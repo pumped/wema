@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/arSteer/!svn/ver/19/html5AR/combined/Daemon
+END
+marxan.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/arSteer/!svn/ver/23/html5AR/combined/Daemon/marxan.py
+END
+server.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/arSteer/!svn/ver/23/html5AR/combined/Daemon/server.py
+END
+marxantest.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/arSteer/!svn/ver/23/html5AR/combined/Daemon/marxantest.py
+END
+bottle.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/arSteer/!svn/ver/19/html5AR/combined/Daemon/bottle.py
+END
