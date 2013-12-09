@@ -6,7 +6,7 @@ $('document').ready(function(){
 });
 
 function setupMap() {
-    //OpenLayers.ProxyHost = "proxy.php?url=";
+    OpenLayers.ProxyHost = "proxy.php?url=";
 
     map = new OpenLayers.Map({
         div: "map",
@@ -27,7 +27,7 @@ function setupMap() {
     // map extent
     //var mapextent = new OpenLayers.Bounds(142.0, 16.0, 150.0, 23.0).transform(WGS84, WGS84_google_mercator);
 
-    tiled = new OpenLayers.Layer.WMS(
+    /*tiled = new OpenLayers.Layer.WMS(
         "Siam", 
         "http://115.146.85.81:8080/geoserver/it.geosolutions/wms",
         {
@@ -44,22 +44,18 @@ function setupMap() {
             isBaseLayer: false,
             yx : {'EPSG:4326' : true}
         } 
-    );/*
-    var tiled = new OpenLayers.Layer.Vector("Editable Features", {
-        strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
-        //projection: new OpenLayers.Projection("EPSG:26910"),
+    );*/
+    var tiled = new OpenLayers.Layer.Vector("WFS (read only)", {
+        strategies: [new OpenLayers.Strategy.BBOX()],
         protocol: new OpenLayers.Protocol.WFS({
             version: "1.1.0",
-            // loading data through localhost url path
-            url: "http://115.146.85.81:8080/geoserver/it.geosolutions/wfs",
-            featureNS :  "http://www.opengeospatial.net/cite",
-            // layer name
-            featureType: "it.geosolutions:Siam_all",
-            // geometry column name
-            geometryName: "the_geom",
-            schema: "http://115.146.85.81:8080/geoserver/it.geosolutions/wms?version=1.1.0&;typename=cite:wfst_test"
-        })
-    });*/
+            srsName: "EPSG:4326",
+            url:  "http://115.146.85.81:9090/fs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=test",
+            featurePrefix: "fs",
+            featureType: "test",
+            featureNS: "http://example.com/featureserver"
+         })
+     });
 
 
     var styledMapOptions = {
@@ -70,7 +66,8 @@ function setupMap() {
 
     var styledMapType = new google.maps.StyledMapType(gmStyle, styledMapOptions);
 
-    map.addLayers([gmap,osm,gsat,tiled]);
+    //map.addLayers([gmap,osm,gsat,tiled]);
+    map.addLayers([tiled]);
 
     map.addControl(new OpenLayers.Control.LayerSwitcher());
     map.addControl(new OpenLayers.Control.EditingToolbar(vectors));
