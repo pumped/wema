@@ -3,6 +3,67 @@
 	height:100%;
 }
 
+.mapContainer {
+    width:100%;
+    margin-top:51px;
+    display:block;
+    position:absolute;
+    bottom:0;
+    top:0;
+}
+
+
+
+
+
+
+.console {
+    font-family:"Lucida Console", Monaco, monospace;
+    font-size:10px;
+    width:340px;
+    height:300px;
+    padding:5px;
+    overflow-y:scroll;
+}
+
+.nodeStats {
+    background-color:#eee;
+    width:100%;
+    font-size:18px;
+    padding:10px 0;
+    color:#666;
+}
+
+.nodeStats .info {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+
+.nodeStats .info li {
+    width:85px;
+    display:inline-block;
+    text-align:center;
+    overflow:hidden;
+}
+
+.nodeStats .info li .subText {
+    font-size:10px;
+    display:block;
+    text-align:center;
+}
+
+
+
+
+.clr{
+    clear:both;
+    border:0;
+    height:0 !important;
+}
+
+
+
 
 
 

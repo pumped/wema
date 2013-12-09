@@ -1,0 +1,42 @@
+
+.container {
+
+}
+
+ul.projects {
+	list-style: none;
+}
+
+ul.projects .item {
+	display: inline-block;
+	margin-bottom:4px;
+}
+
+ul.projects .item a {
+	display:block;
+	width:100px;
+	height:100px;
+	border:1px solid #eee;
+	text-align:center;
+}
+
+ul.projects .item a:hover {
+	background-color:#eee;
+}
+
+ul.projects .item img{
+	display:block;
+	margin:10px auto;
+	max-height:52px;
+}
+
+ul.projects .newItem img{
+	opacity:0.2;
+}
+
+ul.projects .item .projectTitle {
+	text-align:center;
+	display:block;
+	font-size:12px;
+	color:#666;
+}
