@@ -14,20 +14,23 @@ ul.projects .item {
 
 ul.projects .item a {
 	display:block;
-	width:100px;
-	height:100px;
+	width:150px;
+	height:150px;
 	border:1px solid #eee;
+	border-radius:3px;
 	text-align:center;
+	position:relative;
 }
 
 ul.projects .item a:hover {
 	background-color:#eee;
+	border:1px solid #aaa;
 }
 
 ul.projects .item img{
 	display:block;
 	margin:10px auto;
-	max-height:52px;
+	height:90px;
 }
 
 ul.projects .newItem img{
@@ -37,6 +40,9 @@ ul.projects .newItem img{
 ul.projects .item .projectTitle {
 	text-align:center;
 	display:block;
-	font-size:12px;
+	font-size:14px;
 	color:#666;
+	position:absolute;
+	bottom:10px;
+	width:100%;
 }

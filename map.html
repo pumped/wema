@@ -6,8 +6,10 @@
 	<script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/interface.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap-slider.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/map.css">
+	<link rel="stylesheet" type="text/css" href="css/slider.css">
+  <link rel="stylesheet" type="text/css" href="css/map.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 </head>
 <body>
@@ -34,13 +36,13 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><div class="console">Interface loaded</div></li>
+                <li><div class="console"></div></li>
                 <li><div class="nodeStats">
                 	<ul class="info">
                 		<li>1 <span class="subText">Active Nodes</span>
                 		</li><li>0 <span class="subText">Jobs</span>
                 		</li><li>0 <span class="subText">Models Running</span>
-                		</li><li>1 <span class="subText">Project</span></li>
+                		</li><li>2 <span class="subText">Projects</span></li>
                 		<li class="clr"></li>
                 	</ul>
                 </div></li>
@@ -50,9 +52,15 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
+
     <div class="mapContainer">
-		<div id="map">
-		</div>
-	</div>
+      <div id="map"></div>
+    </div>
+
+    <div id="timeline">
+      <div id="playback"><span class="glyphicon glyphicon-play"></span></div>
+      <div id="slideContainer"><div id="timeSlider" class="slider"></div></div>
+    </div>
+    
 </body>
 </html>
