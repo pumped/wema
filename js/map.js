@@ -297,9 +297,9 @@ MapController.prototype.setupMap = function() {
     //setup geoserver
     this.tiled = tiled = new OpenLayers.Layer.WMS(
         "Siam", 
-        "http://115.146.85.81:8080/geoserver/it.geosolutions/wms",
+        "http://115.146.85.81:8080/geoserver/weeds/wms",
         {
-            LAYERS: 'it.geosolutions:Siam_all',
+            LAYERS: 'weeds:Siam_all',
             STYLES: '',
             format: 'image/png',
             tiled: true,
