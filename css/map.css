@@ -56,7 +56,9 @@ ul.vertButtons {
     font-size:22px;
 }
 
-
+#weedSpecies {
+    min-width:150px;
+}
 
 
 .console {
