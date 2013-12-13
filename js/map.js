@@ -14,16 +14,19 @@ function MapController() {
 MapController.prototype.editMode = function() {
     this.mode = 'edit';
 
+    //setup controls
     $('.customEditingToolbar').show();
     $('[class^=olControlDrawFeaturePoint]').show();
-    $('[class^=olControlDrawFeaturePath]').show();
+    $('[class^=olControlDrawFeaturePolygon]').hide();
     $('#timeline').hide();
 
     //hide layers
     this.wfstPoint.setVisibility(true);
-    this.wfstLine.setVisibility(true);
+    this.editTiled.setVisibility(true);
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(false);
+
+    //setup layers
 }
 
 MapController.prototype.overviewMode = function() {
@@ -34,7 +37,7 @@ MapController.prototype.overviewMode = function() {
 
     //hide layers
     this.wfstPoint.setVisibility(false);
-    this.wfstLine.setVisibility(false);
+    this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(true);
 }
@@ -47,7 +50,7 @@ MapController.prototype.planMode = function() {
 
     //hide layers
     this.wfstPoint.setVisibility(false);
-    this.wfstLine.setVisibility(false);
+    this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(true);
 }
@@ -56,13 +59,14 @@ MapController.prototype.zoneMode = function() {
     this.mode = 'zone';
 
     $('.customEditingToolbar').show();
+    $('[class^=olControlDrawFeaturePolygon]').show();
     $('[class^=olControlDrawFeaturePoint]').hide();
     $('[class^=olControlDrawFeaturePath]').hide();
     $('#timeline').hide();
 
     //hide layers
     this.wfstPoint.setVisibility(false);
-    this.wfstLine.setVisibility(false);
+    this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(true);
     this.tiled.setVisibility(true);
 }
@@ -127,57 +131,49 @@ MapController.prototype.setupMap = function() {
         {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 22});
 
 
+    //edit sightings layer
     var savePoint = new OpenLayers.Strategy.Save();
-    var wfstPoint = this.wfstPoint = new OpenLayers.Layer.Vector("Points", {
-                                                strategies: [new OpenLayers.Strategy.BBOX(), savePoint],
-                                                projection: new OpenLayers.Projection("EPSG:4326"),
-                                                protocol: new OpenLayers.Protocol.WFS({
-                                                                                      version: "1.1.0",
-                                                                                      srsName: "EPSG:4326",
-                                                                                      url: featureserver + "?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&maxfeatures=10000&TYPENAME=siam",
-                                                                                      //featurePrefix: "fs",
-                                                                                      featureType: "siam",
-                                                                                      featureNS :  "http://featureserver.org/fs",
-                                                                                      geometryName: "geometry"
-                                                                                      //schema: featureserver + "?SERVICE=WFS&REQUEST=DescribeFeatureType?VERSION=1.1.0&TYPENAME=fs_point"
-                                                                                      })
-                                                });
+    savePoint.events.on({
+        'success': function(event) {
+             log('Saved new sightings');
+        },
+        'fail': function(event) {
+             log('Failed to save sightings');
+        },
+        scope: this
+    });
+    var wfstPoint = this.wfstPoint = new OpenLayers.Layer.Vector("Edit Sightings", {
+      maxScale:150000,
+      strategies: [new OpenLayers.Strategy.BBOX(), savePoint],
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      protocol: new OpenLayers.Protocol.WFS({
+          version: "1.1.0",
+          srsName: "EPSG:4326",
+          url: "http://115.146.85.81:8080/geoserver/wfs",
+          featureType: "Siam_all",
+          featureNS: "weeds"
+      }),
+    });
     wfstPoint.id = "point";
     map.addLayer(wfstPoint);
 
-    var saveLine = new OpenLayers.Strategy.Save();
-    var wfstLine = this.wfstLine = new OpenLayers.Layer.Vector("Lines", {
-                                               strategies: [new OpenLayers.Strategy.BBOX(), saveLine],
-                                               projection: new OpenLayers.Projection("EPSG:4326"),
-                                               protocol: new OpenLayers.Protocol.WFS({
-                                                                                     version: "1.1.0",
-                                                                                     srsName: "EPSG:4326",
-                                                                                     url: featureserver + "?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=test",
-                                                                                     //featurePrefix: "fs",
-                                                                                     featureType: "fs_line",
-                                                                                     featureNS :  "http://featureserver.org/fs",
-                                                                                     geometryName: "geometry"
-                                                                                     //schema: featureserver + "?SERVICE=WFS&REQUEST=DescribeFeatureType?VERSION=1.1.0&TYPENAME=fs_line"
-                                                                                     })
-                                               });
-    wfstLine.id = "line";
-    map.addLayer(wfstLine);
 
+    //zones layer
     var savePolygon = new OpenLayers.Strategy.Save();
     var wfstPolygon = this.wfstPolygon = new OpenLayers.Layer.Vector("Zones", {
-                                                 strategies: [new OpenLayers.Strategy.BBOX(), savePolygon],
-                                                 projection: new OpenLayers.Projection("EPSG:4326"),
-                                                 protocol: new OpenLayers.Protocol.WFS({
-                                                                                       version: "1.1.0",
-                                                                                       srsName: "EPSG:4326",
-                                                                                       url: featureserver + "?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=zone",
-                                                                                       //featurePrefix: "fs",
-                                                                                       featureNS :  "http://featureserver.org/fs",
-                                                                                       featureType: "fs_polygon",
-                                                                                       geometryName: "geometry"
-                                                                                       //schema: featureserver + "?SERVICE=WFS&REQUEST=DescribeFeatureType?VERSION=1.1.0&TYPENAME=fs_polygon"
-                                                                                       })
-                                                 });
+      strategies: [new OpenLayers.Strategy.BBOX(), savePolygon],
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      protocol: new OpenLayers.Protocol.WFS({
+        version: "1.1.0",
+        srsName: "EPSG:4326",
+        url: featureserver + "?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=zone",
+        //featurePrefix: "fs",
+        featureNS :  "http://featureserver.org/fs",
+        featureType: "fs_polygon",
+        geometryName: "geometry"
+        //schema: featureserver + "?SERVICE=WFS&REQUEST=DescribeFeatureType?VERSION=1.1.0&TYPENAME=fs_polygon"
+      })
+    });
     wfstPolygon.id = "polygon";
     map.addLayer(wfstPolygon);
 
@@ -196,14 +192,14 @@ MapController.prototype.setupMap = function() {
                                                    }
                                                    );
 
-    var path = new OpenLayers.Control.DrawFeature(
+   /* var path = new OpenLayers.Control.DrawFeature(
                                                   wfstLine, OpenLayers.Handler.Path,
                                                   {
                                                   title: "Draw Path",
                                                   displayClass: "olControlDrawFeaturePath",
                                                   multi: false
                                                   }
-                                                  );
+                                                  );*/
 
     var polygon = new OpenLayers.Control.DrawFeature(
                                                      wfstPolygon, OpenLayers.Handler.Polygon,
@@ -219,12 +215,12 @@ MapController.prototype.setupMap = function() {
                                                          standalone:true,
                                                          mode: OpenLayers.Control.ModifyFeature.DRAG// | OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE
                                                          });
-    var editLine= new OpenLayers.Control.ModifyFeature(wfstLine,
+   /* var editLine= new OpenLayers.Control.ModifyFeature(wfstLine,
                                                        {
                                                        id:"line",
                                                        standalone:true,
                                                        mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG// | OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE
-                                                       });
+                                                       });*/
     var editPolygon = new OpenLayers.Control.ModifyFeature(wfstPolygon,
                                                            {
                                                            id:"polygon",
@@ -232,11 +228,11 @@ MapController.prototype.setupMap = function() {
                                                            mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG// | OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE
                                                            });
 
-    map.addControls([editPoint, editLine, editPolygon]);
+    map.addControls([editPoint, editPolygon]);
 
 
     var select = new OpenLayers.Control.SelectFeature(
-                                                      [wfstPoint, wfstLine, wfstPolygon],
+                                                      [wfstPoint, wfstPolygon],
                                                       {
                                                       title : "Modify Feature",
                                                       displayClass: "olControlModifyFeature",
@@ -257,46 +253,40 @@ MapController.prototype.setupMap = function() {
                                                       });
 
     var save = new OpenLayers.Control.Button({
-                                             title: "Save Changes",
-                                             trigger: function() {
-                                             /*if(edit.feature) {
-                                              edit.selectControl.unselectAll();
-                                              }*/
-                                             editPoint.deactivate();
-                                             editLine.deactivate();
-                                             editPolygon.deactivate();
-                                             
-
-                                            if (mc.mode == 'zone') {
-                                              savePolygon.save(); 
-                                              log('Saved Zones');
-                                            } else {
-                                              savePoint.save();
-                                              saveLine.save();
-                                              log('Saved Points');
-                                            }
-                                             
-                                             
-                                             },
-                                             displayClass: "olControlSaveFeatures"
-                                             });
+      title: "Save Changes",
+      trigger: function() {
+        /*if(edit.feature) {
+        edit.selectControl.unselectAll();
+        }*/
+        editPoint.deactivate();
+        editPolygon.deactivate();
 
 
-    var del = new DeleteFeature([wfstPoint, wfstLine, wfstPolygon], {title: "Delete Feature", hover:true});
+        if (mc.mode == 'zone') {
+          savePolygon.save(); 
+        } else {
+          savePoint.save();
+        }
 
-    panel.addControls([save, del, select, point, path, polygon]);
+
+      },
+      displayClass: "olControlSaveFeatures"
+    });
+
+
+    var del = new DeleteFeature([wfstPoint, wfstPolygon], {title: "Delete Feature", hover:true});
+
+    panel.addControls([save, del, select, point, polygon]);
     map.addControl(panel);
 
     var styledMapOptions = {
         name: "Styled Map"
     };
 
-    vectors = new OpenLayers.Layer.Vector("Vector Layer", {displayInLayerSwitcher: false});
 
-
-    //setup geoserver
-    this.tiled = tiled = new OpenLayers.Layer.WMS(
-        "Siam", 
+    //setup edit overview view
+    this.editTiled = editTiled = new OpenLayers.Layer.WMS(
+        "Edit Overview", 
         "http://115.146.85.81:8080/geoserver/weeds/wms",
         {
             LAYERS: 'weeds:Siam_all',
@@ -307,14 +297,34 @@ MapController.prototype.setupMap = function() {
             tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
         },
         {
-            buffer: 0,
+            buffer: 2,
+            displayOutsideMaxExtent: true,
+            isBaseLayer: false,
+            yx : {'EPSG:4326' : true},
+            maxScale:150000
+        } 
+    );
+
+    this.tiled = tiled = new OpenLayers.Layer.WMS(
+        "Weed Distribution", 
+        "http://115.146.85.81:8080/geoserver/weeds/wms",
+        {
+            LAYERS: 'weeds:Siam_all',
+            STYLES: '',
+            format: 'image/png',
+            tiled: true,
+            transparent: true,
+            tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+        },
+        {
+            buffer: 2,
             displayOutsideMaxExtent: true,
             isBaseLayer: false,
             yx : {'EPSG:4326' : true}
         } 
     );
 
-    map.addLayer(tiled);
+    map.addLayers([tiled,editTiled]);
 
 
 
@@ -323,7 +333,6 @@ MapController.prototype.setupMap = function() {
     map.addLayers([gmap,gsat,osm]);
 
     map.addControl(new OpenLayers.Control.LayerSwitcher());
-    //map.addControl(new OpenLayers.Control.EditingToolbar(vectors));
 
     map.setCenter(
         new OpenLayers.LonLat(145.69826, -17.37545).transform(
