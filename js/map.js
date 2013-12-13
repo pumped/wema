@@ -1,6 +1,54 @@
 var map;
 var tiled;
 
+var zoneColors = [new OpenLayers.StyleMap({
+    "default": new OpenLayers.Style({ //Prevention
+        fillColor: "#00ee66",
+        fillOpacity: 0.4,
+        strokeColor: "#00cc44",
+        strokeWidth: 3,
+        pointRadius: 6
+    }),
+    "select": new OpenLayers.Style({
+        fillColor: "#22ff88",
+        fillOpacity: 0.2,
+        strokeColor: "#00cc44",
+        strokeWidth: 6,
+        pointRadius: 6,
+    }),
+    "temporary": new OpenLayers.Style({
+        fillColor: "#00ee66",
+        fillOpacity: 0.4,
+        strokeColor: "#00cc44",
+        strokeWidth: 3,
+        pointRadius: 6
+    })
+})];
+
+var zoneLookup = {
+  "IC" : {fillColor: "#1826B0", strokeColor: "#1826B0"},
+  "P" : {fillColor: "#FFBA00", strokeColor: "#FFBA00"},
+  "AP" : {fillColor: "#ff2800", strokeColor: "#ff2800"},
+  "D" : {fillColor: "#ffe573", strokeColor: "#ffe573"},
+  "R" : {fillColor: "#00BB3F", strokeColor: "#00BB3F"},
+  "C" : {fillColor: "#FF8973", strokeColor: "#FF8973"},
+};
+
+zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
+zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
+
+function zoneAdded(e) {
+  console.log(e); 
+  e.attributes = {'type':mc.zone};
+ /* e.style = zoneColors[0];
+  console.log(zoneColors[0]);
+  console.log(e);
+
+  //redraw layer*/
+  mc.wfstPolygon.redraw();
+  console.log(mc.wfstPolygon);
+}
+
 $('document').ready(function(){
     mc = new MapController();
     mc.setupMap();
@@ -9,6 +57,7 @@ $('document').ready(function(){
 
 function MapController() {
     this.mode = 'edit';
+    this.zone = 'IC';
 }
 
 MapController.prototype.editMode = function() {
@@ -160,19 +209,26 @@ MapController.prototype.setupMap = function() {
 
     //zones layer
     var savePolygon = new OpenLayers.Strategy.Save();
+    savePolygon.events.on({
+        'success': function(event) {
+             log('Saved Zones');
+        },
+        'fail': function(event) {
+             log('Failed to save zones');
+        },
+        scope: this
+    });
     var wfstPolygon = this.wfstPolygon = new OpenLayers.Layer.Vector("Zones", {
-      strategies: [new OpenLayers.Strategy.BBOX(), savePolygon],
+      strategies: [savePolygon],
       projection: new OpenLayers.Projection("EPSG:4326"),
       protocol: new OpenLayers.Protocol.WFS({
         version: "1.1.0",
         srsName: "EPSG:4326",
-        url: featureserver + "?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=zone",
-        //featurePrefix: "fs",
-        featureNS :  "http://featureserver.org/fs",
-        featureType: "fs_polygon",
-        geometryName: "geometry"
-        //schema: featureserver + "?SERVICE=WFS&REQUEST=DescribeFeatureType?VERSION=1.1.0&TYPENAME=fs_polygon"
-      })
+        url: "http://115.146.85.81:8080/geoserver/wfs",
+        featureType: "zones",
+        featureNS: "weeds"
+      }),
+      styleMap: zoneColors[0]
     });
     wfstPolygon.id = "polygon";
     map.addLayer(wfstPolygon);
@@ -206,9 +262,11 @@ MapController.prototype.setupMap = function() {
                                                      {
                                                      title: "Draw Polygon",
                                                      displayClass: "olControlDrawFeaturePolygon",
-                                                     multi: false
+                                                     multi: false,
+                                                     featureAdded: zoneAdded
                                                      }
                                                      );
+
 
     var editPoint = new OpenLayers.Control.ModifyFeature(wfstPoint, {
                                                          id:"point",
@@ -240,7 +298,6 @@ MapController.prototype.setupMap = function() {
                                                       callbacks:{
                                                       'click':function(feature) {
                                                       editPoint.deactivate();
-                                                      editLine.deactivate();
                                                       editPolygon.deactivate();
                                                       
                                                       feature.layer.map.getControl(feature.layer.id).activate();
