@@ -687,7 +687,9 @@ img.olTileImage {
 
 
 
-
+#mapControls div {
+    height:50px;
+}
 
 
 
