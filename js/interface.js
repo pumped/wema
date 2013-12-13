@@ -13,12 +13,6 @@ $('document').ready(function(){
 });
 
 function setMode(mode) {
-	//setup buttons
-	$('.navbar-nav li').removeClass('active');
-	$('#'+mode).parent().addClass('active');
-
-	console.log('changed mode')
-
 	//set ui
 	if (mode == 'edit') {
 		mc.editMode();
@@ -28,7 +22,15 @@ function setMode(mode) {
 		mc.planMode();
 	} else if (mode == 'overview') {
 		mc.overviewMode();
+	} else {
+		return;
 	}
+
+	//setup buttons
+	$('.navbar-nav li').removeClass('active');
+	$('#'+mode).parent().addClass('active');
+
+	console.log('changed mode')
 }
 
 function setupTimeline() {
