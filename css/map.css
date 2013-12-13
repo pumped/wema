@@ -38,13 +38,22 @@ ul.vertButtons {
     font-size: 13px;
 }
 
-.vertButtons .glyphicon {
-    font-size: 25px;
-    padding-top: 3px;
+.vertButtons li:hover {
+    opacity:0.6;
+}
+
+.vertButtons span {
+    font-size: 22px;
+    line-height:22px;
+    padding-top: 7px;
     display: block;
     text-align: center;
     margin:auto;
     color: #868686;
+}
+
+.vertButtons .glyphicons {
+    font-size:22px;
 }
 
 
@@ -676,7 +685,9 @@ img.olTileImage {
 
 
 
-
+#mapControls div {
+    height:50px;
+}
 
 
 

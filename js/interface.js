@@ -1,18 +1,36 @@
-$('document').ready(function(){
-	$('.navbar-nav a').click(function(){
-		button = this.href.split('#')[1];
-		setMode(button);
-	});
+var zones;
+var iface;
 
+$('document').ready(function(){
+
+	setupTimeline();
+	zones = new ZoneManager();
+	iface = new InterfaceManager(zones);
+
+	//set current mode
 	if ( window.location.hash ) {
     	$(window.location.hash).click();
 	}
-
-	setupTimeline();
-
 });
 
-function setMode(mode) {
+function InterfaceManager() {
+	this.setup();
+}
+
+InterfaceManager.prototype.setup = function(mode) {
+	//setup mode buttons
+	$('.navbar-nav a').click(function(){
+		button = this.href.split('#')[1];
+		iface.setMode(button);
+	});
+
+	//setup draw button
+	$('#draw').click(function() {
+
+	});
+}
+
+InterfaceManager.prototype.setMode = function(mode) {
 	//set ui
 	if (mode == 'edit') {
 		mc.editMode();
@@ -47,4 +65,43 @@ function log(m) {
 	console.log(m);
 	d = new Date().toLocaleTimeString();
 	$('.console').prepend('<i>'+d+'</i>: '+m+'<br/>');
+}
+
+
+
+
+/*--- Zone Manager ---*/
+function ZoneManager() {
+	this.setup();
+	this.currentMode = 'IC'
+}
+
+//return current zone
+ZoneManager.prototype.mode = function() {
+	return this.currentMode;
+}
+
+ZoneManager.prototype.setMode = function(mode) {
+	this.currentMode = mode;
+}
+
+//setup draw
+ZoneManager.prototype.draw = function () {
+	$('.zoneBtns').slideDown();
+}
+
+ZoneManager.prototype.endDraw = function() {
+	$('.zoneBtns').slideUp();
+}
+
+ZoneManager.prototype.setup = function() {
+	//setup buttons
+	z = this;
+	$('.zoneBtn').click(function(){
+		z.setMode($(this).attr('ID').split('zone')[0]);
+	});
+}
+
+ZoneManager.prototype.setZone = function() {
+
 }

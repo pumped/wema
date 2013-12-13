@@ -10,6 +10,7 @@
 
 	<link rel="stylesheet" type="text/css" href="css/slider.css">
   <link rel="stylesheet" type="text/css" href="css/map.css">
+  <link rel="stylesheet" type="text/css" href="css/zone.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 </head>
 <body>
@@ -54,13 +55,22 @@
     </div>
 
     <div id="sideBar">
+      <div id="mapControls"></div>
       <ul class="vertButtons">
-        <li><span class="glyphicon glyphicon-floppy-disk"></span>Save</li>
-        <li>Save</li>
-        <li>Save</li>
-        <li>Save</li>
-        <li>Save</li>
-        <li>Save</li>
+        <li title="Save State"><span class="glyphicon glyphicon-star-empty"></span>Save</li>        
+        <li id="draw" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
+      </ul>
+      <ul class="vertButtons zoneBtns">
+        <li id="Dzone" class="zoneBtn"><span>D</span>Delimitation</li>
+        <li id="Pzone" class="zoneBtn"><span>P</span>Prevention</li>
+        <li id="Rzone" class="zoneBtn"><span>R</span>Removal</li>
+        <li id="Czone" class="zoneBtn"><span>C</span>Containment</li>
+        <li id="ICzone" class="zoneBtn"><span>IC</span>Impact Control</li>
+        <li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>
+      </ul>
+      <ul class="vertButtons">
+        <li><span class="glyphicon glyphicon-move"></span>Edit</li>
+        <li><span class="glyphicon glyphicon-remove"></span>Delete</li>
       </ul>
     </div>
 

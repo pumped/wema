@@ -39,8 +39,8 @@ zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
 zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
 
 function zoneAdded(e) {
-  console.log(e); 
-  e.attributes = {'type':mc.zone};
+  e.attributes = {'type':zones.mode()};
+  console.log(zones.mode());
  /* e.style = zoneColors[0];
   console.log(zoneColors[0]);
   console.log(e);
@@ -237,7 +237,8 @@ MapController.prototype.setupMap = function() {
 
     var panel = new OpenLayers.Control.Panel({
                                              displayClass: 'customEditingToolbar',
-                                             allowDepress: true
+                                             allowDepress: true,
+                                             div: document.getElementById('mapControls')
                                              });
 
     var point = new OpenLayers.Control.DrawFeature(
@@ -267,6 +268,14 @@ MapController.prototype.setupMap = function() {
                                                      featureAdded: zoneAdded
                                                      }
                                                      );
+
+    $('#draw').click(function(){
+      polygon.activate();
+    });
+
+    /*
+      iface.tools.bind('draw',polygon);
+    */
 
 
     var editPoint = new OpenLayers.Control.ModifyFeature(wfstPoint, {
