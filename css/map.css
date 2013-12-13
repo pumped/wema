@@ -28,12 +28,23 @@ ul.vertButtons {
     margin: 0;
 }
 
-.vertbuttons li {
+.vertButtons li {
     display:block;
     height:50px;
     border-bottom:1px solid #eee;
     border-top:1px solid #ddd;
     text-align:center;
+    color: #666;
+    font-size: 13px;
+}
+
+.vertButtons .glyphicon {
+    font-size: 25px;
+    padding-top: 3px;
+    display: block;
+    text-align: center;
+    margin:auto;
+    color: #868686;
 }
 
 
