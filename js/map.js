@@ -1,6 +1,7 @@
 var map;
 var tiled;
 
+//http://colorschemedesigner.com/#0742qw0w0w0w0
 var zoneColors = [new OpenLayers.StyleMap({
     "default": new OpenLayers.Style({ //Prevention
         fillColor: "#00ee66",
