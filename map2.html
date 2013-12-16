@@ -1,0 +1,178 @@
+<html>
+ <head>
+ <!-- OpenLayers core js -->
+ <script type="text/javascript" src="http://www.openlayers.org/dev/OpenLayers.js"></script>
+ <style>
+        .customEditingToolbar {
+            float: right;
+            right: 0px;
+            height: 30px; 
+        }
+        .customEditingToolbar div {
+            float: right;
+            margin: 5px;
+            width: 24px;
+            height: 24px;
+        }
+        .olControlNavigationItemActive { 
+            background-image: url("img/editing_tool_bar.png");
+            background-repeat: no-repeat;
+            background-position: -103px -23px; 
+        }
+        .olControlNavigationItemInactive { 
+            background-image: url("img/editing_tool_bar.png");
+            background-repeat: no-repeat;
+            background-position: -103px -0px; 
+        }
+        .olControlDrawFeaturePolygoItemInactive { 
+            background-image: url("/img/editing_tool_bar.png");
+            background-repeat: no-repeat;
+            background-position: -26px 0px; 
+        }
+        .olControlDrawFeaturePolygonItemActive { 
+            background-image: url("img/editing_tool_bar.png");
+            background-repeat: no-repeat;
+            background-position: -26px -23px ;                                                                   
+        }
+        .olControlModifyFeatureItemActive { 
+            background-image: url(img/editing_tool_bar.png);
+            background-repeat: no-repeat;
+            background-position: 0px 1px;
+        }
+        .olControlModifyFeatureItemInactive { 
+            background-image: url(img/editing_tool_bar.png);
+            background-repeat: no-repeat;
+            background-position: 0px 1px;
+        }
+        .olControlDeleteFeatureItemActive { 
+            background-image: url(img/remove_point_on.png);
+            background-repeat: no-repeat;
+            background-position: 0px 1px;
+        }
+        .olControlDeleteFeatureItemInactive { 
+            background-image: url(img/remove_point_off.png);
+            background-repeat: no-repeat;
+            background-position: 0px 1px;
+        }
+    </style>
+ <script type="text/javascript">
+ 	var map;
+	OpenLayers.ProxyHost = "proxy.php?url=";
+
+	function init() {
+	    // allow testing of specific renderers via "?renderer=Canvas", etc
+	    var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+	    renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+	    map = new OpenLayers.Map({
+	        div: "map",
+	        layers: [
+	            new OpenLayers.Layer.WMS("OpenLayers WMS",
+	                "http://vmap0.tiles.osgeo.org/wms/vmap0",
+	                {layers: "basic"} 
+	            ),
+	            new OpenLayers.Layer.WMS("States WMS",
+	                "http://115.146.85.81:8080/geoserver/wms",
+	                {layers: "weeds:Siam_all", format: "image/png", transparent: true},
+	                {maxScale: 150000}
+	            )
+	        ],
+	        center: [150, -19],
+	        zoom: 3
+	    });
+
+	    var saveStrategy = new OpenLayers.Strategy.Save();
+
+	    var wfs = new OpenLayers.Layer.Vector("States", {
+	            	minScale:150000,
+	                strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
+	                protocol: new OpenLayers.Protocol.WFS({
+	                	version: "1.1.0",
+            			srsName: "EPSG:4326",
+	                    url: "http://115.146.85.81:8080/geoserver/wfs",
+	                    featureType: "Siam_all",
+	                    featureNS: "weeds"
+	                }),
+	                renderers: renderer
+	            });
+
+	    map.addLayer(wfs);
+
+	
+		var panel = new OpenLayers.Control.Panel({
+	        displayClass: 'customEditingToolbar',
+	        allowDepress: true
+	    });
+	    
+	    var draw = new OpenLayers.Control.DrawFeature(
+	        wfs, OpenLayers.Handler.Point,
+	        {
+	            title: "Draw Point",
+	            displayClass: "olControlDrawFeaturePolygon",
+	            multi: true
+	        }
+	    );
+	    
+	    var edit = new OpenLayers.Control.ModifyFeature(wfs, {
+	        title: "Modify Feature",
+	        displayClass: "olControlModifyFeature"
+	    });
+
+	    var del = new DeleteFeature(wfs, {title: "Delete Feature"});
+	   
+	    var save = new OpenLayers.Control.Button({
+	        title: "Save Changes",
+	        trigger: function() {
+	            if(edit.feature) {
+	                edit.selectControl.unselectAll();
+	            }
+	            saveStrategy.save();
+	        },
+	        displayClass: "olControlSaveFeatures"
+	    });
+
+	    panel.addControls([save, del, edit, draw]);
+	    map.addControl(panel);
+
+		
+	}
+
+
+
+
+
+	var DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
+    initialize: function(layer, options) {
+        OpenLayers.Control.prototype.initialize.apply(this, [options]);
+        this.layer = layer;
+        this.handler = new OpenLayers.Handler.Feature(
+            this, layer, {click: this.clickFeature}
+        );
+    },
+    clickFeature: function(feature) {
+        // if feature doesn't have a fid, destroy it
+        if(feature.fid == undefined) {
+            this.layer.destroyFeatures([feature]);
+        } else {
+            feature.state = OpenLayers.State.DELETE;
+            this.layer.events.triggerEvent("afterfeaturemodified", 
+                                           {feature: feature});
+            feature.renderIntent = "select";
+            this.layer.drawFeature(feature);
+        }
+    },
+    setMap: function(map) {
+        this.handler.setMap(map);
+        OpenLayers.Control.prototype.setMap.apply(this, arguments);
+    },
+    CLASS_NAME: "OpenLayers.Control.DeleteFeature"
+});
+ </script>
+ </head>
+ <body onload="init()">
+ <!-- div containers for map, lat/long coordinate output and transaction messages -->
+ <div id="map" style="width:100%; height:100%;"></div>
+ <div id="coordinates"></div>
+ <div id="nodelist"></div>
+ </body>
+</html>
