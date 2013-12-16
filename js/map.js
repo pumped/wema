@@ -39,8 +39,8 @@ zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
 zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
 
 function zoneAdded(e) {
-  console.log(e); 
-  e.attributes = {'type':mc.zone};
+  e.attributes = {'type':zones.mode()};
+  console.log(zones.mode());
  /* e.style = zoneColors[0];
   console.log(zoneColors[0]);
   console.log(e);
@@ -65,10 +65,7 @@ MapController.prototype.editMode = function() {
     this.mode = 'edit';
 
     //setup controls
-    $('.customEditingToolbar').show();
-    $('[class^=olControlDrawFeaturePoint]').show();
-    $('[class^=olControlDrawFeaturePolygon]').hide();
-    $('#timeline').hide();
+    iface.tools.setMode(this.mode);
 
     //hide layers
     this.wfstPoint.setVisibility(true);
@@ -82,8 +79,7 @@ MapController.prototype.editMode = function() {
 MapController.prototype.overviewMode = function() {
     this.mode = 'overview';
 
-    $('.customEditingToolbar').hide();
-    $('#timeline').hide();
+    iface.tools.setMode(this.mode);
 
     //hide layers
     this.wfstPoint.setVisibility(false);
@@ -95,8 +91,7 @@ MapController.prototype.overviewMode = function() {
 MapController.prototype.planMode = function() {
     this.mode = 'plan';
 
-    $('.customEditingToolbar').hide();
-    $('#timeline').show();
+    iface.tools.setMode(this.mode);
 
     //hide layers
     this.wfstPoint.setVisibility(false);
@@ -108,11 +103,7 @@ MapController.prototype.planMode = function() {
 MapController.prototype.zoneMode = function() {
     this.mode = 'zone';
 
-    $('.customEditingToolbar').show();
-    $('[class^=olControlDrawFeaturePolygon]').show();
-    $('[class^=olControlDrawFeaturePoint]').hide();
-    $('[class^=olControlDrawFeaturePath]').hide();
-    $('#timeline').hide();
+    iface.tools.setMode(this.mode);    
 
     //hide layers
     this.wfstPoint.setVisibility(false);
@@ -237,7 +228,8 @@ MapController.prototype.setupMap = function() {
 
     var panel = new OpenLayers.Control.Panel({
                                              displayClass: 'customEditingToolbar',
-                                             allowDepress: true
+                                             allowDepress: true,
+                                             div: document.getElementById('mapControls')
                                              });
 
     var point = new OpenLayers.Control.DrawFeature(
@@ -245,9 +237,12 @@ MapController.prototype.setupMap = function() {
                                                    {
                                                    title: "Draw Point",
                                                    displayClass: "olControlDrawFeaturePoint",
-                                                   multi: false
+                                                   multi: false,
+                                                   featureAdded: function(){savePoint.save();}
                                                    }
                                                    );
+    iface.tools.bind('pointTool', point);
+    point.id = "point";
 
    /* var path = new OpenLayers.Control.DrawFeature(
                                                   wfstLine, OpenLayers.Handler.Path,
@@ -268,12 +263,20 @@ MapController.prototype.setupMap = function() {
                                                      }
                                                      );
 
+    iface.tools.bind('drawTool',polygon);
+    polygon.id = "polygon";
+
+    /*
+      iface.tools.bind('draw',polygon);
+    */
+
 
     var editPoint = new OpenLayers.Control.ModifyFeature(wfstPoint, {
                                                          id:"point",
                                                          standalone:true,
                                                          mode: OpenLayers.Control.ModifyFeature.DRAG// | OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE
                                                          });
+
    /* var editLine= new OpenLayers.Control.ModifyFeature(wfstLine,
                                                        {
                                                        id:"line",
@@ -298,17 +301,33 @@ MapController.prototype.setupMap = function() {
                                                       hover:true,
                                                       callbacks:{
                                                       'click':function(feature) {
-                                                      editPoint.deactivate();
-                                                      editPolygon.deactivate();
+                                                        editPoint.deactivate();
+                                                        editPolygon.deactivate();
                                                       
-                                                      feature.layer.map.getControl(feature.layer.id).activate();
-                                                      feature.layer.map.getControl(feature.layer.id).selectFeature(feature);
+                                                        console.log(feature.layer.map);
+                                                        feature.layer.map.getControl(feature.layer.id).activate();
+                                                        feature.layer.map.getControl(feature.layer.id).selectFeature(feature);
+                                                        //console.log(feature);
+                                                        //console.log(feature.layer);
+
+                                                        console.log(feature.layer.map.getControl(feature.layer.id));
+                                                        console.log('activated');
+
+                                                      /*feature.layer.map.getControl(feature.layer.id).activate();
+                                                      feature.layer.map.getControl(feature.layer.id).selectFeature(feature);*/
                                                       },
                                                       'clickout':function(feature) {
-                                                      feature.layer.map.getControl(feature.layer.id).deactivate();
+                                                        if (this.mode == 'zone') {
+                                                          editPolygon.deactivate();
+                                                        } else if (this.mode == 'edit') {
+                                                          editPoint.deactivate();
+                                                        }
+                                                        console.log('deactivated');
+
                                                       }
                                                       }
                                                       });
+    iface.tools.bind('editTool',select);
 
     var save = new OpenLayers.Control.Button({
       title: "Save Changes",
@@ -333,6 +352,8 @@ MapController.prototype.setupMap = function() {
 
 
     var del = new DeleteFeature([wfstPoint, wfstPolygon], {title: "Delete Feature", hover:true});
+
+    iface.tools.bind('removeTool',del);
 
     panel.addControls([save, del, select, point, polygon]);
     map.addControl(panel);

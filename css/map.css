@@ -4,7 +4,12 @@
 }
 
 .mapContainer {
-    width:100%;
+    /*width:100%;*/    
+    left: 0;
+    right: 50px;
+}
+
+#sidebar, .mapContainer {
     margin-top:51px;
     display:block;
     position:absolute;
@@ -12,13 +17,56 @@
     top:0;
 }
 
+#sidebar {
+    width:50px;
+    right:0;
+}
+
+ul.vertButtons {
+    list-style:none;
+    padding: 0;
+    margin: 0;
+}
+
+.vertButtons li {
+    display:block;
+    height:50px;
+    border-bottom:1px solid #eee;
+    border-top:1px solid #ddd;
+    text-align:center;
+    color: #666;
+    font-size: 13px;
+}
+
+.vertButtons li:hover {
+    opacity:0.6;
+}
+
+.vertButtons span {
+    font-size: 22px;
+    line-height:22px;
+    padding-top: 7px;
+    display: block;
+    text-align: center;
+    margin:auto;
+    color: #868686;
+}
+
+.vertButtons li.active, .vertButtons li.active .glyphicon {
+    color:#54A8CF;
+}
+
+.vertButtons .glyphicons {
+    font-size:22px;
+}
+
+.zoneBtns, #mapControls {
+    display:none;
+}
+
 #weedSpecies {
     min-width:150px;
 }
-
-
-
-
 
 .console {
     font-family:"Lucida Console", Monaco, monospace;
@@ -71,7 +119,7 @@
 
 
 #timeline {
-    width:100%;
+    margin-right: 50px;
     position:fixed;
     bottom:0;
     z-index: 10000;
@@ -647,7 +695,9 @@ img.olTileImage {
 
 
 
-
+#mapControls div {
+    height:50px;
+}
 
 
 
