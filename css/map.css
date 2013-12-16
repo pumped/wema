@@ -52,8 +52,16 @@ ul.vertButtons {
     color: #868686;
 }
 
+.vertButtons li.active, .vertButtons li.active .glyphicon {
+    color:#54A8CF;
+}
+
 .vertButtons .glyphicons {
     font-size:22px;
+}
+
+.zoneBtns, #mapControls {
+    display:none;
 }
 
 #weedSpecies {
@@ -111,7 +119,7 @@ ul.vertButtons {
 
 
 #timeline {
-    width:100%;
+    margin-right: 50px;
     position:fixed;
     bottom:0;
     z-index: 10000;

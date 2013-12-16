@@ -40,7 +40,7 @@
           </form>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-tasks"></span> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><div class="console"></div></li>
                 <li><div class="nodeStats">
@@ -60,23 +60,26 @@
     </div>
 
     <div id="sideBar">
-      <div id="mapControls"></div>
-      <ul class="vertButtons">
-        <li title="Save State"><span class="glyphicon glyphicon-star-empty"></span>Save</li>        
-        <li id="draw" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
-      </ul>
-      <ul class="vertButtons zoneBtns">
-        <li id="Dzone" class="zoneBtn"><span>D</span>Delimitation</li>
-        <li id="Pzone" class="zoneBtn"><span>P</span>Prevention</li>
-        <li id="Rzone" class="zoneBtn"><span>R</span>Removal</li>
-        <li id="Czone" class="zoneBtn"><span>C</span>Containment</li>
-        <li id="ICzone" class="zoneBtn"><span>IC</span>Impact Control</li>
-        <li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>
-      </ul>
-      <ul class="vertButtons">
-        <li><span class="glyphicon glyphicon-move"></span>Edit</li>
-        <li><span class="glyphicon glyphicon-remove"></span>Delete</li>
-      </ul>
+      <div id="editTools">
+        <div id="mapControls"></div>
+        <ul class="vertButtons">
+          <li title="Save State"><span class="glyphicon glyphicon-star-empty"></span>Save</li>
+          <li id="pointTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Add</li>
+          <li id="drawTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
+        </ul>
+        <ul class="vertButtons zoneBtns">
+          <li id="Dzone" class="zoneBtn"><span>D</span>Delimitation</li>
+          <li id="Pzone" class="zoneBtn"><span>P</span>Prevention</li>
+          <li id="Rzone" class="zoneBtn"><span>R</span>Removal</li>
+          <li id="Czone" class="zoneBtn"><span>C</span>Containment</li>
+          <li id="ICzone" class="zoneBtn"><span>IC</span>Impact Control</li>
+          <li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>
+        </ul>
+        <ul class="vertButtons">
+          <li id="editTool" title="Edit"><span class="glyphicon glyphicon-move"></span>Edit</li>
+          <li id="removeTool" title="Delete"><span class="glyphicon glyphicon-remove"></span>Delete</li>
+        </ul>
+      </div>
     </div>
 
     <div class="mapContainer">
