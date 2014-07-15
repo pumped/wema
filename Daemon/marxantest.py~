@@ -1,5 +1,0 @@
-from marxan import Marxan
-
-m = Marxan()
-#m.setPU("Demo","1","1")
-m.restore()
