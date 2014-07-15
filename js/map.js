@@ -127,34 +127,34 @@ MapController.prototype.setupMap = function() {
 
 
     var DeleteFeature = OpenLayers.Class(OpenLayers.Control.SelectFeature, {
-                                         clickFeature: function(feature) {
-                                         if(feature.fid == undefined) {
-                                         feature.layer.destroyFeatures([feature]);
-                                         } else {
-                                         feature.state = OpenLayers.State.DELETE;
-                                         feature.layer.events.triggerEvent("afterfeaturemodified",
-                                                                        {feature: feature});
-                                         feature.renderIntent = "select";
-                                         feature.layer.drawFeature(feature);
-                                         }
-                                         },
-                                         clickoutFeature: function(feature) {},
-                                         unselectAll: function(options) {
-                                         },
-                                         toggleSelect: function() {},
-                                         overFeature: function(feature) {
-                                         var layer = feature.layer;
-                                         if(feature.state != OpenLayers.State.DELETE) {
-                                         return OpenLayers.Control.SelectFeature.prototype.overFeature.apply(this, arguments);
-                                         }
-                                         },
-                                         outFeature : function(feature) {
-                                         if(feature.state != OpenLayers.State.DELETE) {
-                                         return OpenLayers.Control.SelectFeature.prototype.outFeature.apply(this, arguments);
-                                         }
-                                         },
-                                         CLASS_NAME: "OpenLayers.Control.DeleteFeature"
-                                         });
+       clickFeature: function(feature) {
+         if(feature.fid == undefined) {
+           feature.layer.destroyFeatures([feature]);
+         } else {
+           feature.state = OpenLayers.State.DELETE;
+           feature.layer.events.triggerEvent("afterfeaturemodified",
+            {feature: feature});
+           feature.renderIntent = "select";
+           feature.layer.drawFeature(feature);
+         }
+       },
+       clickoutFeature: function(feature) {},
+       unselectAll: function(options) {
+       },
+       toggleSelect: function() {},
+       overFeature: function(feature) {
+         var layer = feature.layer;
+         if(feature.state != OpenLayers.State.DELETE) {
+           return OpenLayers.Control.SelectFeature.prototype.overFeature.apply(this, arguments);
+         }
+       },
+       outFeature : function(feature) {
+         if(feature.state != OpenLayers.State.DELETE) {
+           return OpenLayers.Control.SelectFeature.prototype.outFeature.apply(this, arguments);
+         }
+       },
+       CLASS_NAME: "OpenLayers.Control.DeleteFeature"
+     });
 
 
 
@@ -376,7 +376,7 @@ MapController.prototype.setupMap = function() {
             tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
         },
         {
-            buffer: 2,
+            buffer: 0,
             displayOutsideMaxExtent: true,
             isBaseLayer: false,
             yx : {'EPSG:4326' : true},
@@ -396,7 +396,7 @@ MapController.prototype.setupMap = function() {
             tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
         },
         {
-            buffer: 2,
+            buffer: 0,
             displayOutsideMaxExtent: true,
             isBaseLayer: false,
             yx : {'EPSG:4326' : true}
@@ -420,6 +420,16 @@ MapController.prototype.setupMap = function() {
         ), 
         11
     );
+
+    var graticuleCtl1 = new OpenLayers.Control.Graticule({
+                    numPoints: 2,
+                    targetSize: 200,
+                    labelled: false,
+                    lineSymbolizer:  { strokeOpacity: 0.1, strokeColor: '#eee', strokeWidth: 1 },
+                    labelSymbolizer: { color: '#fff'}
+                });
+
+    map.addControl(graticuleCtl1);
 
     gmap.mapObject.mapTypes.set('styled', styledMapType);
     gmap.mapObject.setMapTypeId('styled');
