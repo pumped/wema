@@ -28,6 +28,10 @@ InterfaceManager.prototype.setup = function(mode) {
 	$('#draw').click(function() {
 
 	});
+
+	//setup timelines
+	this.timeline = new Timeline(timelines);
+	this.timeline.drawTimeline('timelines');
 }
 
 InterfaceManager.prototype.setMode = function(mode) {
@@ -212,4 +216,12 @@ ZoneManager.prototype.setZone = function() {
 }
 
 
+
+function TimelineManager() {
+
+}
+
+TimelineManager.prototype.setup = function() {
+
+}
 
