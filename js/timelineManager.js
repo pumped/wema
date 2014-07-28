@@ -13,6 +13,11 @@ TimelineManager.prototype.setConsole = function(cons) {
 	this.modelManager.setConsole(cons);
 }
 
+TimelineManager.prototype.setMapController = function(mapController) { 
+	this.mapController = mapController;
+}
+
+
 TimelineManager.prototype.setup = function() {
 	this.setupPlaybackBar();
 
@@ -53,6 +58,9 @@ TimelineManager.prototype.setYear = function(year) {
 	if (this.currentYear != year) {
 		this.currentYear = year
 		this.slider.slider('setValue',year)
+
+		//adjust layers
+		this.mapController.showLayer(year);
 	}
 }
 
