@@ -50,11 +50,6 @@ function zoneAdded(e) {
   console.log(mc.wfstPolygon);
 }
 
-$('document').ready(function(){
-    mc = new MapController();
-    mc.setupMap();
-    log('Map Initialised');
-});
 
 function MapController() {
     this.mode = 'edit';

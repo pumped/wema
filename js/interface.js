@@ -3,9 +3,12 @@ var iface = new InterfaceManager();
 
 $('document').ready(function(){
 
-	setupTimeline();
 	zones = new ZoneManager();
 	iface.setup();
+
+	mc = new MapController();
+    mc.setupMap();
+    iface.console.write('Map Initialised');
 
 	//set current mode
 	if ( window.location.hash ) {
@@ -14,7 +17,10 @@ $('document').ready(function(){
 });
 
 function InterfaceManager() {
+	this.console = new Console();
 	this.tools = new ToolbarManager();
+	this.timeline = new TimelineManager();
+	this.timeline.setConsole(this.console);
 }
 
 InterfaceManager.prototype.setup = function(mode) {
@@ -29,9 +35,9 @@ InterfaceManager.prototype.setup = function(mode) {
 
 	});
 
-	//setup timelines
-	this.timeline = new Timeline(timelines);
-	this.timeline.drawTimeline('timelines');
+	//setup timeline manager
+	this.timeline.setup();
+	
 }
 
 InterfaceManager.prototype.setMode = function(mode) {
@@ -53,22 +59,6 @@ InterfaceManager.prototype.setMode = function(mode) {
 	$('#'+mode).parent().addClass('active');
 
 	console.log('changed mode')
-}
-
-function setupTimeline() {
-	$('.slider').slider({
-		min:2000,
-		max:2050,
-		step:1,
-		value: 2013,
-		orientation: 'horizontal'
-	});
-}
-
-function log(m) {
-	console.log(m);
-	d = new Date().toLocaleTimeString();
-	$('.console').prepend('<i>'+d+'</i>: '+m+'<br/>');
 }
 
 
@@ -215,13 +205,4 @@ ZoneManager.prototype.setZone = function() {
 
 }
 
-
-
-function TimelineManager() {
-
-}
-
-TimelineManager.prototype.setup = function() {
-
-}
 

@@ -33,7 +33,7 @@
     position:absolute;
     z-index: 6;
     text-align: center;
-    overflow:scroll;
+    overflow:auto;
 }
 
 ul.vertButtons {
@@ -85,10 +85,31 @@ ul.vertButtons {
 .console {
     font-family:"Lucida Console", Monaco, monospace;
     font-size:10px;
-    width:340px;
+    width:580px;
     height:300px;
     padding:5px;
     overflow-y:scroll;
+}
+
+.consdebug {
+    color:#BBB;
+}
+
+.conswarning {
+    color:#C97800;
+}
+
+.conserror, .conscritical  {
+    color:#E40606;
+}
+
+.conscritical {
+    font-weight:bold;
+}
+
+.consoleDate {
+    font-size:0.9em;
+    font-style:italic;
 }
 
 .nodeStats {
@@ -152,10 +173,11 @@ ul.vertButtons {
     width:100%;
 }
 
-#playback {
+a#playback {
     font-size:18px;
-    color:#;
+    display:block;
     float:left;
+    color:#000;
     margin-left:15px;
 }
 
