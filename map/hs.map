@@ -83,7 +83,7 @@ MAP
             END
           END
           CLASS
-            EXPRESSION ([pixel] >= 184)
+            EXPRESSION ([pixel] >= 184 AND [pixel] < 9999)
             STYLE
               COLORRANGE 253 174 97 215 25 28
               DATARANGE 184 400
