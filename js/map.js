@@ -110,6 +110,22 @@ MapController.prototype.zoneMode = function() {
     this.tiled.setVisibility(true);
 }
 
+MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
+  //delete all layers
+
+  //add new layers
+  for (var i=yearStart;i<yearEnd;i++) {
+    console.log("Added layer: " + i);
+  }
+}
+
+MapController.prototype.showLayer = function(year) {
+  //show new layer
+  //layer.setVisibility(true);
+  console.log('Showing layer: ' + year);
+  //hide last layer
+
+}
 
 //setup map function
 MapController.prototype.setupMap = function() {
@@ -118,10 +134,10 @@ MapController.prototype.setupMap = function() {
     var featureserver = "http://115.146.85.81:9090/"
 
     OpenLayers.Util.extend(OpenLayers.Request,{
-                           makeSameOrigin : function(url, proxy) {
-                           return proxy + encodeURIComponent(url);
-                           }
-                           });
+        makeSameOrigin : function(url, proxy) {
+        return proxy + encodeURIComponent(url);
+      }
+    });
 
 
     var DeleteFeature = OpenLayers.Class(OpenLayers.Control.SelectFeature, {
@@ -162,6 +178,7 @@ MapController.prototype.setupMap = function() {
                                  projection: new OpenLayers.Projection("EPSG:4326"),
                                  displayProjection: new OpenLayers.Projection("EPSG:4326")
                                  });
+    this.map = map;
 
     var habitatSuitability = new OpenLayers.Layer.WMS( "HS", 
                     "map/wms.php", {

@@ -1,13 +1,13 @@
 var zones;
+mc = new MapController();
 var iface = new InterfaceManager();
 
 $('document').ready(function(){
 
 	zones = new ZoneManager();
-	iface.setup();
-
-	mc = new MapController();
-    mc.setupMap();
+	mc.setupMap();
+	iface.setup();	
+    
     iface.console.write('Map Initialised');
 
 	//set current mode
@@ -21,6 +21,7 @@ function InterfaceManager() {
 	this.tools = new ToolbarManager();
 	this.timeline = new TimelineManager();
 	this.timeline.setConsole(this.console);
+	this.timeline.setMapController(mc);
 }
 
 InterfaceManager.prototype.setup = function(mode) {
