@@ -1,6 +1,9 @@
 var map;
 var tiled;
 
+geographic = new OpenLayers.Projection("EPSG:4326");
+mercator = new OpenLayers.Projection("EPSG:3857");
+
 //http://colorschemedesigner.com/#0742qw0w0w0w0
 var zoneColors = [new OpenLayers.StyleMap({
     "default": new OpenLayers.Style({ //Prevention
@@ -159,6 +162,19 @@ MapController.prototype.setupMap = function() {
                                  projection: new OpenLayers.Projection("EPSG:4326"),
                                  displayProjection: new OpenLayers.Projection("EPSG:4326")
                                  });
+
+    var habitatSuitability = new OpenLayers.Layer.WMS( "HS", 
+                    "map/wms.php", {
+                      MAP: 'hs.map',
+                      DATA: 'max_pre1.asc',
+                      LAYERS: 'habitat',
+                      isBaseLayer: 'false',
+                      transparent: 'true',
+                      reaspect: "true",
+                      format: 'image/png'},
+                    {gutter: 15, sphericalMercator:true, projection:mercator});
+
+    map.addLayer(habitatSuitability);
 
     //base layers
     var osm = new OpenLayers.Layer.OSM("OSM");
@@ -409,18 +425,18 @@ MapController.prototype.setupMap = function() {
     map.addControl(new OpenLayers.Control.LayerSwitcher());
 
     map.setCenter(
-        new OpenLayers.LonLat(145.69826, -17.37545).transform(
+        new OpenLayers.LonLat(145.8, -17.2).transform(
             new OpenLayers.Projection("EPSG:4326"),
             map.getProjectionObject()
         ), 
-        11
+        10
     );
 
     var graticuleCtl1 = new OpenLayers.Control.Graticule({
                     numPoints: 2,
                     targetSize: 200,
                     labelled: false,
-                    lineSymbolizer:  { strokeOpacity: 0.1, strokeColor: '#eee', strokeWidth: 1 },
+                    lineSymbolizer:  { strokeOpacity: 0.3, strokeColor: '#aaa', strokeWidth: 1 },
                     labelSymbolizer: { color: '#fff'}
                 });
 
@@ -552,7 +568,7 @@ MapController.prototype.setupMap = function() {
         featureType: 'poi.park',
         elementType: 'geometry',
         stylers: [
-            { hue: '#d8ecd5' },
+            { hue: '#ddd' },
             { saturation: -12 },
             { lightness: 46 },
             { visibility: 'on' }

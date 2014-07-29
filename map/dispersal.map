@@ -1,0 +1,104 @@
+MAP
+    NAME "WMS-Mapserver"
+    STATUS ON
+    SIZE 600 900
+    #EXTENT 143.91 -20 148 -15
+    #EXTENT -180 -90 180 90
+    EXTENT 16078473 -2203421 16365455 -1723647
+    UNITS DD
+    SHAPEPATH "/home/dylan/mapserver/data"
+
+    TRANSPARENT ON
+    IMAGECOLOR 0 255 255
+    IMAGEQUALITY 95
+    IMAGETYPE png
+
+    PROJECTION
+        "init=epsg:3857"
+    END
+
+    #
+    # Start of web interface definition
+    #
+    WEB
+        METADATA
+            "wms_title"           "WMS-MapServer"
+            "wms_onlineresource"  ""
+            "wms_enable_request" "*"
+            "wms_srs"             "EPSG:4269 EPSG:4326 EPSG:3857"
+        END
+    END # WEB
+
+    #
+    # Start of layer definitions
+    #
+    LAYER
+        NAME 'dispersal'
+        TYPE RASTER
+        STATUS DEFAULT
+        PROJECTION
+            "init=epsg:4326"
+        END
+        CLASSITEM "[pixel]"
+        OFFSITE 0 0 0
+        TRANSPARENCY 80
+
+          # class using an EXPRESSION using only [pixel].
+          CLASS
+            EXPRESSION ([pixel] >= 1 AND [pixel] < 10)
+            STYLE
+              OPACITY 5
+              COLORRANGE 43 131 186 171 221 164
+              DATARANGE 1 60
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 10 AND [pixel] < 30)
+            STYLE
+              OPACITY 30
+              COLORRANGE 43 131 186 171 221 164
+              DATARANGE 1 60
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 30 AND [pixel] < 60)
+            STYLE
+              OPACITY 100
+              COLORRANGE 43 131 186 171 221 164
+              DATARANGE 1 60
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 60 AND [pixel] < 122)
+            STYLE
+              COLORRANGE 171 221 164 203 192 38
+              DATARANGE 60 122
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 122 AND [pixel] < 184)
+            STYLE
+              COLORRANGE 203 192 38 253 174 97
+              DATARANGE 122 184
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 184)
+            STYLE
+              COLORRANGE 253 174 97 215 25 28
+              DATARANGE 184 400
+            END
+          END
+
+    END # LAYER
+
+
+    OUTPUTFORMAT
+      NAME "png"
+      DRIVER AGG/PNG
+      MIMETYPE "image/png"
+      IMAGEMODE RGBA
+      TRANSPARENT ON
+      EXTENSION "png"
+    END
+END # MAP
