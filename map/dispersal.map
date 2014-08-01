@@ -6,7 +6,7 @@ MAP
     #EXTENT -180 -90 180 90
     EXTENT 16078473 -2203421 16365455 -1723647
     UNITS DD
-    SHAPEPATH "/home/dylan/mapserver/data"
+    SHAPEPATH "/home/dylan/Dev/test/scratch/runs"
 
     TRANSPARENT ON
     IMAGECOLOR 0 255 255
@@ -45,45 +45,36 @@ MAP
 
           # class using an EXPRESSION using only [pixel].
           CLASS
-            EXPRESSION ([pixel] >= 1 AND [pixel] < 10)
-            STYLE
-              OPACITY 5
-              COLORRANGE 43 131 186 171 221 164
-              DATARANGE 1 60
-            END
-          END
-          CLASS
-            EXPRESSION ([pixel] >= 10 AND [pixel] < 30)
-            STYLE
-              OPACITY 30
-              COLORRANGE 43 131 186 171 221 164
-              DATARANGE 1 60
-            END
-          END
-          CLASS
-            EXPRESSION ([pixel] >= 30 AND [pixel] < 60)
+            EXPRESSION ([pixel] >= 1 AND [pixel] < 5)
             STYLE
               OPACITY 100
-              COLORRANGE 43 131 186 171 221 164
+              COLOR 0 0 0
+            END
+          END
+          CLASS
+            EXPRESSION ([pixel] >= 2 AND [pixel] < 10)
+            STYLE
+              OPACITY 100
+              COLORRANGE 171 221 164 141 251 141
               DATARANGE 1 60
             END
           END
           CLASS
-            EXPRESSION ([pixel] >= 60 AND [pixel] < 122)
+            EXPRESSION ([pixel] >= 5 AND [pixel] < 20)
             STYLE
               COLORRANGE 171 221 164 203 192 38
               DATARANGE 60 122
             END
           END
           CLASS
-            EXPRESSION ([pixel] >= 122 AND [pixel] < 184)
+            EXPRESSION ([pixel] >= 20 AND [pixel] < 50)
             STYLE
               COLORRANGE 203 192 38 253 174 97
               DATARANGE 122 184
             END
           END
           CLASS
-            EXPRESSION ([pixel] >= 184)
+            EXPRESSION ([pixel] >= 100)
             STYLE
               COLORRANGE 253 174 97 215 25 28
               DATARANGE 184 400

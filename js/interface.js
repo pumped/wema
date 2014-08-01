@@ -10,6 +10,8 @@ $('document').ready(function(){
     
     iface.console.write('Map Initialised');
 
+    mc.addTimeline('asdfasd', 2014, 2044);
+
 	//set current mode
 	if ( window.location.hash ) {
     	$(window.location.hash).click();

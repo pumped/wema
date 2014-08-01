@@ -1,6 +1,7 @@
 <?php
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
+	$RUNDIR = "/home/dylan/Dev/test/scratch/runs/asdfasd";
 
     // Fill map request object based on WMS GET params.
     $map_request = ms_newOwsRequestObj();
@@ -15,19 +16,25 @@
     $requested_map_file = null;
     $requested_map_file = $_GET['MAP'];
 
-    // Set full path to map file.
+    // Set full path to map file.  	
     $path_to_map_file = realpath($map_dir.'/'.$requested_map_file);
 
     //get data file
     $data = null;
-    $data = 'max_pre1.asc';
+    $layerName = $_GET['LAYERS'];
+    if (isset($_GET['RUNS'])) {  
+        $data = $RUNDIR.'/'.$_GET['DATA'];
+    	//echo "<br/>".$data."<br/>";
+    } else {
+    	$data = 'max_pre1.asc';
+	}
 
     // Create a map object based on above inputs.
     ms_ioinstallstdouttobuffer();
     $map = ms_newMapObj($path_to_map_file);
 
     //set layer data to be used
-    $layer = $map->getLayerByName('habitat');
+    $layer = $map->getLayerByName($layerName);
     $layer->set('data', $data);   
 
     //dispatch request

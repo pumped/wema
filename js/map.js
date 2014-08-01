@@ -57,6 +57,7 @@ function zoneAdded(e) {
 function MapController() {
     this.mode = 'edit';
     this.zone = 'IC';
+    this.timelineLayers = [];
 }
 
 MapController.prototype.editMode = function() {
@@ -95,7 +96,7 @@ MapController.prototype.planMode = function() {
     this.wfstPoint.setVisibility(false);
     this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(false);
-    this.tiled.setVisibility(true);
+    this.tiled.setVisibility(false);
 }
 
 MapController.prototype.zoneMode = function() {
@@ -111,19 +112,48 @@ MapController.prototype.zoneMode = function() {
 }
 
 MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
+  this.timeLength = yearEnd - yearStart;
+  this.yearStart = yearStart;
+  this.yearEnd = yearEnd;
+
   //delete all layers
+  timeline = [];
 
   //add new layers
-  for (var i=yearStart;i<yearEnd;i++) {
+  for (var i=0;i<this.timeLength;i++) {
     console.log("Added layer: " + i);
+    var file = 'agg'+i+'.asc';
+    this.addDispersalLayer(file, i);
   }
 }
 
+MapController.prototype.addDispersalLayer = function(data,idx) {
+  var newLayer = new OpenLayers.Layer.WMS( idx.toString(), 
+                            "map/wms.php", {
+                              MAP: 'dispersal.map',
+                              DATA: data,
+                              LAYERS: 'dispersal',
+                              RUNS: 'true',
+                              isBaseLayer: 'false',
+                              transparent: 'true',
+                              reaspect: "true",
+                              format: 'image/png'},
+                            {gutter: 0, sphericalMercator:true, projection:mercator, opacity:0, singleTile: true, ratio: 1});
+
+    this.map.addLayer(newLayer);
+    timeline[idx] = newLayer;
+}
+
 MapController.prototype.showLayer = function(year) {
-  //show new layer
   //layer.setVisibility(true);
+  idx = year - this.yearStart;
   console.log('Showing layer: ' + year);
-  //hide last layer
+  console.log(idx);
+  
+  //set visibility of all layers
+  for (var i=0;i<timeline.length;i++) {
+    timeline[i].setOpacity((i==idx ? 1:0));
+  }
 
 }
 
@@ -189,7 +219,7 @@ MapController.prototype.setupMap = function() {
                       transparent: 'true',
                       reaspect: "true",
                       format: 'image/png'},
-                    {gutter: 15, sphericalMercator:true, projection:mercator});
+                    {gutter: 15, sphericalMercator:true, projection:mercator, visibility:false});
 
     map.addLayer(habitatSuitability);
 

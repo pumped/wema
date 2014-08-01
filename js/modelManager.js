@@ -1,5 +1,5 @@
 function ModelManager() {
-	this.url = 'proxy.php?url=http://192.168.1.2:5566';
+	this.url = 'proxy.php?url=http://137.219.45.153:5566';
 	this.ID = -1;
 	this.updateRate = 100;
 }
@@ -10,6 +10,10 @@ ModelManager.prototype.setup = function() {
 
 ModelManager.prototype.getStatus = function() {
 
+}
+
+ModelManager.prototype.setMapController = function(mapController) {
+	this.mapController = mapController;
 }
 
 ModelManager.prototype.loadTimeline = function(callback) {

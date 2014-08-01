@@ -15,6 +15,7 @@ TimelineManager.prototype.setConsole = function(cons) {
 
 TimelineManager.prototype.setMapController = function(mapController) { 
 	this.mapController = mapController;
+	this.modelManager.setMapController(mapController)
 }
 
 
