@@ -50,7 +50,7 @@ Timeline.prototype.drawTimeline = function(element) {
 	this.range = [this.data[0].startTime,this._latestTime(this.data)];
 	this.rows = this._rowCount(this.data);
 	this.steps = 35;
-	this.height = (this.rows * (this.config.elementHeight + this.config.rowSpacing*2)) + this.config.topBorder;
+	this.height = (this.rows * (this.config.elementHeight + this.config.rowSpacing*2)) + this.config.topBorder + 100;
 	this.width = ((this.range[1]-this.range[0]+1)*(this.config.stepWidth))+this.config.leftBorder;
 	this.draw = SVG(element).size(this.width,this.height);
 
@@ -138,6 +138,24 @@ Timeline.prototype.drawBase = function() {
 	//draw shading
 }
 
+Timeline.prototype.clickBind = function(callback) {
+	this.callback = callback;
+	var that = this;
+	$('.clickTarget').click(function() {
+		console.log('this');
+		that.selectLineage(this);
+		return false;
+	});
+}
+
+Timeline.prototype.selectLineage = function(target) {
+	dateID = $(target).attr('href').replace("#tl",'').split('-');
+	date = dateID[0];
+	id = dateID [1];
+	console.log(id);
+	this.callback(id);
+}
+
 Timeline.prototype.processTimeline  = function(tData,parent) {
 	//sort
 
@@ -186,7 +204,7 @@ Timeline.prototype.processTimeline  = function(tData,parent) {
 		//draw points on timeline last to be above lines
 		for(i=0;i <= (t.endTime - t.startTime); i++) {
 			//draw link target
-			var link = group.link('#tl'+this.getDate(t,i)+t.ID);
+			var link = group.link('#tl'+this.getDate(t,i)+'-'+t.ID);
 			link.attr('class','clickTarget');
 			link.attr('title', this.getDate(t,i));
 			var target = link.rect(this.config.stepWidth,this.config.elementHeight);

@@ -2,8 +2,9 @@
 function TimelineManager() {
 	this.startYear = 2014;
 	this.currentYear = this.startYear;
-	this.endYear = 2044;
-	this.playbackSpeed = 100;
+	this.endYear = 2053;
+	this.playbackSpeed = 200;
+	this.loop = false;
 
 	this.modelManager = new ModelManager();
 }
@@ -23,10 +24,16 @@ TimelineManager.prototype.setup = function() {
 	this.setupPlaybackBar();
 
 	//setup timelines
-	this.timeline = new Timeline(timelines);
-	this.timeline.drawTimeline('timelines');
 	var that = this;
-	this.modelManager.loadTimeline(that.setupTimeline);
+	$.getJSON(this.modelManager.url+'/getTimeline', function(data){ 
+		that.timeline = new Timeline(data);
+		that.modelManager.setID(data[0].ID);
+		that.timeline.drawTimeline('timelines');
+		that.timeline.clickBind(that.modelManager.setID);	
+
+		that.modelManager.loadTimeline(that.setupTimeline);
+	});	
+	
 }
 
 TimelineManager.prototype.setupTimeline = function(data) {
@@ -52,6 +59,7 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 	//bind buttons
 	$('#playback').click({self:this},function(event){
 		event.data.self.togglePlay();
+		return false;
 	});
 }
 
@@ -91,6 +99,8 @@ TimelineManager.prototype.play = function () {
 	} else {
 		this.playback();	
 	}
+
+	return false;
 }
 
 //code that iterates through the years
@@ -101,7 +111,13 @@ TimelineManager.prototype.playback = function() {
 			var that = this;
 			setTimeout(function(){that.playback()},this.playbackSpeed);
 		} else {
+			if (this.loop) {
+				this.currentYear = this.startYear;
+				var that = this;
+				setTimeout(function(){that.playback()},this.playbackSpeed);
+			} else {
 			this.stop();
+			}
 		}
 	}
 }

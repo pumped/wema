@@ -1,6 +1,7 @@
 var zones;
 mc = new MapController();
 var iface = new InterfaceManager();
+var years = [2014,2053];
 
 $('document').ready(function(){
 
@@ -9,8 +10,6 @@ $('document').ready(function(){
 	iface.setup();	
     
     iface.console.write('Map Initialised');
-
-    mc.addTimeline('asdfasd', 2014, 2044);
 
 	//set current mode
 	if ( window.location.hash ) {
@@ -57,6 +56,9 @@ InterfaceManager.prototype.setMode = function(mode) {
 		return;
 	}
 
+	//stop playback
+	this.timeline.stop();
+
 	//setup buttons
 	$('.navbar-nav li').removeClass('active');
 	$('#'+mode).parent().addClass('active');
@@ -96,7 +98,7 @@ ToolbarManager.prototype.setMode = function(mode) {
 	}
 
 	//timeline
-	if (mode == 'plan') {
+	if (mode == 'plan' || mode == 'zone') {
 		$('#timeline').slideDown();
 	} else {
 		$('#timeline').slideUp();

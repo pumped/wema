@@ -1,7 +1,18 @@
 <?php
+
+    //check if image exists
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 	$RUNDIR = "/home/dylan/Dev/test/scratch/runs/asdfasd";
+
+    //check if folder exists
+    $id = md5($_GET['LAYERS'].$_GET['DATA'].$_GET['BBOX'].$_GET['WIDTH'].$_GET['HEIGHT'].$_GET['SRS']);
+    $file = "imgs/cache/".$id.".png";
+    if (file_exists($file)) {
+        header('Content-Type: image/png');
+        readfile($file);
+        exit();
+    }
 
     // Fill map request object based on WMS GET params.
     $map_request = ms_newOwsRequestObj();
@@ -37,18 +48,26 @@
     $layer = $map->getLayerByName($layerName);
     $layer->set('data', $data);   
 
+    ob_start();
+
     //dispatch request
     $map->owsdispatch($map_request);
+
 
     //strip header and output
     $contenttype = ms_iostripstdoutbuffercontenttype();
     $buffer = ms_iogetStdoutBufferBytes();
 
-    if (!isset($_GET['debug'])) {
-    	header('Content-Type: image/png');
-    }
 
+    if (!isset($_GET['debug'])) {
+        header('Content-Type: image/png');
+    }
     echo $buffer;
+
+    $img = ob_get_contents();
+    ob_flush();
+
+    file_put_contents($file, $img);
 
 	ms_ioresethandlers();
 

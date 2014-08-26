@@ -1,7 +1,7 @@
 function ModelManager() {
 	this.url = 'proxy.php?url=http://137.219.45.153:5566';
 	this.ID = -1;
-	this.updateRate = 100;
+	this.updateRate = 1000;
 }
 
 ModelManager.prototype.setup = function() {
@@ -10,6 +10,12 @@ ModelManager.prototype.setup = function() {
 
 ModelManager.prototype.getStatus = function() {
 
+}
+
+ModelManager.prototype.setID = function(id) {
+	this.ID = id;
+	mc.addHSLayer(id);
+	mc.addTimeline(id, years[0], years[1]);	
 }
 
 ModelManager.prototype.setMapController = function(mapController) {
@@ -26,7 +32,6 @@ ModelManager.prototype.loadTimeline = function(callback) {
 //expects jquery element
 ModelManager.prototype.setConsole = function(cons) {
 	this.console = cons;
-	console.log(cons)
 	this.console .write("test")
 	var that = this;
 	setTimeout(function(){that.updateConsole()},0);

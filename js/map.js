@@ -72,6 +72,7 @@ MapController.prototype.editMode = function() {
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(false);
 
+    this.disableLayers();
     //setup layers
 }
 
@@ -85,6 +86,8 @@ MapController.prototype.overviewMode = function() {
     this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(true);
+
+    this.disableLayers();
 }
 
 MapController.prototype.planMode = function() {
@@ -97,6 +100,9 @@ MapController.prototype.planMode = function() {
     this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(false);
     this.tiled.setVisibility(false);
+
+    this.enableLayers();
+    this.showLayer(this.year);
 }
 
 MapController.prototype.zoneMode = function() {
@@ -108,53 +114,105 @@ MapController.prototype.zoneMode = function() {
     this.wfstPoint.setVisibility(false);
     this.editTiled.setVisibility(false);
     this.wfstPolygon.setVisibility(true);
-    this.tiled.setVisibility(true);
+    this.tiled.setVisibility(false);
+
+    this.disableLayers();
+    this.showLayer(this.year);
 }
 
 MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
-  this.timeLength = yearEnd - yearStart;
+  this.timeLength = (yearEnd - yearStart) +1;
   this.yearStart = yearStart;
   this.yearEnd = yearEnd;
 
   //delete all layers
-  timeline = [];
+  for (var i=0;i<this.timelineLayers.length;i++) {
+    this.map.removeLayer(this.timelineLayers[i]);
+  }
+  this.timelineLayers = [];
 
   //add new layers
   for (var i=0;i<this.timeLength;i++) {
-    console.log("Added layer: " + i);
-    var file = 'agg'+i+'.asc';
+    //console.log("Added layer: " + i);
+    var file = id+'/a'+(i)+'.png';
     this.addDispersalLayer(file, i);
+  }
+  this.showLayer(this.yearStart);
+
+}
+
+MapController.prototype.addDispersalLayer = function(file,idx) {
+    var newLayer = new OpenLayers.Layer.Image(
+                'tl'+idx.toString(),
+                'map/imgs/'+file,
+                new OpenLayers.Bounds(16078473, -2203421, 16365455, -1723647),
+                new OpenLayers.Size(3084, 5045), {
+                  isBaseLayer: false,
+                  transparent: true,
+                  numZoomLevels: 15,
+                  maxResolution: "auto",
+                  projection: mercator,
+                  strategies: [new OpenLayers.Strategy.Fixed()],
+                  opacity:1,
+                  displayInLayerSwitcher: false
+                }
+            );
+    this.map.addLayer(newLayer);
+    this.timelineLayers[idx] = newLayer;
+}
+
+MapController.prototype.disableLayers = function() {
+  for (var i=0;i<this.timelineLayers.length;i++) {
+       this.timelineLayers[i].setVisibility(false);
   }
 }
 
-MapController.prototype.addDispersalLayer = function(data,idx) {
-  var newLayer = new OpenLayers.Layer.WMS( idx.toString(), 
-                            "map/wms.php", {
-                              MAP: 'dispersal.map',
-                              DATA: data,
-                              LAYERS: 'dispersal',
-                              RUNS: 'true',
-                              isBaseLayer: 'false',
-                              transparent: 'true',
-                              reaspect: "true",
-                              format: 'image/png'},
-                            {gutter: 0, sphericalMercator:true, projection:mercator, opacity:0, singleTile: true, ratio: 1});
-
-    this.map.addLayer(newLayer);
-    timeline[idx] = newLayer;
+MapController.prototype.enableLayers = function() {
+  for (var i=0;i<this.timelineLayers.length;i++) {
+       this.timelineLayers[i].setVisibility(true);
+       this.timelineLayers[i].display(false);
+  }
 }
 
 MapController.prototype.showLayer = function(year) {
+  if (this.timelineLayers.length < 1) {
+    return 1;
+  }
   //layer.setVisibility(true);
   idx = year - this.yearStart;
-  console.log('Showing layer: ' + year);
-  console.log(idx);
-  
+  this.year = year;
+  //console.log('Showing layer: ' + year);
+
+
+
   //set visibility of all layers
-  for (var i=0;i<timeline.length;i++) {
-    timeline[i].setOpacity((i==idx ? 1:0));
+  for (var i=0;i<this.timelineLayers.length;i++) {
+        this.timelineLayers[i].display(0);
+  }
+    this.timelineLayers[idx].display(1);
+    this.timelineLayers[idx].setVisibility(true);
+}
+
+MapController.prototype.addHSLayer =  function(id) {
+  //delete existing layer
+  if (this.habitatSuitabilityLayer) {
+    this.map.removeLayer(this.habitatSuitabilityLayer);
   }
 
+  // create / add new layer
+  this.habitatSuitabilityLayer = new OpenLayers.Layer.WMS( "HS", 
+                    "map/wms.php", {
+                      MAP: 'hs.map',
+                      ID: id,
+                      DATA: 'max_pre1.asc',
+                      LAYERS: 'habitat',
+                      isBaseLayer: 'false',
+                      transparent: 'true',
+                      reaspect: "true",
+                      format: 'image/png'},
+                    {gutter: 15, sphericalMercator:true, projection:mercator, opacity:0.4});
+
+    this.map.addLayer(this.habitatSuitabilityLayer);
 }
 
 //setup map function
@@ -210,20 +268,9 @@ MapController.prototype.setupMap = function() {
                                  });
     this.map = map;
 
-    var habitatSuitability = new OpenLayers.Layer.WMS( "HS", 
-                    "map/wms.php", {
-                      MAP: 'hs.map',
-                      DATA: 'max_pre1.asc',
-                      LAYERS: 'habitat',
-                      isBaseLayer: 'false',
-                      transparent: 'true',
-                      reaspect: "true",
-                      format: 'image/png'},
-                    {gutter: 15, sphericalMercator:true, projection:mercator, visibility:false});
-
-    map.addLayer(habitatSuitability);
 
     //base layers
+    var blank = new OpenLayers.Layer("Blank", {isBaseLayer:true});
     var osm = new OpenLayers.Layer.OSM("OSM");
     var gmap = new OpenLayers.Layer.Google("Google", {type: 'styled'});          
     var gsat = new OpenLayers.Layer.Google("Satellite",
@@ -467,7 +514,7 @@ MapController.prototype.setupMap = function() {
 
     var styledMapType = new google.maps.StyledMapType(gmStyle, styledMapOptions);
 
-    map.addLayers([gmap,gsat,osm]);
+    map.addLayers([gmap,gsat,osm,blank]);
 
     map.addControl(new OpenLayers.Control.LayerSwitcher());
 
@@ -479,15 +526,15 @@ MapController.prototype.setupMap = function() {
         10
     );
 
-    var graticuleCtl1 = new OpenLayers.Control.Graticule({
+    /*var graticuleCtl1 = new OpenLayers.Control.Graticule({
                     numPoints: 2,
                     targetSize: 200,
-                    labelled: false,
+                    labelled: true,
                     lineSymbolizer:  { strokeOpacity: 0.3, strokeColor: '#aaa', strokeWidth: 1 },
                     labelSymbolizer: { color: '#fff'}
                 });
 
-    map.addControl(graticuleCtl1);
+    map.addControl(graticuleCtl1);*/
 
     gmap.mapObject.mapTypes.set('styled', styledMapType);
     gmap.mapObject.setMapTypeId('styled');
@@ -619,6 +666,78 @@ MapController.prototype.setupMap = function() {
             { saturation: -12 },
             { lightness: 46 },
             { visibility: 'on' }
+        ]
+    }
+];
+
+
+//google map style
+    gmBlackout = [
+    {
+        "featureType": "water",
+        "stylers": [
+            { "hue": "#2a00ff" },
+            { "saturation": -100 },
+            { "lightness": -78 }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": 'labels',
+        "stylers": [
+            {
+                "color": "#46bcec"
+            },
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "lightness": "-100"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": -100
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#000"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [
+            {
+                "visibility": "off"
+            },
+            {
+              "lightness": "-100"
+            }
         ]
     }
 ];
