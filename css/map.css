@@ -148,7 +148,25 @@ ul.vertButtons {
     height:0 !important;
 }
 
+.statsOverlay {
+    position:absolute;
+    right:80;
+    top:80;
+    font-size:32px;
+    line-height:1em;
+    font-weight:bold;
+    color:#fff;
+}
 
+.statsOverlay .descriptor {
+    font-size:0.5em;
+    font-weight:normal;
+    line-height:1.1em;
+}
+
+.statsOverlay > div {
+    padding-top:10px;
+}
 
 
 
@@ -537,6 +555,10 @@ div.olControlSaveFeaturesItemInactive {
 .olControlLayerSwitcher .layersDiv .baseLayersDiv,
 .olControlLayerSwitcher .layersDiv .dataLayersDiv {
     padding-left: 10px;
+}
+
+.olControlLayerSwitcher .maximizeDiv {
+    opacity:0.1;
 }
 
 .olControlLayerSwitcher .maximizeDiv,

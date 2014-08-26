@@ -142,7 +142,6 @@ Timeline.prototype.clickBind = function(callback) {
 	this.callback = callback;
 	var that = this;
 	$('.clickTarget').click(function() {
-		console.log('this');
 		that.selectLineage(this);
 		return false;
 	});
@@ -153,7 +152,7 @@ Timeline.prototype.selectLineage = function(target) {
 	date = dateID[0];
 	id = dateID [1];
 	console.log(id);
-	this.callback(id);
+	this.callback(id, date);
 }
 
 Timeline.prototype.processTimeline  = function(tData,parent) {

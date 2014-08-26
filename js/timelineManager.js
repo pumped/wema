@@ -5,6 +5,7 @@ function TimelineManager() {
 	this.endYear = 2053;
 	this.playbackSpeed = 200;
 	this.loop = false;
+	this.data = null;
 
 	this.modelManager = new ModelManager();
 }
@@ -27,17 +28,18 @@ TimelineManager.prototype.setup = function() {
 	var that = this;
 	$.getJSON(this.modelManager.url+'/getTimeline', function(data){ 
 		that.timeline = new Timeline(data);
-		that.modelManager.setID(data[0].ID);
+		that.data = data;
+		that.setID(data[0].ID);
 		that.timeline.drawTimeline('timelines');
-		that.timeline.clickBind(that.modelManager.setID);	
+		that.timeline.clickBind(function(id, year){
+			that.setID(id);
+			data = that.getData(id);
+			year = year - data.startTime;
+			that.setYear(year);
+		});	
 
-		that.modelManager.loadTimeline(that.setupTimeline);
 	});	
 	
-}
-
-TimelineManager.prototype.setupTimeline = function(data) {
-	console.log(this);
 }
 
 TimelineManager.prototype.setupPlaybackBar = function() {
@@ -63,13 +65,71 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 	});
 }
 
-TimelineManager.prototype.setYear = function(year) {	
+TimelineManager.prototype.setID = function(id) {
+	this.id = id;
+	this.modelManager.setID(id);
+	data = this.getData(this.id);
+
+	//adjust stats
+	this.updateStats();
+}
+
+TimelineManager.prototype.setYear = function(year) {
 	if (this.currentYear != year) {
-		this.currentYear = year
-		this.slider.slider('setValue',year)
+		this.currentYear = year;
+		this.slider.slider('setValue',year);
 
 		//adjust layers
 		this.mapController.showLayer(year);
+
+		//adjust stats
+		this.updateStats();
+	}
+}
+
+TimelineManager.prototype.updateStats = function() {
+
+	data = this.getData(this.id);	
+	idx = this.currentYear - (this.startYear); // + parseInt(data.startTime));
+
+	if (idx >= 0) {
+		invArea = data.invStats[idx];
+		
+		$('#costDisplay .value').html("$--,---");
+		$('#invAreaDisplay .value').html(invArea);
+		$('#restCostDisplay .value').html("$"+(invArea*600));
+	}
+}
+
+function smoothVal(selector, val) {
+	oldVal = parseInt($(selector).html());
+
+
+}
+
+TimelineManager.prototype.getData = function(id) {
+	if (this.currentData) {
+		if (this.currentData.ID == id) {
+			return this.currentData;
+		}
+	}
+
+	this.currentData = this.dataSearch(this.data[0], id);
+	return this.currentData;
+}
+
+TimelineManager.prototype.dataSearch = function(data,id) {
+	if (data.ID == id) {
+		return data;
+	}
+
+	for (var i=0;i<data['children'].length;i++) {
+		child = this.dataSearch(data['children'][i], id);
+		if (child != 0) {
+			return child;
+		} else {
+			return 0;
+		}
 	}
 }
 
