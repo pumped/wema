@@ -42,6 +42,7 @@ zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
 zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
 
 function zoneAdded(e) {
+  console.log(e);
   e.attributes = {'type':zones.mode()};
   console.log(zones.mode());
  /* e.style = zoneColors[0];
@@ -50,7 +51,10 @@ function zoneAdded(e) {
 
   //redraw layer*/
   mc.wfstPolygon.redraw();
-  console.log(mc.wfstPolygon);
+  var cost = parseInt($('#costDisplay .value').html());
+  var additional = Math.floor(Math.random() * 8000) + 1000
+  $('#costDisplay .value').html(cost+additional);
+
 }
 
 

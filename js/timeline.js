@@ -13,6 +13,10 @@ function Timeline (data) {
 		rowSpacing: 10,
 		stepWidth:40,
 		pointSize:8,
+		points: {
+			max: 34,
+			min:8
+		},
 		topBorder: 30,
 		leftBorder:0,
 
@@ -59,6 +63,8 @@ Timeline.prototype.drawTimeline = function(element) {
 	this.chart.attr('id','chart');
 	this.plotGroup = this.chart.group();
 	this.plotGroup.attr('id','plot');
+	this.mm = this.minMaxValue(this.data[0]);
+	console.log("Min: "+this.mm[0]+" Max: "+this.mm[1]);
 	
 	this.drawBase();
 	this.processTimeline(this.data);
@@ -79,6 +85,25 @@ Timeline.prototype._latestTime = function(data) {
 	}
 	return largest;
 };
+
+Timeline.prototype.minMaxValue = function(data) {
+	
+	//for array
+	arr = data.invStats;
+	var min = Math.min.apply(null, arr);
+    var max = Math.max.apply(null, arr);
+    var mm = [min,max];
+
+	//for each child call the function, base case is to ignore this
+	for (var i=0; i<data.children.length; i++) {
+		//compare
+		mmChild = this.minMaxValue(data.children[i]);
+		if (mm[0] > mmChild[0]) {mm[0] = mmChild[0]}; //min
+		if (mm[1] < mmChild[1]) {mm[1] = mmChild[1]}; //max
+	}
+	
+	return mm;
+}
 
 Timeline.prototype._rowCount = function(data) {
 	var count = 0;
@@ -156,7 +181,7 @@ Timeline.prototype.selectLineage = function(target) {
 }
 
 Timeline.prototype.processTimeline  = function(tData,parent) {
-	//sort
+	//sort	
 
 	//draw
 	for (i in tData) {
@@ -196,7 +221,7 @@ Timeline.prototype.processTimeline  = function(tData,parent) {
 		if (t.children.length) {
 			this.processTimeline(t.children,t);
 		}
-
+		
 		//draw element last to be on top
 		var rect = group.rect(this.config.elementWidth, this.config.elementHeight).move(x,y);
 
@@ -214,9 +239,11 @@ Timeline.prototype.processTimeline  = function(tData,parent) {
 			//target.attr('class','clickTarget');			
 
 			if (i !=0 ) {
-				var circle = link.circle(this.config.pointSize);
-				var cx = x+(0.5*this.config.elementWidth)+(i*this.config.stepWidth)-(0.5*this.config.pointSize);
-				var cy = tY-(0.5*this.config.pointSize);
+				//var pointSize = this.config.points.min + ((i*rate/30) * (this.config.points.max - this.config.points.min));
+				var pointSize = this.config.points.min + (((t.invStats[i]-this.mm[0]) / (this.mm[1]-this.mm[0])) * (this.config.points.max - this.config.points.min));
+				var circle = link.circle(pointSize);
+				var cx = x+(0.5*this.config.elementWidth)+(i*this.config.stepWidth)-(0.5*pointSize);
+				var cy = tY-(0.5*pointSize);
 				circle.move(cx,cy);
 				circle.fill('#fff');
 				circle.stroke({color: '#000', width: this.config.lineWidth});
@@ -236,53 +263,3 @@ Timeline.prototype.getDate = function(data, i) {
 }
 
 
-
-
-
-//temporary data
-var timelines = [{
-	startTime:'0',
-	endTime:'30',
-	ID:'1',
-	children:[{
-			startTime:'5',
-			endTime:'35',
-			ID:'1.1',
-			children:[{
-				startTime:'5',
-				endTime:'35',
-				ID:'1.1.1',
-				children:[]
-			}]
-		},{
-			startTime:'1',
-			endTime:'32',
-			ID:'1.2',
-			children:[]
-		},{
-			startTime:'0',
-			endTime:'30',
-			ID:'1.3',
-			children:[{
-				startTime:'20',
-				endTime:'25',
-				ID:'1.3.1',
-				children:[]
-			},{
-				startTime:'4',
-				endTime:'28',
-				ID:'1.3.2',
-				children:[{
-					startTime:'8',
-					endTime:'28',
-					ID:'1.3.2.1',
-					children:[{
-						startTime:'12',
-						endTime:'28',
-						ID:'1.3.2.1.1',
-						children:[]
-					}]
-				}]
-			}]
-		}]
-	}];

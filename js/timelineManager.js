@@ -95,9 +95,10 @@ TimelineManager.prototype.updateStats = function() {
 	if (idx >= 0) {
 		invArea = data.invStats[idx];
 		
-		$('#costDisplay .value').html("$--,---");
+		$('#costDisplay .value').html("0");
+		$('#yearDisplay .value').html(this.currentYear);
 		$('#invAreaDisplay .value').html(invArea);
-		$('#restCostDisplay .value').html("$"+(invArea*600));
+		//$('#restCostDisplay .value').html("$"+(invArea*600));
 	}
 }
 
@@ -115,7 +116,7 @@ TimelineManager.prototype.getData = function(id) {
 	}
 
 	this.currentData = this.dataSearch(this.data[0], id);
-	return this.currentData;
+	console.log(this.currentData);
 }
 
 TimelineManager.prototype.dataSearch = function(data,id) {
@@ -127,10 +128,9 @@ TimelineManager.prototype.dataSearch = function(data,id) {
 		child = this.dataSearch(data['children'][i], id);
 		if (child != 0) {
 			return child;
-		} else {
-			return 0;
 		}
 	}
+	return 0;
 }
 
 TimelineManager.prototype.getYear = function() {

@@ -4,7 +4,7 @@ import fileinput, os
 lines = ['ncols         3084\n', 'nrows         5045\n', 'xllcorner     143.916567517\n', 'yllcorner     -20.02510726\n', 'cellsize      0.001\n', 'NODATA_value  -9999\n']
 
 mapfile = 'static.map'
-id = "aa"
+id = "ab"
 
 filepath = "/home/dylan/Dev/test/scratch/runs/asdfasd/"
 fixedDir = filepath + "fixed/"
@@ -20,7 +20,7 @@ if not os.path.exists(fixedDir):
 m = mapscript.mapObj(mapfile)
 
 
-for i in range(20,100):
+for i in range(5,100):
 
 	if fix:
 		print "fixed"
@@ -41,4 +41,4 @@ for i in range(20,100):
 	layer = m.getLayerByName("dispersal")
 	layer.data = "agg"+str(i)+".asc"
 
-	m.draw().save(savepath+"a"+str(i-20)+".png")
+	m.draw().save(savepath+"a"+str(i-5)+".png")
