@@ -29,6 +29,8 @@ var zoneColors = [new OpenLayers.StyleMap({
     })
 })];
 
+var zoneIDLookup = ["D","P","R","C","IC","AP"];
+
 var zoneLookup = {
   "IC" : {fillColor: "#1826B0", strokeColor: "#1826B0"},
   "P" : {fillColor: "#FFBA00", strokeColor: "#FFBA00"},
@@ -42,9 +44,11 @@ zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
 zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
 
 function zoneAdded(e) {
-  console.log(e);
-  e.attributes = {'type':zones.mode()};
-  console.log(zones.mode());
+  //console.log(e);
+  e.attributes = {'controlMechanism':zoneIDLookup.indexOf(zones.currentMode)};
+  console.log(mc.timelineID);
+  e.attributes = {'timeline':mc.timelineID};
+ // console.log(zones.mode());
  /* e.style = zoneColors[0];
   console.log(zoneColors[0]);
   console.log(e);
@@ -62,6 +66,7 @@ function MapController() {
     this.mode = 'edit';
     this.zone = 'IC';
     this.timelineLayers = [];
+    this.timelineID = ''
 }
 
 MapController.prototype.editMode = function() {
@@ -128,6 +133,7 @@ MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
   this.timeLength = (yearEnd - yearStart) +1;
   this.yearStart = yearStart;
   this.yearEnd = yearEnd;
+  this.timelineID = id;
 
   //delete all layers
   for (var i=0;i<this.timelineLayers.length;i++) {
@@ -320,16 +326,18 @@ MapController.prototype.setupMap = function() {
         scope: this
     });
     var wfstPolygon = this.wfstPolygon = new OpenLayers.Layer.Vector("Zones", {
-      strategies: [savePolygon],
+      strategies: [new OpenLayers.Strategy.BBOX(),savePolygon],
       projection: new OpenLayers.Projection("EPSG:4326"),
       protocol: new OpenLayers.Protocol.WFS({
         version: "1.1.0",
         srsName: "EPSG:4326",
-        url: "http://115.146.85.81:8080/geoserver/wfs",
-        featureType: "zones",
-        featureNS: "weeds"
-      }),
-      styleMap: zoneColors[0]
+        url: "http://localhost:8080/geoserver/wema/ows",
+        featureNS :  "wema",
+        featureType: "management_strategies",
+        geometryName: "the_geom",
+        schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
+      })
+      //styleMap: zoneColors[0]
     });
     wfstPolygon.id = "polygon";
     map.addLayer(wfstPolygon);
@@ -367,7 +375,7 @@ MapController.prototype.setupMap = function() {
                                                      {
                                                      title: "Draw Polygon",
                                                      displayClass: "olControlDrawFeaturePolygon",
-                                                     multi: false,
+                                                     multi: true,
                                                      featureAdded: zoneAdded
                                                      }
                                                      );
@@ -458,6 +466,8 @@ MapController.prototype.setupMap = function() {
       },
       displayClass: "olControlSaveFeatures"
     });
+
+    $('#saveState').click(function(){save.trigger();});
 
 
     var del = new DeleteFeature([wfstPoint, wfstPolygon], {title: "Delete Feature", hover:true});
