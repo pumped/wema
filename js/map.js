@@ -21,9 +21,9 @@ var zoneColors = [new OpenLayers.StyleMap({
         pointRadius: 6,
     }),
     "temporary": new OpenLayers.Style({
-        fillColor: "#00ee66",
+        fillColor: "#3F3F3F",
         fillOpacity: 0.4,
-        strokeColor: "#00cc44",
+        strokeColor: "#3F3F3F",
         strokeWidth: 3,
         pointRadius: 6
     })
@@ -32,22 +32,27 @@ var zoneColors = [new OpenLayers.StyleMap({
 var zoneIDLookup = ["D","P","R","C","IC","AP"];
 
 var zoneLookup = {
-  "IC" : {fillColor: "#1826B0", strokeColor: "#1826B0"},
-  "P" : {fillColor: "#FFBA00", strokeColor: "#FFBA00"},
-  "AP" : {fillColor: "#ff2800", strokeColor: "#ff2800"},
-  "D" : {fillColor: "#ffe573", strokeColor: "#ffe573"},
-  "R" : {fillColor: "#00BB3F", strokeColor: "#00BB3F"},
-  "C" : {fillColor: "#FF8973", strokeColor: "#FF8973"},
+  "4" : {fillColor: "#1F60E9", strokeColor: "#1F60E9"},
+  "1" : {fillColor: "#FF9100", strokeColor: "#FF9100"},
+  "5" : {fillColor: "#ff2800", strokeColor: "#ff2800"},
+  "0" : {fillColor: "#EEC800", strokeColor: "#EEC800"},
+  "2" : {fillColor: "#0CB655", strokeColor: "#0CB655"},
+  "3" : {fillColor: "#FF6A8E", strokeColor: "#FF6A8E"},
 };
 
-zoneColors[0].addUniqueValueRules("default","type",zoneLookup);
-zoneColors[0].addUniqueValueRules("select","type",zoneLookup);
+zoneColors[0].addUniqueValueRules("default","controlMechanism",zoneLookup);
+zoneColors[0].addUniqueValueRules("select","controlMechanism",zoneLookup);
 
 function zoneAdded(e) {
   //console.log(e);
-  e.attributes = {'controlMechanism':zoneIDLookup.indexOf(zones.currentMode)};
+  console.log(zoneIDLookup.indexOf(zones.currentMode));
+
+  console.log(mc.year);
+
+  e.attributes = {'controlMechanism':zoneIDLookup.indexOf(zones.currentMode),
+                  'timeline':mc.timelineID, 
+                  'time':mc.year};
   console.log(mc.timelineID);
-  e.attributes = {'timeline':mc.timelineID};
  // console.log(zones.mode());
  /* e.style = zoneColors[0];
   console.log(zoneColors[0]);
@@ -67,6 +72,7 @@ function MapController() {
     this.zone = 'IC';
     this.timelineLayers = [];
     this.timelineID = ''
+    this.year = 2014; //default a year for testing
 }
 
 MapController.prototype.editMode = function() {
@@ -191,6 +197,7 @@ MapController.prototype.showLayer = function(year) {
   //layer.setVisibility(true);
   idx = year - this.yearStart;
   this.year = year;
+  this.showZones(year);
   //console.log('Showing layer: ' + year);
 
 
@@ -223,6 +230,22 @@ MapController.prototype.addHSLayer =  function(id) {
                     {gutter: 15, sphericalMercator:true, projection:mercator, opacity:0.4});
 
     this.map.addLayer(this.habitatSuitabilityLayer);
+}
+
+MapController.prototype.showZones = function(year) {
+  console.log("show zones");
+  features = this.wfstPolygon.features;
+  for (i in features) {
+    if ('time' in features[i].attributes && 'timeline' in features[i].attributes) {
+      var time = features[i].attributes.time;
+      var timeline = features[i].attributes.timeline
+      if (time <= year && timeline == this.timelineID) {
+        $('#'+features[i].geometry.components[0].id).attr('class', '');
+      } else {
+        $('#'+features[i].geometry.components[0].id).attr('class','zone_hidden');
+      }
+    }
+  }
 }
 
 //setup map function
@@ -308,7 +331,7 @@ MapController.prototype.setupMap = function() {
           url: "http://115.146.85.81:8080/geoserver/wfs",
           featureType: "Siam_all",
           featureNS: "weeds"
-      }),
+      })
     });
     wfstPoint.id = "point";
     map.addLayer(wfstPoint);
@@ -325,6 +348,8 @@ MapController.prototype.setupMap = function() {
         },
         scope: this
     });
+
+    //Management Strategies
     var wfstPolygon = this.wfstPolygon = new OpenLayers.Layer.Vector("Zones", {
       strategies: [new OpenLayers.Strategy.BBOX(),savePolygon],
       projection: new OpenLayers.Projection("EPSG:4326"),
@@ -336,11 +361,28 @@ MapController.prototype.setupMap = function() {
         featureType: "management_strategies",
         geometryName: "the_geom",
         schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
-      })
-      //styleMap: zoneColors[0]
+      }),
+      styleMap: zoneColors[0]
     });
     wfstPolygon.id = "polygon";
     map.addLayer(wfstPolygon);
+
+    wfstPolygon.events.register("loadend",wfstPolygon,function(){
+      colorZones(wfstPolygon);
+    });
+
+    function colorZones(layer) {
+      /*features = layer.features;
+      for (i in features) {
+        if ('controlMechanism' in features[i].attributes) {
+          var cm = features[i].attributes.controlMechanism;
+          
+          console.log(features[i].geometry.components[0].id);
+          //console.log(zoneIDLookup[cm])
+         // $('#'+features[i].geometry.components[0].id).attr('class','zone_'+zoneIDLookup[cm]+'_path zonePath');
+        }
+      }*/
+    }
 
 
     var panel = new OpenLayers.Control.Panel({
