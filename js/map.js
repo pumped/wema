@@ -49,10 +49,30 @@ function zoneAdded(e) {
 
   console.log(mc.year);
 
+  console.log(e);
+
+
+  //reduce hand drawn polygon
+  var linearRing = new OpenLayers.Geometry.LinearRing(e.geometry.components[0].components[0].components);
+  var lineString = new OpenLayers.Geometry.LineString(linearRing.components); 
+  var newLineString = lineString.simplify(100);
+
+  if (newLineString.components.length > 60) {
+    var newLineString = newLineString.simplify(200);
+  }
+
+  var newLinearRing = new OpenLayers.Geometry.LinearRing(newLineString.getVertices());
+  var newPolygon = new OpenLayers.Geometry.Polygon(newLinearRing);
+  var reducedFeature = new OpenLayers.Feature.Vector(newPolygon);
+
+  e.geometry.components[0].components[0].components = reducedFeature.geometry.components[0].components;
+
+
   e.attributes = {'controlMechanism':zoneIDLookup.indexOf(zones.currentMode),
                   'timeline':mc.timelineID, 
                   'time':mc.year};
   console.log(mc.timelineID);
+
  // console.log(zones.mode());
  /* e.style = zoneColors[0];
   console.log(zoneColors[0]);
@@ -61,7 +81,7 @@ function zoneAdded(e) {
   //redraw layer*/
   mc.wfstPolygon.redraw();
   var cost = parseInt($('#costDisplay .value').html());
-  var additional = Math.floor(Math.random() * 8000) + 1000
+  var additional = Math.floor(Math.random() * 8000) + 1000;
   $('#costDisplay .value').html(cost+additional);
 
 }
@@ -71,7 +91,7 @@ function MapController() {
     this.mode = 'edit';
     this.zone = 'IC';
     this.timelineLayers = [];
-    this.timelineID = ''
+    this.timelineID = '';
     this.year = 2014; //default a year for testing
 }
 
@@ -89,7 +109,7 @@ MapController.prototype.editMode = function() {
 
     this.disableLayers();
     //setup layers
-}
+};
 
 MapController.prototype.overviewMode = function() {
     this.mode = 'overview';
@@ -103,7 +123,7 @@ MapController.prototype.overviewMode = function() {
     this.tiled.setVisibility(true);
 
     this.disableLayers();
-}
+};
 
 MapController.prototype.planMode = function() {
     this.mode = 'plan';
@@ -118,7 +138,7 @@ MapController.prototype.planMode = function() {
 
     this.enableLayers();
     this.showLayer(this.year);
-}
+};
 
 MapController.prototype.zoneMode = function() {
     this.mode = 'zone';
@@ -133,9 +153,10 @@ MapController.prototype.zoneMode = function() {
 
     this.disableLayers();
     this.showLayer(this.year);
-}
+};
 
 MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
+  console.log("switched to timeline: " + id);
   this.timeLength = (yearEnd - yearStart) +1;
   this.yearStart = yearStart;
   this.yearEnd = yearEnd;
@@ -150,12 +171,15 @@ MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
   //add new layers
   for (var i=0;i<this.timeLength;i++) {
     //console.log("Added layer: " + i);
-    var file = id+'/a'+(i)+'.png';
+    var file = id+'/agg'+(i)+'.asc.png';
     this.addDispersalLayer(file, i);
   }
   this.showLayer(this.yearStart);
 
-}
+  //set zones to top again
+  this.wfstPolygon.setZIndex( 1001 );
+
+};
 
 MapController.prototype.addDispersalLayer = function(file,idx) {
     var newLayer = new OpenLayers.Layer.Image(
@@ -169,26 +193,32 @@ MapController.prototype.addDispersalLayer = function(file,idx) {
                   maxResolution: "auto",
                   projection: mercator,
                   strategies: [new OpenLayers.Strategy.Fixed()],
-                  opacity:1,
+                  opacity:0.8,
                   displayInLayerSwitcher: false
                 }
             );
+    /*this.map.setLayerIndex(newLayer, 1);*/
     this.map.addLayer(newLayer);
     this.timelineLayers[idx] = newLayer;
-}
+};
 
-MapController.prototype.disableLayers = function() {
+MapController.prototype.disableLayers = function(exclude) {
+  exclude = exclude || [];
+
   for (var i=0;i<this.timelineLayers.length;i++) {
+      //check it's not ignored
+      if (exclude.indexOf(i) == -1) {
        this.timelineLayers[i].setVisibility(false);
+      }
   }
-}
+};
 
 MapController.prototype.enableLayers = function() {
   for (var i=0;i<this.timelineLayers.length;i++) {
        this.timelineLayers[i].setVisibility(true);
        this.timelineLayers[i].display(false);
   }
-}
+};
 
 MapController.prototype.showLayer = function(year) {
   if (this.timelineLayers.length < 1) {
@@ -208,13 +238,15 @@ MapController.prototype.showLayer = function(year) {
   }
     this.timelineLayers[idx].display(1);
     this.timelineLayers[idx].setVisibility(true);
-}
+};
 
 MapController.prototype.addHSLayer =  function(id) {
   //delete existing layer
   if (this.habitatSuitabilityLayer) {
     this.map.removeLayer(this.habitatSuitabilityLayer);
   }
+
+  console.log("adding hs map");
 
   // create / add new layer
   this.habitatSuitabilityLayer = new OpenLayers.Layer.WMS( "HS", 
@@ -227,15 +259,17 @@ MapController.prototype.addHSLayer =  function(id) {
                       transparent: 'true',
                       reaspect: "true",
                       format: 'image/png'},
-                    {gutter: 15, sphericalMercator:true, projection:mercator, opacity:0.4});
+                    { sphericalMercator:true, projection:mercator, opacity:0.5});
+
+   /* this.map.setLayerIndex(this.habitatSuitabilityLayer, 1);*/
 
     this.map.addLayer(this.habitatSuitabilityLayer);
-}
+};
 
 MapController.prototype.showZones = function(year) {
   console.log("show zones");
   features = this.wfstPolygon.features;
-  for (i in features) {
+  for (var i in features) {
     if ('time' in features[i].attributes && 'timeline' in features[i].attributes) {
       var time = features[i].attributes.time;
       var timeline = features[i].attributes.timeline
@@ -246,7 +280,7 @@ MapController.prototype.showZones = function(year) {
       }
     }
   }
-}
+};
 
 //setup map function
 MapController.prototype.setupMap = function() {
@@ -301,13 +335,33 @@ MapController.prototype.setupMap = function() {
                                  });
     this.map = map;
 
+    //set hs map
+    this.addHSLayer('a');
+
 
     //base layers
     var blank = new OpenLayers.Layer("Blank", {isBaseLayer:true});
     var osm = new OpenLayers.Layer.OSM("OSM");
-    var gmap = new OpenLayers.Layer.Google("Google", {type: 'styled'});          
-    var gsat = new OpenLayers.Layer.Google("Satellite",
-        {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 22});
+  //  var gmap = new OpenLayers.Layer.Google("Google", {type: 'styled'});          
+    // var gsat = new OpenLayers.Layer.Google("Satellite",
+    //     {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 22});
+
+    /// load only tiles visible in map viewport);
+      var hydda = new OpenLayers.Layer.XYZ( "ESRI",
+                    "http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/${z}/${y}/${x}",
+                    {sphericalMercator: true} );
+    /*var hydda = new OpenLayers.Layer.XYZ(
+            "OpenStreetMap", 
+            "http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png",
+            {
+                attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>",
+                transitionEffect: "resize"
+            }
+        );*/
+/*
+      map.setLayerIndex(blank, 0);
+      map.setLayerIndex(osm, 0);
+      map.setLayerIndex(hydda, 0);*/
 
 
     //edit sightings layer
@@ -321,6 +375,8 @@ MapController.prototype.setupMap = function() {
         },
         scope: this
     });
+
+
     var wfstPoint = this.wfstPoint = new OpenLayers.Layer.Vector("Edit Sightings", {
       maxScale:150000,
       strategies: [new OpenLayers.Strategy.BBOX(), savePoint],
@@ -334,7 +390,7 @@ MapController.prototype.setupMap = function() {
       })
     });
     wfstPoint.id = "point";
-    map.addLayer(wfstPoint);
+    //map.addLayer(wfstPoint);
 
 
     //zones layer
@@ -364,6 +420,7 @@ MapController.prototype.setupMap = function() {
       }),
       styleMap: zoneColors[0]
     });
+    /*map.setLayerIndex(wfstPolygon, 99);*/
     wfstPolygon.id = "polygon";
     map.addLayer(wfstPolygon);
 
@@ -412,13 +469,20 @@ MapController.prototype.setupMap = function() {
                                                   }
                                                   );*/
 
+    var polygonDrawOptions = { // 1
+        
+    };
+
     var polygon = new OpenLayers.Control.DrawFeature(
                                                      wfstPolygon, OpenLayers.Handler.Polygon,
                                                      {
                                                      title: "Draw Polygon",
                                                      displayClass: "olControlDrawFeaturePolygon",
                                                      multi: true,
-                                                     featureAdded: zoneAdded
+                                                     featureAdded: zoneAdded,
+                                                     handlerOptions: {
+            freehand: true
+        }
                                                      }
                                                      );
 
@@ -564,13 +628,13 @@ MapController.prototype.setupMap = function() {
         } 
     );
 
-    map.addLayers([tiled,editTiled]);
+    //map.addLayers([tiled,editTiled]);
 
 
 
     var styledMapType = new google.maps.StyledMapType(gmStyle, styledMapOptions);
 
-    map.addLayers([gmap,gsat,osm,blank]);
+    map.addLayers([hydda,osm,blank]);
 
     map.addControl(new OpenLayers.Control.LayerSwitcher());
 
@@ -592,11 +656,23 @@ MapController.prototype.setupMap = function() {
 
     map.addControl(graticuleCtl1);*/
 
-    gmap.mapObject.mapTypes.set('styled', styledMapType);
-    gmap.mapObject.setMapTypeId('styled');
+    // gmap.mapObject.mapTypes.set('styled', styledMapType);
+    // gmap.mapObject.setMapTypeId('styled');
 
-    gsat.mapObject.mapTypes.set('styled', styledMapType);
-    gsat.mapObject.setMapTypeId('styled');
+    // gsat.mapObject.mapTypes.set('styled', styledMapType);
+    // gsat.mapObject.setMapTypeId('styled');
+
+    mc = this;
+    map.events.register("movestart", map, function(){
+     // console.log('moving');
+      mc.disableLayers([mc.year]);
+      //mc.showLayer(mc.year);
+    });
+    map.events.register("moveend", map, function(){
+      //console.log('moving');
+      mc.enableLayers();
+      mc.showLayer(mc.year);
+    });
 
 }
 
