@@ -3,7 +3,10 @@
     //check if image exists
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
-	$RUNDIR = "/home/dylan/Dev/test/scratch/runs/asdfasd";
+	//$RUNDIR = "/home/dylan/Dev/test/scratch/runs/asdfasd";
+    $RUNDIR = "/media/src/data/siam";
+
+    //echo $RUNDIR;
 
     //check if folder exists
     $id = md5($_GET['LAYERS'].$_GET['DATA'].$_GET['BBOX'].$_GET['WIDTH'].$_GET['HEIGHT'].$_GET['SRS']);

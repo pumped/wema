@@ -18,6 +18,10 @@ $Name$
 
 // read in the variables
 
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(-1);
+
 if(array_key_exists('HTTP_SERVERURL', $_SERVER)){ 
   $onlineresource=$_SERVER['HTTP_SERVERURL']; 
 }else{ 
@@ -58,7 +62,7 @@ if($pos > 1) {
   $result = substr($result, $pos, $len);
 }
 //$result = str_replace("xlink:","",$result);
-echo $result;
+//echo $result;
 
 // define class with functions to open socket and post XML
 // from http://www.phpbuilder.com/annotate/message.php3?id=1013274 by Richard Hundt

@@ -1,7 +1,7 @@
 import mapscript
 import fileinput, os
 
-lines = ['ncols         3084\n', 'nrows         5045\n', 'xllcorner     143.916567517\n', 'yllcorner     -20.02510726\n', 'cellsize      0.001\n', 'NODATA_value  -9999\n']
+#lines = ['ncols         3084\n', 'nrows         5045\n', 'xllcorner     143.916567517\n', 'yllcorner     -20.02510726\n', 'cellsize      0.001\n', 'NODATA_value  -9999\n']
 
 mapfile = 'static.map'
 id = "ab"
@@ -22,20 +22,20 @@ m = mapscript.mapObj(mapfile)
 
 for i in range(5,100):
 
-	if fix:
-		print "fixed"
-		with open(filepath+'agg'+str(i)+".asc", 'r+') as inFile:
-			with open (fixedDir+'agg'+str(i)+".asc",'w') as outFile:
-				num = 0
-				for line in inFile:
-					if num < 6:
-						l = lines[num]
-						num+=1
-						outFile.write(l)
-					else:
-						outFile.write(line)
+	# if fix:
+	# 	print "fixed"
+	# 	with open(filepath+'agg'+str(i)+".asc", 'r+') as inFile:
+	# 		with open (fixedDir+'agg'+str(i)+".asc",'w') as outFile:
+	# 			num = 0
+	# 			for line in inFile:
+	# 				if num < 6:
+	# 					l = lines[num]
+	# 					num+=1
+	# 					outFile.write(l)
+	# 				else:
+	# 					outFile.write(line)
 	
-	print i
+	# print i 
 
 	#set layer data file
 	layer = m.getLayerByName("dispersal")

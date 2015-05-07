@@ -6,7 +6,7 @@ MAP
     #EXTENT -180 -90 180 90
     EXTENT 16078473 -2203421 16365455 -1723647
     UNITS DD
-    SHAPEPATH "/home/dylan/mapserver/data"
+    SHAPEPATH "/media/src/data/siam"
 
     TRANSPARENT ON
     IMAGECOLOR 0 255 255
