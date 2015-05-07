@@ -1,7 +1,7 @@
 var zones;
 mc = new MapController();
 var iface = new InterfaceManager();
-var years = [2014,2053];
+var years = [0,49];
 
 $('document').ready(function(){
 
@@ -15,6 +15,8 @@ $('document').ready(function(){
 	if ( window.location.hash ) {
     	$(window.location.hash).click();
 	}
+
+	mc.addTimeline('ab',0,65);
 });
 
 function InterfaceManager() {
@@ -40,7 +42,7 @@ InterfaceManager.prototype.setup = function(mode) {
 	//setup timeline manager
 	this.timeline.setup();
 	
-}
+};
 
 InterfaceManager.prototype.setMode = function(mode) {
 	//set ui
@@ -63,8 +65,8 @@ InterfaceManager.prototype.setMode = function(mode) {
 	$('.navbar-nav li').removeClass('active');
 	$('#'+mode).parent().addClass('active');
 
-	console.log('changed mode')
-}
+	console.log('changed mode');
+};
 
 
 
@@ -84,7 +86,7 @@ function ToolbarManager() {
 			'editTool': 1,
 			'removeTool': 1
 		}
-	}
+	};
 }
 
 ToolbarManager.prototype.setMode = function(mode) {
@@ -110,14 +112,14 @@ ToolbarManager.prototype.setMode = function(mode) {
 	}
 
 	//show tools
-	for (i in this.mode[mode]) {
+	for (var i in this.mode[mode]) {
 		if (this.mode[mode][i] == 0){
 			$('#'+i).hide();
 		} else {
 			$('#'+i).show();
 		}		
 	}
-}
+};
 
 ToolbarManager.prototype.bind = function(ID,button) {
 	this.controls[ID] = button;
@@ -126,15 +128,15 @@ ToolbarManager.prototype.bind = function(ID,button) {
 	$('#'+ID).click(function(){
 		tbm.toggle(ID);
 	});
-}
+};
 
 ToolbarManager.prototype.bindOnMode = function(ID,button,zone) {
 
-}
+};
 
 ToolbarManager.prototype.toggle = function(ID) {
 	//deactivate all tools
-	for (id in this.controls) {
+	for (var id in this.controls) {
 		if (id != ID) {
 			this.deactivate(id);
 		}
@@ -146,7 +148,7 @@ ToolbarManager.prototype.toggle = function(ID) {
   	} else {
   		this.activate(ID);
   	}
-}
+};
 
 ToolbarManager.prototype.activate = function(ID) {
 	button = this.controls[ID];
@@ -158,7 +160,7 @@ ToolbarManager.prototype.activate = function(ID) {
 	if (ID == 'drawTool') {
 		$('.zoneBtns').slideDown();
 	}
-}
+};
 
 ToolbarManager.prototype.deactivate = function(ID) {
 	button = this.controls[ID];
@@ -170,33 +172,33 @@ ToolbarManager.prototype.deactivate = function(ID) {
 	if (ID == 'drawTool') {
 		$('.zoneBtns').slideUp();
 	}
-}
+};
 
 
 
 /*--- Zone Manager ---*/
 function ZoneManager() {
 	this.setup();
-	this.currentMode = 'IC'
+	this.currentMode = 'IC';
 }
 
 //return current zone
 ZoneManager.prototype.mode = function() {
 	return this.currentMode;
-}
+};
 
 ZoneManager.prototype.setMode = function(mode) {
 	this.currentMode = mode;
-}
+};
 
 //setup draw
 ZoneManager.prototype.draw = function () {
 	$('.zoneBtns').slideDown();
-}
+};
 
 ZoneManager.prototype.endDraw = function() {
 	$('.zoneBtns').slideUp();
-}
+};
 
 ZoneManager.prototype.setup = function() {
 	//setup buttons
@@ -204,10 +206,10 @@ ZoneManager.prototype.setup = function() {
 	$('.zoneBtn').click(function(){
 		z.setMode($(this).attr('ID').split('zone')[0]);
 	});
-}
+};
 
 ZoneManager.prototype.setZone = function() {
 
-}
+};
 
 

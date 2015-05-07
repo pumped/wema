@@ -1,8 +1,8 @@
 
 function TimelineManager() {
-	this.startYear = 2014;
+	this.startYear = 0;
 	this.currentYear = this.startYear;
-	this.endYear = 2053;
+	this.endYear = 65;
 	this.playbackSpeed = 200;
 	this.loop = false;
 	this.data = null;
@@ -13,12 +13,12 @@ function TimelineManager() {
 TimelineManager.prototype.setConsole = function(cons) { 
 	this.console = cons;
 	this.modelManager.setConsole(cons);
-}
+};
 
 TimelineManager.prototype.setMapController = function(mapController) { 
 	this.mapController = mapController;
-	this.modelManager.setMapController(mapController)
-}
+	this.modelManager.setMapController(mapController);
+};
 
 
 TimelineManager.prototype.setup = function() {
@@ -40,7 +40,7 @@ TimelineManager.prototype.setup = function() {
 
 	});	
 	
-}
+};
 
 TimelineManager.prototype.setupPlaybackBar = function() {
 	this.slider = $('#timeSlider');
@@ -63,7 +63,7 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 		event.data.self.togglePlay();
 		return false;
 	});
-}
+};
 
 TimelineManager.prototype.setID = function(id) {
 	this.id = id;
@@ -72,7 +72,7 @@ TimelineManager.prototype.setID = function(id) {
 
 	//adjust stats
 	this.updateStats();
-}
+};
 
 TimelineManager.prototype.setYear = function(year) {
 	if (this.currentYear != year) {
@@ -80,12 +80,12 @@ TimelineManager.prototype.setYear = function(year) {
 		this.slider.slider('setValue',year);
 
 		//adjust layers
-		this.mapController.showLayer(year);
+		this.mapController.showLayer(year-this.startYear);
 
 		//adjust stats
-		this.updateStats();
+		//this.updateStats();
 	}
-}
+};
 
 TimelineManager.prototype.updateStats = function() {
 
@@ -100,7 +100,7 @@ TimelineManager.prototype.updateStats = function() {
 		$('#invAreaDisplay .value').html(invArea);
 		//$('#restCostDisplay .value').html("$"+(invArea*600));
 	}
-}
+};
 
 function smoothVal(selector, val) {
 	oldVal = parseInt($(selector).html());
@@ -117,7 +117,7 @@ TimelineManager.prototype.getData = function(id) {
 
 	this.currentData = this.dataSearch(this.data[0], id);
 	console.log(this.currentData);
-}
+};
 
 TimelineManager.prototype.dataSearch = function(data,id) {
 	if (data.ID == id) {
@@ -131,11 +131,11 @@ TimelineManager.prototype.dataSearch = function(data,id) {
 		}
 	}
 	return 0;
-}
+};
 
 TimelineManager.prototype.getYear = function() {
 	return this.currentYear;
-}
+};
 
 TimelineManager.prototype.togglePlay = function() {
 	if (this.playing) {
@@ -143,7 +143,7 @@ TimelineManager.prototype.togglePlay = function() {
 	} else {
 		this.play();
 	}
-}
+};
 
 TimelineManager.prototype.play = function () {
 	this.playing = true;
@@ -161,7 +161,7 @@ TimelineManager.prototype.play = function () {
 	}
 
 	return false;
-}
+};
 
 //code that iterates through the years
 TimelineManager.prototype.playback = function() {
@@ -180,10 +180,10 @@ TimelineManager.prototype.playback = function() {
 			}
 		}
 	}
-}
+};
 
 TimelineManager.prototype.stop = function() {
 	this.playing = false;
 	$('#playback .glyphicon').removeClass('glyphicon-pause');
 	$('#playback .glyphicon').addClass('glyphicon-play');
-}
+};
