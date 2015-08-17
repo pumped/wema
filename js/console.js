@@ -16,3 +16,5 @@ Console.prototype.write = function(m, logLevel) {
 	var d = new Date().toLocaleTimeString();
 	$('.console').prepend('<div class="consoleMessage cons'+logLevel+'"><span class="consoleDate">'+d+'</span>: '+m+'</div>');
 }
+
+log = new Console();

@@ -1,7 +1,7 @@
 <html>
  <head>
  <!-- OpenLayers core js -->
- <script type="text/javascript" src="http://www.openlayers.org/dev/OpenLayers.js"></script>
+ <script type="text/javascript" src="js/OpenLayers.js"></script>
  <style>
         .customEditingToolbar {
             float: right;
@@ -72,9 +72,9 @@
 	                {layers: "basic"} 
 	            ),
 	            new OpenLayers.Layer.WMS("States WMS",
-	                "http://115.146.85.81:8080/geoserver/wms",
-	                {layers: "weeds:Siam_all", format: "image/png", transparent: true},
-	                {maxScale: 150000}
+	                "http://localhost:8080/geoserver/wema/wms",
+	                {layers: "wema:management_strategies", format: "image/png", transparent: true},
+	                {maxScale: 1500000}
 	            )
 	        ],
 	        center: [150, -19],
@@ -84,14 +84,16 @@
 	    var saveStrategy = new OpenLayers.Strategy.Save();
 
 	    var wfs = new OpenLayers.Layer.Vector("States", {
-	            	minScale:150000,
-	                strategies: [new OpenLayers.Strategy.BBOX(), saveStrategy],
+	            	/*minScale:150000,*/
+	                strategies: [new OpenLayers.Strategy.Fixed(), saveStrategy],
 	                protocol: new OpenLayers.Protocol.WFS({
 	                	version: "1.1.0",
-            			srsName: "EPSG:4326",
-	                    url: "http://115.146.85.81:8080/geoserver/wfs",
-	                    featureType: "Siam_all",
-	                    featureNS: "weeds"
+            			srsName: new OpenLayers.Projection("EPSG:4326"),
+	                    url: "http://localhost:8080/geoserver/wfs",
+                        featurePrefix: 'wema',
+	                    featureType: "management_strategies",
+                        geometryName : "the_geom",
+	                    featureNS: "wema"
 	                }),
 	                renderers: renderer
 	            });

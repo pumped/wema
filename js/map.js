@@ -45,11 +45,11 @@ zoneColors[0].addUniqueValueRules("select","controlMechanism",zoneLookup);
 
 function zoneAdded(e) {
   //console.log(e);
-  console.log(zoneIDLookup.indexOf(zones.currentMode));
+  //console.log(zoneIDLookup.indexOf(zones.currentMode));
 
-  console.log(mc.year);
+  //console.log(mc.year);
 
-  console.log(e);
+  //console.log(e);
 
 
   //reduce hand drawn polygon
@@ -67,19 +67,22 @@ function zoneAdded(e) {
 
   e.geometry.components[0].components[0].components = reducedFeature.geometry.components[0].components;
 
-
-  e.attributes = {'controlMechanism':zoneIDLookup.indexOf(zones.currentMode),
+  var cm = zoneIDLookup.indexOf(zones.currentMode);
+  console.log(mc.year);
+  e.attributes = {'controlMechanism':cm,
                   'timeline':mc.timelineID, 
                   'time':mc.year};
   console.log(mc.timelineID);
 
- // console.log(zones.mode());
- /* e.style = zoneColors[0];
+  $('#'+e.geometry.components[0].id).attr('class','zone_'+zoneIDLookup[cm]+'_path zonePath');
+  /*e.style = zoneColors[0];
   console.log(zoneColors[0]);
-  console.log(e);
+  console.log(e);*/
 
-  //redraw layer*/
+  //redraw layer
   mc.wfstPolygon.redraw();
+
+  //calculate cost
   var cost = parseInt($('#costDisplay .value').html());
   var additional = Math.floor(Math.random() * 8000) + 1000;
   $('#costDisplay .value').html(cost+additional);
@@ -194,7 +197,7 @@ MapController.prototype.addDispersalLayer = function(file,idx) {
                   projection: mercator,
                   strategies: [new OpenLayers.Strategy.Fixed()],
                   opacity:0.8,
-                  displayInLayerSwitcher: false
+                  displayInLayerSwitcher: true
                 }
             );
     /*this.map.setLayerIndex(newLayer, 1);*/
@@ -269,7 +272,7 @@ MapController.prototype.addHSLayer =  function(id) {
 MapController.prototype.showZones = function(year) {
   console.log("show zones");
   features = this.wfstPolygon.features;
-  for (var i in features) {
+ /* for (var i in features) {
     if ('time' in features[i].attributes && 'timeline' in features[i].attributes) {
       var time = features[i].attributes.time;
       var timeline = features[i].attributes.timeline
@@ -279,7 +282,7 @@ MapController.prototype.showZones = function(year) {
         $('#'+features[i].geometry.components[0].id).attr('class','zone_hidden');
       }
     }
-  }
+  }*/
 };
 
 //setup map function
@@ -397,28 +400,28 @@ MapController.prototype.setupMap = function() {
     var savePolygon = new OpenLayers.Strategy.Save();
     savePolygon.events.on({
         'success': function(event) {
-             log('Saved Zones');
+             log.write('Saved Zones');
         },
         'fail': function(event) {
-             log('Failed to save zones');
+             log.write('Failed to save zones');
         },
         scope: this
     });
 
     //Management Strategies
     var wfstPolygon = this.wfstPolygon = new OpenLayers.Layer.Vector("Zones", {
-      strategies: [new OpenLayers.Strategy.BBOX(),savePolygon],
+      strategies: [new OpenLayers.Strategy.Fixed(),savePolygon],
       projection: new OpenLayers.Projection("EPSG:4326"),
       protocol: new OpenLayers.Protocol.WFS({
         version: "1.1.0",
-        srsName: "EPSG:4326",
-        url: "http://localhost:8080/geoserver/wema/ows",
+        srsName: OpenLayers.Projection("EPSG:4326"),
+        url: "http://localhost:8080/geoserver/wfs",
+        featurePrefix: 'wema',
         featureNS :  "wema",
         featureType: "management_strategies",
         geometryName: "the_geom",
-        schema: "http://demo.opengeo.org/geoserver/wfs/DescribeFeatureType?version=1.1.0&typename=og:restricted"
-      }),
-      styleMap: zoneColors[0]
+      })/*,
+      styleMap: zoneColors[0]*/
     });
     /*map.setLayerIndex(wfstPolygon, 99);*/
     wfstPolygon.id = "polygon";
@@ -429,16 +432,20 @@ MapController.prototype.setupMap = function() {
     });
 
     function colorZones(layer) {
-      /*features = layer.features;
+      console.log("polygons")
+      for (i in features) {
+        console.log("feature");
+      }
+      features = layer.features;
       for (i in features) {
         if ('controlMechanism' in features[i].attributes) {
           var cm = features[i].attributes.controlMechanism;
           
           console.log(features[i].geometry.components[0].id);
           //console.log(zoneIDLookup[cm])
-         // $('#'+features[i].geometry.components[0].id).attr('class','zone_'+zoneIDLookup[cm]+'_path zonePath');
+         $('#'+features[i].geometry.components[0].id).attr('class','zone_'+zoneIDLookup[cm]+'_path zonePath');
         }
-      }*/
+      }
     }
 
 
@@ -666,11 +673,12 @@ MapController.prototype.setupMap = function() {
     map.events.register("movestart", map, function(){
      // console.log('moving');
       mc.disableLayers([mc.year]);
+      $("#OpenLayers_Control_LayerSwitcher_98_layersDiv").trigger("click");
       //mc.showLayer(mc.year);
     });
     map.events.register("moveend", map, function(){
       //console.log('moving');
-      mc.enableLayers();
+      //mc.enableLayers();
       mc.showLayer(mc.year);
     });
 

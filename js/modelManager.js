@@ -1,7 +1,7 @@
 function ModelManager() {
 	this.url = 'proxy.php?url=http://localhost:5566';
 	this.id = -1;
-	this.updateRate = 1000;
+	this.updateRate = 5000;
 	this.consID = -1;
 }
 

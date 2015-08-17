@@ -2,7 +2,7 @@
 function TimelineManager() {
 	this.startYear = 0;
 	this.currentYear = this.startYear;
-	this.endYear = 65;
+	this.endYear = 30;
 	this.playbackSpeed = 200;
 	this.loop = false;
 	this.data = null;

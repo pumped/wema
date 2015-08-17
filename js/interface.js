@@ -16,7 +16,7 @@ $('document').ready(function(){
     	$(window.location.hash).click();
 	}
 
-	mc.addTimeline('ab',0,65);
+	mc.addTimeline('ab',0,30);
 });
 
 function InterfaceManager() {
