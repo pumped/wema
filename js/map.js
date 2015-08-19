@@ -54,7 +54,7 @@ function zoneAdded(e) {
 
   //reduce hand drawn polygon
   var linearRing = new OpenLayers.Geometry.LinearRing(e.geometry.components[0].components[0].components);
-  var lineString = new OpenLayers.Geometry.LineString(linearRing.components); 
+  var lineString = new OpenLayers.Geometry.LineString(linearRing.components);
   var newLineString = lineString.simplify(100);
 
   if (newLineString.components.length > 60) {
@@ -70,7 +70,7 @@ function zoneAdded(e) {
   var cm = zoneIDLookup.indexOf(zones.currentMode);
   console.log(mc.year);
   e.attributes = {'controlMechanism':cm,
-                  'timeline':mc.timelineID, 
+                  'timeline':mc.timelineID,
                   'time':mc.year};
   console.log(mc.timelineID);
 
@@ -146,7 +146,7 @@ MapController.prototype.planMode = function() {
 MapController.prototype.zoneMode = function() {
     this.mode = 'zone';
 
-    iface.tools.setMode(this.mode);    
+    iface.tools.setMode(this.mode);
 
     //hide layers
     this.wfstPoint.setVisibility(false);
@@ -174,7 +174,7 @@ MapController.prototype.addTimeline = function(id, yearStart, yearEnd) {
   //add new layers
   for (var i=0;i<this.timeLength;i++) {
     //console.log("Added layer: " + i);
-    var file = id+'/agg'+(i)+'.asc.png';
+    var file = id+'/agg'+(i)+'.png';
     this.addDispersalLayer(file, i);
   }
   this.showLayer(this.yearStart);
@@ -252,7 +252,7 @@ MapController.prototype.addHSLayer =  function(id) {
   console.log("adding hs map");
 
   // create / add new layer
-  this.habitatSuitabilityLayer = new OpenLayers.Layer.WMS( "HS", 
+  this.habitatSuitabilityLayer = new OpenLayers.Layer.WMS( "HS",
                     "map/wms.php", {
                       MAP: 'hs.map',
                       ID: id,
@@ -345,7 +345,7 @@ MapController.prototype.setupMap = function() {
     //base layers
     var blank = new OpenLayers.Layer("Blank", {isBaseLayer:true});
     var osm = new OpenLayers.Layer.OSM("OSM");
-  //  var gmap = new OpenLayers.Layer.Google("Google", {type: 'styled'});          
+  //  var gmap = new OpenLayers.Layer.Google("Google", {type: 'styled'});
     // var gsat = new OpenLayers.Layer.Google("Satellite",
     //     {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 22});
 
@@ -354,7 +354,7 @@ MapController.prototype.setupMap = function() {
                     "http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/${z}/${y}/${x}",
                     {sphericalMercator: true} );
     /*var hydda = new OpenLayers.Layer.XYZ(
-            "OpenStreetMap", 
+            "OpenStreetMap",
             "http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png",
             {
                 attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>",
@@ -440,7 +440,7 @@ MapController.prototype.setupMap = function() {
       for (i in features) {
         if ('controlMechanism' in features[i].attributes) {
           var cm = features[i].attributes.controlMechanism;
-          
+
           console.log(features[i].geometry.components[0].id);
           //console.log(zoneIDLookup[cm])
          $('#'+features[i].geometry.components[0].id).attr('class','zone_'+zoneIDLookup[cm]+'_path zonePath');
@@ -477,7 +477,7 @@ MapController.prototype.setupMap = function() {
                                                   );*/
 
     var polygonDrawOptions = { // 1
-        
+
     };
 
     var polygon = new OpenLayers.Control.DrawFeature(
@@ -533,7 +533,7 @@ MapController.prototype.setupMap = function() {
                                                       'click':function(feature) {
                                                         editPoint.deactivate();
                                                         editPolygon.deactivate();
-                                                      
+
                                                         console.log(feature.layer.map);
                                                         feature.layer.map.getControl(feature.layer.id).activate();
                                                         feature.layer.map.getControl(feature.layer.id).selectFeature(feature);
@@ -570,7 +570,7 @@ MapController.prototype.setupMap = function() {
 
 
         if (mc.mode == 'zone') {
-          savePolygon.save(); 
+          savePolygon.save();
         } else {
           savePoint.save();
         }
@@ -597,7 +597,7 @@ MapController.prototype.setupMap = function() {
 
     //setup edit overview view
     this.editTiled = editTiled = new OpenLayers.Layer.WMS(
-        "Edit Overview", 
+        "Edit Overview",
         "http://115.146.85.81:8080/geoserver/weeds/wms",
         {
             LAYERS: 'weeds:Siam_all',
@@ -613,11 +613,11 @@ MapController.prototype.setupMap = function() {
             isBaseLayer: false,
             yx : {'EPSG:4326' : true},
             maxScale:150000
-        } 
+        }
     );
 
     this.tiled = tiled = new OpenLayers.Layer.WMS(
-        "Weed Distribution", 
+        "Weed Distribution",
         "http://115.146.85.81:8080/geoserver/weeds/wms",
         {
             LAYERS: 'weeds:Siam_all',
@@ -632,7 +632,7 @@ MapController.prototype.setupMap = function() {
             displayOutsideMaxExtent: true,
             isBaseLayer: false,
             yx : {'EPSG:4326' : true}
-        } 
+        }
     );
 
     //map.addLayers([tiled,editTiled]);
@@ -649,7 +649,7 @@ MapController.prototype.setupMap = function() {
         new OpenLayers.LonLat(145.8, -17.2).transform(
             new OpenLayers.Projection("EPSG:4326"),
             map.getProjectionObject()
-        ), 
+        ),
         10
     );
 
