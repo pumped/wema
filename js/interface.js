@@ -1,5 +1,5 @@
 var zones;
-mc = new MapController();
+var mc = new MapController();
 var iface = new InterfaceManager();
 var years = [0,49];
 
@@ -7,8 +7,8 @@ $('document').ready(function(){
 
 	zones = new ZoneManager();
 	mc.setupMap();
-	iface.setup();	
-    
+	iface.setup();
+
     iface.console.write('Map Initialised');
 
 	//set current mode
@@ -16,7 +16,6 @@ $('document').ready(function(){
     	$(window.location.hash).click();
 	}
 
-	mc.addTimeline('ab',0,30);
 });
 
 function InterfaceManager() {
@@ -41,7 +40,7 @@ InterfaceManager.prototype.setup = function(mode) {
 
 	//setup timeline manager
 	this.timeline.setup();
-	
+
 };
 
 InterfaceManager.prototype.setMode = function(mode) {
@@ -90,7 +89,7 @@ function ToolbarManager() {
 }
 
 ToolbarManager.prototype.setMode = function(mode) {
-	
+
 	//edit toolbar
 	if (mode == 'zone' || mode == 'edit') {
 		$('#editTools').slideDown();
@@ -117,7 +116,7 @@ ToolbarManager.prototype.setMode = function(mode) {
 			$('#'+i).hide();
 		} else {
 			$('#'+i).show();
-		}		
+		}
 	}
 };
 
@@ -143,7 +142,7 @@ ToolbarManager.prototype.toggle = function(ID) {
 	}
 
 	button = this.controls[ID];
-	if (button.active) {    	
+	if (button.active) {
 		this.deactivate(ID);
   	} else {
   		this.activate(ID);
@@ -211,5 +210,3 @@ ZoneManager.prototype.setup = function() {
 ZoneManager.prototype.setZone = function() {
 
 };
-
-

@@ -2,7 +2,7 @@
 function TimelineManager() {
 	this.startYear = 0;
 	this.currentYear = this.startYear;
-	this.endYear = 30;
+	this.endYear = 29;
 	this.playbackSpeed = 200;
 	this.loop = false;
 	this.data = null;
@@ -10,12 +10,12 @@ function TimelineManager() {
 	this.modelManager = new ModelManager();
 }
 
-TimelineManager.prototype.setConsole = function(cons) { 
+TimelineManager.prototype.setConsole = function(cons) {
 	this.console = cons;
 	this.modelManager.setConsole(cons);
 };
 
-TimelineManager.prototype.setMapController = function(mapController) { 
+TimelineManager.prototype.setMapController = function(mapController) {
 	this.mapController = mapController;
 	this.modelManager.setMapController(mapController);
 };
@@ -26,7 +26,7 @@ TimelineManager.prototype.setup = function() {
 
 	//setup timelines
 	var that = this;
-	$.getJSON(this.modelManager.url+'/getTimeline', function(data){ 
+	$.getJSON(this.modelManager.url+'/getTimeline', function(data){
 		that.timeline = new Timeline(data);
 		that.data = data;
 		that.setID(data[0].ID);
@@ -36,10 +36,10 @@ TimelineManager.prototype.setup = function() {
 			data = that.getData(id);
 			year = year - data.startTime;
 			that.setYear(year);
-		});	
+		});
 
-	});	
-	
+	});
+
 };
 
 TimelineManager.prototype.setupPlaybackBar = function() {
@@ -51,7 +51,7 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 		step:1,
 		value: this.currentYear
 	});
-	
+
 	this.slider.on("slide",
 		{self:this},
 		function(ev) {
@@ -80,7 +80,7 @@ TimelineManager.prototype.setYear = function(year) {
 		this.slider.slider('setValue',year);
 
 		//adjust layers
-		this.mapController.showLayer(year-this.startYear);
+		this.mapController.setVisTime(year-this.startYear);
 
 		//adjust stats
 		//this.updateStats();
@@ -89,12 +89,12 @@ TimelineManager.prototype.setYear = function(year) {
 
 TimelineManager.prototype.updateStats = function() {
 
-	data = this.getData(this.id);	
+	data = this.getData(this.id);
 	idx = this.currentYear - (this.startYear); // + parseInt(data.startTime));
 
 	if (idx >= 0) {
 		invArea = data.invStats[idx];
-		
+
 		$('#costDisplay .value').html("0");
 		$('#yearDisplay .value').html(this.currentYear);
 		$('#invAreaDisplay .value').html(invArea);
@@ -157,7 +157,7 @@ TimelineManager.prototype.play = function () {
 		var that = this;
 		setTimeout(function(){that.playback()},this.playbackSpeed);
 	} else {
-		this.playback();	
+		this.playback();
 	}
 
 	return false;

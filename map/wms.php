@@ -9,7 +9,7 @@
     //echo $RUNDIR;
 
     //check if folder exists
-    $id = md5($_GET['LAYERS'].$_GET['DATA'].$_GET['BBOX'].$_GET['WIDTH'].$_GET['HEIGHT'].$_GET['SRS']);
+    $id = md5($_GET['LAYERS'].$_GET['DATA'].$_GET['BBOX'].$_GET['WIDTH'].$_GET['HEIGHT'].$_GET['CRS']);
     $file = "imgs/cache/".$id.".png";
     if (file_exists($file)) {
         header('Content-Type: image/png');
@@ -30,13 +30,13 @@
     $requested_map_file = null;
     $requested_map_file = $_GET['MAP'];
 
-    // Set full path to map file.  	
+    // Set full path to map file.
     $path_to_map_file = realpath($map_dir.'/'.$requested_map_file);
 
     //get data file
     $data = null;
     $layerName = $_GET['LAYERS'];
-    if (isset($_GET['RUNS'])) {  
+    if (isset($_GET['RUNS'])) {
         $data = $RUNDIR.'/'.$_GET['DATA'];
     	//echo "<br/>".$data."<br/>";
     } else {
@@ -49,7 +49,7 @@
 
     //set layer data to be used
     $layer = $map->getLayerByName($layerName);
-    $layer->set('data', $data);   
+    $layer->set('data', $data);
 
     ob_start();
 
