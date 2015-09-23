@@ -19,7 +19,13 @@ var zoneLookup = {
 
 function MapController() {
   this.layers = {};
+  this.WFSTLayers = {};
   this.map;
+  this.interaction = false;
+
+  this.id;
+  this.zone;
+  this.time;
 }
 
 MapController.prototype.getID = function () {
@@ -60,12 +66,44 @@ MapController.prototype._setupVisLayer = function() {
 }
 
 MapController.prototype.setVisTime = function(val) {
+  this.time = val;
   this.animater.animateTo(val);
 }
 
 MapController.prototype.setMode = function (mode) {
-    //define what layers are shown
+  this.mode = mode;
+
+  if (mode == "edit") {
+
+  }
 };
+
+MapController.prototype.getInteractionMode = function() {
+  if (this.interaction) {
+    return this.interaction;
+  }
+  return false;
+}
+
+MapController.prototype.setInteractionMode = function(mode) {
+  console.log("Set Interaction Mode: " + mode)
+  //remove current listener
+  this.interaction = false;
+
+  //if just turning off return
+  if (mode == false) {
+    this.WFSTLayers.managementActions.setMode(false);
+    return;
+  }
+
+  //fetch interaction
+  if (this.mode == "zone") {
+    this.WFSTLayers.managementActions.setMode("draw");
+    this.interaction = this.WFSTLayers.managementActions.getDrawInteraction();
+  }
+
+  //this.map.addInteraction(this.interaction);
+}
 /*
 MapController.prototype.editMode = function() {
 
@@ -87,8 +125,17 @@ MapController.prototype.setTimeline = function(id, yearStart, yearEnd) {
 
 };
 
+MapController.prototype.setZone = function(zone) {
+  this.zone = zone;
+}
+
 MapController.prototype.addDispersalLayer = function(file,idx) {
 
+};
+
+MapController.prototype.getMetadata = function() {
+  var metadata = {controlMechanism:this.zone, time:this.time, timeline:this.id};
+  return metadata;
 };
 
 MapController.prototype.addHSLayer =  function() {
@@ -116,48 +163,9 @@ MapController.prototype.showZones = function(year) {
 
 };
 
-MapController.prototype._setupWFS = function () {
-  this.geoJSONFormat = new ol.format.GeoJSON();
-  var that = this;
-
-  //create vector source
-  this.vectorSource = new ol.source.Vector({
-    loader: function(extent, resolution, projection) {
-      var url = "http://localhost:8080/geoserver/wema/wfs?service=WFS&version=1.1.0&request=GetFeature&"+
-                "typeName=wema:management_strategies&maxFeatures=50&"+
-                "outputFormat=application/json"+
-                '&srsname=EPSG:3857';
-      //loader function
-      $.ajax({url:url, dataType: 'json', jsonp:false,
-        success: function(data) {
-          that.vectorSource.addFeatures(that.geoJSONFormat.readFeatures(data));
-        }
-      })
-    }
-  });
-
-  //management zone styles
-  var managementActionStyles = (function() {
-    return function(feature, resolution) {
-      var defaultStyle = [new ol.style.Style({
-        fill: new ol.style.Fill({color: zoneLookup[feature.get('controlMechanism')].fillColor}),
-        stroke: new ol.style.Stroke({color: zoneLookup[feature.get('controlMechanism')].strokeColor, width: 4})
-      })];
-      return defaultStyle;
-    };
-  })();
-
-  //create layer
-  this.layers.mangementActions = new ol.layer.Vector({
-    source: this.vectorSource,
-    style:managementActionStyles
-  });
-
-  this.map.addLayer(this.layers.mangementActions);
-};
-
 //setup map function
 MapController.prototype.setupMap = function() {
+  var that = this;
   this.map = new ol.Map({
     interactions: ol.interaction.defaults().extend([
       new ol.interaction.DragRotateAndZoom()
@@ -178,6 +186,22 @@ MapController.prototype.setupMap = function() {
 
   this.addHSLayer();
   this._setupVisLayer();
-  this._setupWFS();
+
+  //setup management actions wfs
+  this.WFSTLayers.managementActions = new WFSTLayer({
+    url: "http://localhost:8080/geoserver/wema/wfs",
+    featureNS: "wema",
+    featureType: "management_strategies"
+  });
+  this.layers.managementActions = this.WFSTLayers.managementActions.getLayer();
+  this.map.addLayer(this.layers.managementActions);
+  this.WFSTLayers.managementActions.drawPropertiesFunction(function getDrawMetadata() {
+    return that.getMetadata();
+  });
+
+
+  //add interaction handlers
+  this.map.addInteraction(this.WFSTLayers.managementActions.getDrawInteraction());
+  this.map.addInteraction(this.WFSTLayers.managementActions.snap);
 
 }
