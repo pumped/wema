@@ -99,7 +99,9 @@ function ToolbarManager(mc) {
 ToolbarManager.prototype.setup = function () {
 	var that = this;
 	//setup draw button
-	this.bind('drawTool','zone');
+	this.bind('drawTool','draw');
+	this.bind('editTool','edit');
+	this.bind('removeTool','delete');
 
 	$('#drawTool').click(function() {
 		that._draw("zone");
@@ -148,8 +150,8 @@ ToolbarManager.prototype.onInteraction = function (type,callback) {
 
 // bind a button to a map interaction mode
 // toggles map setInteractionMode()
-ToolbarManager.prototype.bind = function(buttonID,modeID) {
-	this.controls[buttonID] = modeID;
+ToolbarManager.prototype.bind = function(buttonID,type) {
+	this.controls[buttonID] = type;
 
 	//bind click function
 	var that = this;
@@ -187,8 +189,8 @@ ToolbarManager.prototype.toggle = function(ID) {
 
 ToolbarManager.prototype.activate = function(ID) {
 	//set map controller mode
-	mode = this.controls[ID];
-	this.mc.setInteractionMode(mode);
+	var type = this.controls[ID];
+	this.mc.setInteractionMode(type);
 
 	//change button state
 	$('#'+ID).addClass('active');

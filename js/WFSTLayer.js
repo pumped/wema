@@ -25,15 +25,27 @@ function WFSTLayer(params) {
 
 //sets the interaction mode with the layer
 WFSTLayer.prototype.setMode = function(mode) {
+
+  this.draw.setActive(false);
+  this.select.setActive(false);
+  this.modify.setActive(false);
+  this._enableDelete(false);
+  //this.delete.setActive(false);
+
   if (mode == "draw") {
-    console.log("draw on");
+    //console.log("draw on");
     this.draw.setActive(true);
-    console.log(this.draw.getActive());
+    //console.log(this.draw.getActive());
   } else if (mode == "delete") {
-    this.draw.setActive(false);
+    this._enableDelete(true);
+    this.modify.setActive(true);
+    this.select.setActive(true);
+  } else if (mode == "edit") {
+    this.select.setActive(true);
+    this.modify.setActive(true);
   } else {
     //off
-    console.log(mode);
+    //console.log(mode);
     this.draw.setActive(false);
 
   }
@@ -56,7 +68,7 @@ WFSTLayer.prototype._setupWFS = function () {
   this.vectorSource = new ol.source.Vector({
     loader: function(extent, resolution, projection) {
       var url = that.params.url + "?service=WFS&version=1.1.0&request=GetFeature&"+
-                "typeName=wema:management_strategies&maxFeatures=50&"+
+                "typeName=wema:management_strategies&maxFeatures=1000&"+
                 "outputFormat=application/json"+
                 "&srsname=EPSG:3857";
 
@@ -111,9 +123,120 @@ WFSTLayer.prototype.getDrawProperties = function() {
 // setup modify interaction handler
 WFSTLayer.prototype._setupModify = function () {
   console.log(this.vectorSource);
-  /*his.modify = new ol.interaction.Modify({
-    features: this.vectorSource.getFeatures(),
-  })*/
+  console.log(this.vectorSource.getFeatures());
+  this.select = new ol.interaction.Select({
+    wrapX: false
+  });
+  var that = this;
+  this.select.on("select", function(e){
+    if (that.delete) {
+      console.log("delete");
+      //console.log(e);
+
+      var features = e.target.getFeatures().getArray();
+      if (features.length > 0) {
+        var featureID = features[0].getId();
+
+        //save & delete in view
+        that._saveChanges(null,null,features,function successfulTransaction(data){
+          console.debug("succesfully deleted");
+
+          //delete it
+          that._removeSelectedFeature(featureID);
+
+          //deselect feature to finish deletion
+          that.select.getFeatures().clear();
+        });
+      }
+    }
+  });
+
+  this.modify = new ol.interaction.Modify({
+    features:this.select.getFeatures()
+  });
+  this.select.setActive(false);
+};
+
+WFSTLayer.prototype._removeSelectedFeature = function(removeID) {
+  var features = this.vectorSource.getFeatures();
+  //console.log(features);
+  if (features != null && features.length > 0) {
+    for (x in features) {
+      var id = features[x].getId();
+      //console.log(id);
+      if (id == removeID) {
+        this.vectorSource.removeFeature(features[x]);
+        break;
+      }
+    }
+  }
+};
+
+WFSTLayer.prototype._enableDelete = function (val) {
+  this.delete = val;
+  if (val) {
+    this.deleteFunction = function(event) {
+      return ol.events.condition.singleClick(event);
+    }
+  } else {
+    this.deleteFunction = function(event) {
+      return false;
+    }
+  }
+}
+
+WFSTLayer.prototype._saveChanges = function(add, modify, del, successFunction, errorFunction) {
+
+  if (typeof add == "undefined") {
+    add = null;
+  }
+  if (typeof modify == "undefined") {
+    modify = null;
+  }
+  if (typeof del == "undefined") {
+    del = null;
+  }
+
+  //create wfs transaction
+  var options = {
+    featureNS: this.params.featureNS,
+    featureType: this.params.featureType,
+    gmlOptions: {srsName: "EPSG:3857"}
+  };
+  var transaction = new ol.format.WFS(options);
+
+  //create transaction xml string
+  var transactionXML = transaction.writeTransaction(add,modify,del,options);
+  var serializer = new XMLSerializer();
+  var transactionString = serializer.serializeToString(transactionXML);
+
+  //post transaction
+  $.ajax({
+    url:this.params.url,
+    data:transactionString,
+    jsonp:false,
+    type:"POST",
+    method:"POST",
+    contentType: "application/xml",
+    success: function(data) {
+      if (typeof successFunction == "function") {
+        successFunction(data);
+      } else {
+        console.debug("Transaction Succeded");
+        console.debug(data);
+      }
+    },
+    error: function(e) {
+      if (typeof errorFunction == "function") {
+        errorFunction(e);
+      } else {
+        console.error("Transaction Failed")
+        if (e.hasOwnProperty('responseText')) {
+            console.error('WFS Transaction Failed:\n Code:'+e.status+' \n'+e.responseText)
+        }
+      }
+    }
+  });
 };
 
 // setup drawing interaction handler
@@ -143,40 +266,11 @@ WFSTLayer.prototype._setupDrawing = function () {
     console.log(drawProperties);
     e.feature.setProperties(drawProperties);
 
-    //create wfs transaction
-    var options = {
-      featureNS: that.params.featureNS,
-      featureType: that.params.featureType,
-      gmlOptions: {srsName: "EPSG:3857"}
-    };
-    var transaction = new ol.format.WFS(options);
-
     //fix geometry name
     e.feature.set('the_geom',e.feature.getGeometry());
     e.feature.setGeometryName("the_geom");
 
-    //create transaction xml string
-    var transactionXML = transaction.writeTransaction([e.feature],null,null,options);
-    var serializer = new XMLSerializer();
-    var transactionString = serializer.serializeToString(transactionXML);
-
-    //post transaction
-    $.ajax({
-      url:that.params.url,
-      data:transactionString,
-      jsonp:false,
-      type:"POST",
-      method:"POST",
-      contentType: "application/xml",
-      success: function(data) {
-        console.log(data);
-      },
-      error: function(e) {
-        if (e.hasOwnProperty('responseText')) {
-            console.error('WFS Transaction Failed:\n Code:'+e.status+' \n'+e.responseText)
-        }
-      }
-    });
+    that._saveChanges([e.feature],null,null);
   })
 };
 

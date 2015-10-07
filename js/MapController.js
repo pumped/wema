@@ -88,7 +88,7 @@ MapController.prototype.getInteractionMode = function() {
 MapController.prototype.setInteractionMode = function(mode) {
   console.log("Set Interaction Mode: " + mode)
   //remove current listener
-  this.interaction = false;
+  this.interaction = mode;
 
   //if just turning off return
   if (mode == false) {
@@ -97,9 +97,15 @@ MapController.prototype.setInteractionMode = function(mode) {
   }
 
   //fetch interaction
+  console.log(this.mode);
   if (this.mode == "zone") {
-    this.WFSTLayers.managementActions.setMode("draw");
-    this.interaction = this.WFSTLayers.managementActions.getDrawInteraction();
+    if (mode == "draw") {
+      this.WFSTLayers.managementActions.setMode("draw");
+    } else if (mode == "edit") {
+      this.WFSTLayers.managementActions.setMode("edit");
+    } else if (mode == "delete") {
+      this.WFSTLayers.managementActions.setMode("delete");
+    }
   }
 
   //this.map.addInteraction(this.interaction);
@@ -203,5 +209,7 @@ MapController.prototype.setupMap = function() {
   //add interaction handlers
   this.map.addInteraction(this.WFSTLayers.managementActions.getDrawInteraction());
   this.map.addInteraction(this.WFSTLayers.managementActions.snap);
+  this.map.addInteraction(this.WFSTLayers.managementActions.select);
+  this.map.addInteraction(this.WFSTLayers.managementActions.modify);
 
 }
