@@ -1,6 +1,5 @@
 var mc = new MapController();
 var iface = new InterfaceManager();
-var years = [0,49];
 
 $('document').ready(function(){
 	mc.setupMap();
@@ -18,9 +17,14 @@ $('document').ready(function(){
 function InterfaceManager() {
 	this.console = new Console();
 	this.tools = new ToolbarManager(mc);
-	this.timeline = new TimelineManager();
+	this.modelManager = new ModelManager();
+
+	this.timeline = new TimelineManager(this.modelManager.url);
 	this.timeline.setConsole(this.console);
 	this.timeline.setMapController(mc);
+
+	this.speciesID = 0;
+
 }
 
 InterfaceManager.prototype.setup = function(mode) {
@@ -41,6 +45,13 @@ InterfaceManager.prototype.setup = function(mode) {
 	this.zones = new ZoneManager();
 	this.zones.onChange(function updateMapZone(zoneID) {
 		mc.setZone(zoneID);
+	});
+
+	this.tools.on("save",function saveState(e) {
+		var timeline = that.timeline.getID();
+		var species = that.speciesID;
+		console.log("saveState Function")
+		that.modelManager.saveState(species,timeline);
 	});
 
 };
@@ -76,7 +87,7 @@ InterfaceManager.prototype.setMode = function(mode) {
 /*--- Toolbar Buttons ---*/
 function ToolbarManager(mc) {
 	this.mc = mc;
-	this.callbacks;
+	this.callbacks = {};
 	this.controls = {}; // {ID:button}
 	this.mode = {
 		'edit':{
@@ -103,10 +114,34 @@ ToolbarManager.prototype.setup = function () {
 	this.bind('editTool','edit');
 	this.bind('removeTool','delete');
 
+
 	$('#drawTool').click(function() {
 		that._draw("zone");
 	});
+
+	$('#saveState').click(function saveButtonClick() {
+		//run model
+		that._event("save",null);
+	})
+
 };
+
+ToolbarManager.prototype._event = function(type,evt) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](evt);
+			}
+		}
+	}
+}
+
+ToolbarManager.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
+}
 
 ToolbarManager.prototype.setMode = function(mode) {
 	//edit toolbar
@@ -143,10 +178,10 @@ ToolbarManager.prototype._draw = function(mode) {
 		console.log("draw");
 	}
 }
-
+/*
 ToolbarManager.prototype.onInteraction = function (type,callback) {
 	this.callbacks[type] = callback;
-};
+};*/
 
 // bind a button to a map interaction mode
 // toggles map setInteractionMode()

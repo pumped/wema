@@ -18,6 +18,8 @@ function WFSTLayer(params) {
     controlMechanism: 2
   };
 
+  this.modificationTable = {};
+
   this._setupWFS();
   this._setupDrawing();
   this._setupModify();
@@ -122,17 +124,16 @@ WFSTLayer.prototype.getDrawProperties = function() {
 
 // setup modify interaction handler
 WFSTLayer.prototype._setupModify = function () {
-  console.log(this.vectorSource);
-  console.log(this.vectorSource.getFeatures());
+  //console.log(this.vectorSource);
+  //console.log(this.vectorSource.getFeatures());
   this.select = new ol.interaction.Select({
     wrapX: false
   });
   var that = this;
+  //deletes
   this.select.on("select", function(e){
+    //if deleting
     if (that.delete) {
-      console.log("delete");
-      //console.log(e);
-
       var features = e.target.getFeatures().getArray();
       if (features.length > 0) {
         var featureID = features[0].getId();
@@ -151,6 +152,24 @@ WFSTLayer.prototype._setupModify = function () {
     }
   });
 
+  //when feature is selected store revision for modification detection
+  this.select.getFeatures().on("add", function(e){
+    var feature = e.element;
+    that.modificationTable[feature.getId()] = feature.getRevision();
+  });
+
+  //when feature is de-selected, save it if modified
+  this.select.getFeatures().on("remove", function(e) {
+    var feature = e.element;
+    var id = feature.getId();
+    if (that.modificationTable.hasOwnProperty(id))
+    if (that.modificationTable[id] != feature.getRevision()) {
+      console.debug("Feature changed, saving");
+      that._saveChanges(null,[feature],null);
+    }
+  });
+
+  //modifications
   this.modify = new ol.interaction.Modify({
     features:this.select.getFeatures()
   });

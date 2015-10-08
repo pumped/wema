@@ -3,6 +3,8 @@ function ModelManager() {
 	this.id = -1;
 	this.updateRate = 5000;
 	this.consID = -1;
+
+	console.trace();
 }
 
 ModelManager.prototype.setup = function() {
@@ -13,10 +15,20 @@ ModelManager.prototype.getStatus = function() {
 
 }
 
+//save the state and run a model
+ModelManager.prototype.saveState = function(species, timeline) {
+/*	var species = "a";
+	var timeline = "b";*/
+
+	$.getJSON(this.url + '/save/'+species+"/"+timeline, function(data) {
+		console.log(data);
+	});
+}
+
 ModelManager.prototype.setID = function(id) {
-	this.id = id;
+	/*this.id = id;
 	mc.addHSLayer(id);
-	mc.addTimeline(id, years[0], years[1]);	
+	mc.addTimeline(id, years[0], years[1]);	*/
 }
 
 ModelManager.prototype.setMapController = function(mapController) {

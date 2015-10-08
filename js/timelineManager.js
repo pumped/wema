@@ -1,23 +1,22 @@
 
-function TimelineManager() {
+function TimelineManager(url) {
 	this.startYear = 0;
 	this.currentYear = this.startYear;
 	this.endYear = 29;
 	this.playbackSpeed = 200;
 	this.loop = false;
 	this.data = null;
-
-	this.modelManager = new ModelManager();
+	this.url = url;
 }
 
 TimelineManager.prototype.setConsole = function(cons) {
 	this.console = cons;
-	this.modelManager.setConsole(cons);
+	//this.modelManager.setConsole(cons);
 };
 
 TimelineManager.prototype.setMapController = function(mapController) {
 	this.mapController = mapController;
-	this.modelManager.setMapController(mapController);
+	//this.modelManager.setMapController(mapController);
 };
 
 
@@ -26,7 +25,7 @@ TimelineManager.prototype.setup = function() {
 
 	//setup timelines
 	var that = this;
-	$.getJSON(this.modelManager.url+'/getTimeline', function(data){
+	$.getJSON(this.url+'/getTimeline', function(data){
 		that.timeline = new Timeline(data);
 		that.data = data;
 		that.setID(data[0].ID);
@@ -65,9 +64,13 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 	});
 };
 
+TimelineManager.prototype.getID = function(id) {
+	return this.id;
+}
+
 TimelineManager.prototype.setID = function(id) {
 	this.id = id;
-	this.modelManager.setID(id);
+	//this.modelManager.setID(id);
 	data = this.getData(this.id);
 
 	//adjust stats
