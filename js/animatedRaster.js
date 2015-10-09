@@ -33,6 +33,17 @@ AnimatedRaster.prototype.setTime = function(time) {
 	this.drawImage(time);
 }
 
+AnimatedRaster.prototype.changeParam = function(paramater, value) {
+	if (paramater == "url") {
+		this.url = value;
+	}
+
+	console.log("Paramater " + paramater + " changed to " + value);
+
+	//refresh view
+	this.drawImage(this.time);
+}
+
 AnimatedRaster.prototype.drawImage = function(time) {
 	this.time = time;
 
@@ -63,8 +74,6 @@ AnimatedRaster.prototype.fireFrameCallback = function(callback) {
 };
 
 AnimatedRaster.prototype.getCanvas = function(extent, resolution, pixelRatio, size, projection) {
-	//console.log(this);
-
 	//calculate projections
 	this.calculateProjection(extent, resolution, pixelRatio, size, projection);
 

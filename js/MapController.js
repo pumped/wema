@@ -24,14 +24,27 @@ function MapController() {
   this.interaction = false;
 
   this.id;
+  this.visID;
+  this.speciesID;
   this.zone;
   this.time;
 }
 
 MapController.prototype.getID = function () {
-  return ''
+  //return ''
   return this.id;
 };
+
+MapController.prototype._getVisURL = function() {
+  console.log(this.speciesID + " - " + this.visID);
+  var url = "map/imgs";
+  if (this.speciesID && this.visID) {
+    url += "/" + this.speciesID + "-" + this.visID;
+  }
+  url += "/agg";
+
+  return url;
+}
 
 MapController.prototype._setupVisLayer = function() {
   if (!this.map) {
@@ -39,7 +52,7 @@ MapController.prototype._setupVisLayer = function() {
   }
 
   //create canvas and animater
-  var url = "map/imgs/" + this.getID() + "/agg";
+  var url = this._getVisURL();
   this.animatedRaster = new AnimatedRaster({
     url: url,
     startTime: "0",
@@ -110,25 +123,22 @@ MapController.prototype.setInteractionMode = function(mode) {
 
   //this.map.addInteraction(this.interaction);
 }
-/*
-MapController.prototype.editMode = function() {
 
+MapController.prototype.setVisTimeline = function(id) {
+  this.visID = id;
+
+  //update animated raster url
+  this.animatedRaster.changeParam("url",this._getVisURL());
 };
 
-MapController.prototype.overviewMode = function() {
+MapController.prototype.setVectorTimeline = function(id) {
+  this.id = id;
 
+  //show/hide as necessary
 };
 
-MapController.prototype.planMode = function() {
-
-};
-
-MapController.prototype.zoneMode = function() {
-
-};*/
-
-MapController.prototype.setTimeline = function(id, yearStart, yearEnd) {
-
+MapController.prototype.setSpecies = function (species) {
+  this.speciesID = species;
 };
 
 MapController.prototype.setZone = function(zone) {
@@ -140,7 +150,13 @@ MapController.prototype.addDispersalLayer = function(file,idx) {
 };
 
 MapController.prototype.getMetadata = function() {
-  var metadata = {controlMechanism:this.zone, time:this.time, timeline:this.id};
+  var metadata = {
+                    controlMechanism:this.zone,
+                    time:this.time,
+                    timeline:this.id,
+                    species:this.speciesID
+                  };
+                  
   return metadata;
 };
 

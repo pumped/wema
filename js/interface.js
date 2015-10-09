@@ -2,7 +2,6 @@ var mc = new MapController();
 var iface = new InterfaceManager();
 
 $('document').ready(function(){
-	mc.setupMap();
 	iface.setup();
 
     iface.console.write('Map Initialised');
@@ -22,24 +21,37 @@ function InterfaceManager() {
 	this.timeline = new TimelineManager(this.modelManager.url);
 	this.timeline.setConsole(this.console);
 	this.timeline.setMapController(mc);
-
-	this.speciesID = 0;
-
 }
 
 InterfaceManager.prototype.setup = function(mode) {
+	var that = this;
+
+	//set default species and ID
+	this.speciesID = "a";
+	this.timeline.setID("b");
+
+	//setup map controller
+	mc.setSpecies(this.speciesID);
+	mc.setupMap();
+	this.timeline.on("timelineChange",function updateMapTimeline(data){
+		if (data.hasOwnProperty("id")) {
+			mc.setVectorTimeline(data.id);
+		} else {
+			console.warn("Timeline Change event doesn't have an ID");
+		}
+	});
+
+	//setup timeline manager
+	this.timeline.setup();
+
 	//setup mode buttons
 	$('.navbar-nav a').click(function(){
 		button = this.href.split('#')[1];
 		iface.setMode(button);
 	});
 
+	//setup toolbars
 	this.tools.setup();
-
-	//setup timeline manager
-	this.timeline.setup();
-
-	var that = this;
 
 	//setup zone manager events
 	this.zones = new ZoneManager();
@@ -50,8 +62,9 @@ InterfaceManager.prototype.setup = function(mode) {
 	this.tools.on("save",function saveState(e) {
 		var timeline = that.timeline.getID();
 		var species = that.speciesID;
-		console.log("saveState Function")
+		//console.log(timeline);
 		that.modelManager.saveState(species,timeline);
+		mc.setVisTimeline(timeline);
 	});
 
 };

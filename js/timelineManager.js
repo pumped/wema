@@ -7,6 +7,8 @@ function TimelineManager(url) {
 	this.loop = false;
 	this.data = null;
 	this.url = url;
+
+	this.callbacks = {};
 }
 
 TimelineManager.prototype.setConsole = function(cons) {
@@ -41,6 +43,25 @@ TimelineManager.prototype.setup = function() {
 
 };
 
+//fire callbacks
+TimelineManager.prototype._event = function(type,data) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](data);
+			}
+		}
+	}
+}
+
+//set callback
+TimelineManager.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
+}
+
 TimelineManager.prototype.setupPlaybackBar = function() {
 	this.slider = $('#timeSlider');
 
@@ -71,10 +92,13 @@ TimelineManager.prototype.getID = function(id) {
 TimelineManager.prototype.setID = function(id) {
 	this.id = id;
 	//this.modelManager.setID(id);
-	data = this.getData(this.id);
+	//data = this.getData(this.id);
 
 	//adjust stats
 	this.updateStats();
+
+	//fire callback
+	this._event("timelineChange",{"id":id});
 };
 
 TimelineManager.prototype.setYear = function(year) {
@@ -91,17 +115,20 @@ TimelineManager.prototype.setYear = function(year) {
 };
 
 TimelineManager.prototype.updateStats = function() {
+	var data = this.getData(this.id);
+	if (data) {
+		var idx = this.currentYear - (this.startYear); // + parseInt(data.startTime));
 
-	data = this.getData(this.id);
-	idx = this.currentYear - (this.startYear); // + parseInt(data.startTime));
+		if (idx >= 0) {
+			var invArea = data.invStats[idx];
 
-	if (idx >= 0) {
-		invArea = data.invStats[idx];
-
-		$('#costDisplay .value').html("0");
-		$('#yearDisplay .value').html(this.currentYear);
-		$('#invAreaDisplay .value').html(invArea);
-		//$('#restCostDisplay .value').html("$"+(invArea*600));
+			$('#costDisplay .value').html("0");
+			$('#yearDisplay .value').html(this.currentYear);
+			$('#invAreaDisplay .value').html(invArea);
+			//$('#restCostDisplay .value').html("$"+(invArea*600));
+		}
+	} else {
+		console.warn("Timeline Manager - (updateStats): no data found");
 	}
 };
 
@@ -118,8 +145,14 @@ TimelineManager.prototype.getData = function(id) {
 		}
 	}
 
-	this.currentData = this.dataSearch(this.data[0], id);
-	console.log(this.currentData);
+	console.log(this.data);
+	if (this.data != null) {
+		this.currentData = this.dataSearch(this.data[0], id);
+		return this.currentData;
+		console.log(this.currentData);
+	}
+
+	return null;
 };
 
 TimelineManager.prototype.dataSearch = function(data,id) {
