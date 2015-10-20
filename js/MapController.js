@@ -83,6 +83,10 @@ MapController.prototype.setVisTime = function(val) {
   this.animater.animateTo(val);
 }
 
+MapController.prototype.getMode = function (mode) {
+  return this.mode;
+}
+
 MapController.prototype.setMode = function (mode) {
   this.mode = mode;
 
@@ -156,7 +160,7 @@ MapController.prototype.getMetadata = function() {
                     timeline:this.id,
                     species:this.speciesID
                   };
-                  
+
   return metadata;
 };
 

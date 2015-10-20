@@ -27,12 +27,16 @@ InterfaceManager.prototype.setup = function(mode) {
 	var that = this;
 
 	//set default species and ID
-	this.speciesID = "a";
-	this.timeline.setID("b");
+	this.speciesID = "siam";
+
+	this.timeline.setSpeciesID(this.speciesID);
+	this.timeline.setID("1");
 
 	//setup map controller
 	mc.setSpecies(this.speciesID);
 	mc.setupMap();
+	mc.setVisTimeline("1");
+
 	this.timeline.on("timelineChange",function updateMapTimeline(data){
 		if (data.hasOwnProperty("id")) {
 			mc.setVectorTimeline(data.id);
@@ -213,23 +217,23 @@ ToolbarManager.prototype.bindOnMode = function(ID,button,zone) {
 };
 
 ToolbarManager.prototype.toggle = function(ID) {
-
+	console.log(ID);
 	//get currently Active tool
 	var active = false;
-	if (this.mc.getInteractionMode() != false) {
+	if ($('#'+ID).hasClass('active')) {
 		active = true;
 	}
 
 	//deactivate all tools
-	/*this.mc.setInteractionMode(false);
+	this.mc.setInteractionMode(false);
 	for (id in this.controls) {
 		this.deactivate(id);
-	}*/
+	}
 
 	//turn on/off required tool
 	callback = this.controls[ID];
 	if (active) {
-			this.deactivate(ID);
+			//this.deactivate(ID);
   	} else {
   		this.activate(ID);
   	}
@@ -249,8 +253,8 @@ ToolbarManager.prototype.activate = function(ID) {
 };
 
 ToolbarManager.prototype.deactivate = function(ID) {
-	mode = this.controls[ID];
-	this.mc.setInteractionMode(false);
+	var mode = this.controls[ID];
+	//this.mc.setInteractionMode(false);
 
 	//change button state
 	$('#'+ID).removeClass('active');

@@ -8,6 +8,8 @@ function TimelineManager(url) {
 	this.data = null;
 	this.url = url;
 
+	this.speciesID = 0;
+
 	this.callbacks = {};
 }
 
@@ -27,19 +29,61 @@ TimelineManager.prototype.setup = function() {
 
 	//setup timelines
 	var that = this;
-	$.getJSON(this.url+'/getTimeline', function(data){
-		that.timeline = new Timeline(data);
+	$.getJSON(this.url+'?r=getTimeline&species='+this.speciesID+'&timeline='+this.id, function(data){
+		/*that.timeline = new Timeline(data);
+		that.timeline.drawTimeline('timelines');*/
 		that.data = data;
-		that.setID(data[0].ID);
+		//playGraph.setData(data);
+	//	playGraph.setTimelineData("1",data);
+	/*	that.setID(data[0].ID);
 		that.timeline.drawTimeline('timelines');
 		that.timeline.clickBind(function(id, year){
 			that.setID(id);
 			data = that.getData(id);
 			year = year - data.startTime;
 			that.setYear(year);
-		});
+		});*/
 
 	});
+
+	tldata = [{
+			startTime:'0',
+			endTime:'30',
+			ID:'0',
+			occupied: [886, 1276, 1544, 1737, 1887, 2307, 3038, 3836, 4622, 5356, 6120, 6967, 7909, 8954, 10133, 11334, 12625, 13982, 15347, 16907, 18509, 20180, 21916, 23738, 25644, 27648, 29728, 31932, 34124, 36413],
+			cost: 500000,
+			divisions: [2000,1000,3000,6000,0,1000],
+			children:[{
+				startTime:'0',
+				endTime:'30',
+				ID:'1',
+				occupied: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				cost: 200000,
+				children:[]
+			}]
+		}];
+
+	playGraph = new GraphTimeline("playbackGraph");
+	playGraph.setData(tldata);
+	playGraph.setBaseID("0");
+	playGraph.setID("1");
+
+	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
+	var $message = $('#message');
+	ws.onopen = function(){
+		console.log("socket opened");
+	};
+	ws.onmessage = function(ev){
+		var data = JSON.parse(ev.data);
+		console.log(data);
+		playGraph.setTimelineData("1",data.data.state);
+	};
+	ws.onclose = function(ev){
+		console.log("socket closed");
+	};
+	ws.onerror = function(ev){
+		console.log("socket error");
+	};
 
 };
 
@@ -83,6 +127,10 @@ TimelineManager.prototype.setupPlaybackBar = function() {
 		event.data.self.togglePlay();
 		return false;
 	});
+};
+
+TimelineManager.prototype.setSpeciesID = function (id) {
+	this.speciesID = id;
 };
 
 TimelineManager.prototype.getID = function(id) {

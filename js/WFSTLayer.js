@@ -239,7 +239,7 @@ WFSTLayer.prototype._saveChanges = function(add, modify, del, successFunction, e
     contentType: "application/xml",
     success: function(data) {
       if (typeof successFunction == "function") {
-        successFunction(data);
+        successFunction(data, add);
       } else {
         console.debug("Transaction Succeded");
         console.debug(data);
@@ -289,7 +289,18 @@ WFSTLayer.prototype._setupDrawing = function () {
     e.feature.set('the_geom',e.feature.getGeometry());
     e.feature.setGeometryName("the_geom");
 
-    that._saveChanges([e.feature],null,null);
+    that._saveChanges([e.feature],null,null, function success(data,features){
+      console.log(data);
+      //l=$(data).find("totalInserted");
+      if (parseInt($(data).find("totalInserted").text()) == 1) {
+        var fid = $(data).find("FeatureId").attr("fid");
+        console.log(features);
+        features[0].setId(fid);
+      }
+      /*if (features) {
+
+      }*/
+    });
   })
 };
 

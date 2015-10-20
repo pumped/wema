@@ -1,10 +1,10 @@
 function ModelManager() {
-	this.url = 'proxy.php?url=http://localhost:5566';
+	this.url = 'http://localhost:8082/api';
 	this.id = -1;
 	this.updateRate = 5000;
 	this.consID = -1;
 
-	console.trace();
+	//console.trace();
 }
 
 ModelManager.prototype.setup = function() {
@@ -20,7 +20,7 @@ ModelManager.prototype.saveState = function(species, timeline) {
 /*	var species = "a";
 	var timeline = "b";*/
 
-	$.getJSON(this.url + '/save/'+species+"/"+timeline, function(data) {
+	$.getJSON(this.url + '?r=runModel&species='+species+"&timeline="+timeline, function(data) {
 		console.log(data);
 	});
 }
@@ -33,6 +33,10 @@ ModelManager.prototype.setID = function(id) {
 
 ModelManager.prototype.setMapController = function(mapController) {
 	this.mapController = mapController;
+}
+
+ModelManager.prototype.onNewData = function(callback) {
+
 }
 
 //expects jquery element
