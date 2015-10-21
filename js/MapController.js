@@ -89,9 +89,13 @@ MapController.prototype.getMode = function (mode) {
 
 MapController.prototype.setMode = function (mode) {
   this.mode = mode;
-
+  console.debug(mode);
   if (mode == "edit") {
-
+    this.WFSTLayers.managementActions.setVisibility(false);
+    this.WFSTLayers.distributionLayer.setVisibility(true);
+  } else if (mode == "zone") {
+    this.WFSTLayers.distributionLayer.setVisibility(false);
+    this.WFSTLayers.managementActions.setVisibility(true);
   }
 };
 
@@ -122,6 +126,14 @@ MapController.prototype.setInteractionMode = function(mode) {
       this.WFSTLayers.managementActions.setMode("edit");
     } else if (mode == "delete") {
       this.WFSTLayers.managementActions.setMode("delete");
+    }
+  } else if (this.mode == "edit") {
+    if (mode == "polygon") {
+      this.WFSTLayers.distributionLayer.setMode("draw");
+    } else if (mode == "edit") {
+      this.WFSTLayers.distributionLayer.setMode("edit");
+    } else if (mode == "delete") {
+      this.WFSTLayers.distributionLayer.setMode("delete");
     }
   }
 
@@ -225,11 +237,24 @@ MapController.prototype.setupMap = function() {
     return that.getMetadata();
   });
 
+  //setup distribution layer
+  this.WFSTLayers.distributionLayer = new WFSTLayer({
+    url: "http://localhost:8080/geoserver/wema/wfs",
+    featureNS: "wema",
+    featureType: "distribution"
+  });
+  this.layers.distributionLayer = this.WFSTLayers.distributionLayer.getLayer();
+  this.map.addLayer(this.layers.distributionLayer);
 
   //add interaction handlers
   this.map.addInteraction(this.WFSTLayers.managementActions.getDrawInteraction());
   this.map.addInteraction(this.WFSTLayers.managementActions.snap);
   this.map.addInteraction(this.WFSTLayers.managementActions.select);
   this.map.addInteraction(this.WFSTLayers.managementActions.modify);
+
+  this.map.addInteraction(this.WFSTLayers.distributionLayer.getDrawInteraction());
+  this.map.addInteraction(this.WFSTLayers.distributionLayer.snap);
+  this.map.addInteraction(this.WFSTLayers.distributionLayer.select);
+  this.map.addInteraction(this.WFSTLayers.distributionLayer.modify);
 
 }

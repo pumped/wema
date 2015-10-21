@@ -109,12 +109,14 @@ function ToolbarManager(mc) {
 	this.mode = {
 		'edit':{
 			'drawTool': 0,
+			'polygonTool':1,
 			'pointTool': 1,
 			'editTool': 1,
 			'removeTool': 1
 		},
 		'zone':{
 			'drawTool': 1,
+			'polygonTool':0,
 			'pointTool':0,
 			'editTool': 1,
 			'removeTool': 1
@@ -130,6 +132,8 @@ ToolbarManager.prototype.setup = function () {
 	this.bind('drawTool','draw');
 	this.bind('editTool','edit');
 	this.bind('removeTool','delete');
+	this.bind('pointTool','point');
+	this.bind('polygonTool','polygon');
 
 
 	$('#drawTool').click(function() {

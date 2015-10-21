@@ -3,6 +3,7 @@
 	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
   <script type="text/javascript" src="js/svg.min.js"></script>
   <script type="text/javascript" src="js/timeline.js"></script>
+	<script type="text/javascript" src="packages/reconnecting-websocket/reconnecting-websocket.min.js"></script>
 
 	<script type="text/javascript" src="js/ol.js"></script>
 	<script type="text/javascript" src="js/animatedRaster.js"></script>
@@ -23,6 +24,10 @@
   <link rel="stylesheet" type="text/css" href="css/zone.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/timeline.css">
+
+	<script type="text/javascript" src="packages/timelineVis/timeline.js"></script>
+	<script type="text/javascript" src="packages/timelineVis/highcharts.js"></script>
+	<link rel="stylesheet" type="text/css" href="packages/timelineVis/css/timeline.css"/>
 
 </head>
 <body>
@@ -76,8 +81,9 @@
       <div id="editTools">
         <div id="mapControls"></div>
         <ul class="vertButtons">
-          <li id="saveState" title="Save State"><span class="glyphicon glyphicon-star-empty"></span>Save</li>
-          <li id="pointTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Add</li>
+          <li id="saveState" title="Run Model"><span class="glyphicon glyphicon-refresh"></span>Run</li>
+          <li id="pointTool" title="Point"><span class="glyphicon glyphicon-pencil"></span>Point</li>
+					<li id="polygonTool" title="Polygon"><span class="glyphicon glyphicon-pencil"></span>Polygon</li>
           <li id="drawTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
         </ul>
         <ul class="vertButtons zoneBtns">
@@ -124,6 +130,7 @@
 
 
     <div id="timeline">
+			<div id="playbackGraph"></div>
       <a href="#play" id="playback"><span class="glyphicon glyphicon-play"></span></a>
       <div id="slideContainer"><div id="timeSlider" class="slider"></div></div>
     </div>

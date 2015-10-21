@@ -70,7 +70,7 @@ WFSTLayer.prototype._setupWFS = function () {
   this.vectorSource = new ol.source.Vector({
     loader: function(extent, resolution, projection) {
       var url = that.params.url + "?service=WFS&version=1.1.0&request=GetFeature&"+
-                "typeName=wema:management_strategies&maxFeatures=1000&"+
+                "typeName="+that.params.featureNS+":"+that.params.featureType+"&maxFeatures=1000&"+
                 "outputFormat=application/json"+
                 "&srsname=EPSG:3857";
 
@@ -306,4 +306,13 @@ WFSTLayer.prototype._setupDrawing = function () {
 
 WFSTLayer.prototype.getDrawInteraction = function () {
     return this.draw;
+};
+
+WFSTLayer.prototype.setVisibility = function (state) {
+  console.log(this.layer);
+  if (state) {
+    this.layer.setVisible(true);
+  } else {
+    this.layer.setVisible(false);
+  }
 };
