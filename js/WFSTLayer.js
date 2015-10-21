@@ -12,7 +12,9 @@ function WFSTLayer(params) {
     return false;
   }
 
-  this.params = params;
+  var defaults = {geometryType:"MultiPolygon", geometryName: "the_geom"}
+
+  this.params = $.extend({},defaults,params);
 
   this.drawProperties = {
     controlMechanism: 2
@@ -93,8 +95,8 @@ WFSTLayer.prototype._setupWFS = function () {
         })];
       } else {
         var defaultStyle = [new ol.style.Style({
-          fill: new ol.style.Fill({color: "rgb(250, 87, 243)"}),
-          stroke: new ol.style.Stroke({color: "rgb(250, 87, 243)", width: 4})
+          fill: new ol.style.Fill({color: "rgba(53, 180, 251, 0.2)"}),
+          stroke: new ol.style.Stroke({color: "rgba(53, 180, 251, 0.7)", width: 4})
         })];
       }
       return defaultStyle;
@@ -262,7 +264,7 @@ WFSTLayer.prototype._saveChanges = function(add, modify, del, successFunction, e
 WFSTLayer.prototype._setupDrawing = function () {
   this.draw = new ol.interaction.Draw({
     source:this.vectorSource,
-    type:'MultiPolygon'
+    type:this.params.geometryType
   });
 
   this.draw.setActive(false);
@@ -282,19 +284,18 @@ WFSTLayer.prototype._setupDrawing = function () {
 
     //set draw properties
     var drawProperties = that.getDrawProperties();
-    console.log(drawProperties);
     e.feature.setProperties(drawProperties);
 
     //fix geometry name
-    e.feature.set('the_geom',e.feature.getGeometry());
-    e.feature.setGeometryName("the_geom");
+    if (that.params.geometryName != "geometry") {
+      e.feature.set(that.params.geometryName,e.feature.getGeometry());
+      e.feature.setGeometryName(that.params.geometryName);  
+    }
 
     that._saveChanges([e.feature],null,null, function success(data,features){
-      console.log(data);
       //l=$(data).find("totalInserted");
       if (parseInt($(data).find("totalInserted").text()) == 1) {
         var fid = $(data).find("FeatureId").attr("fid");
-        console.log(features);
         features[0].setId(fid);
       }
       /*if (features) {

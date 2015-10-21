@@ -213,7 +213,15 @@ MapController.prototype.setupMap = function() {
         source: new ol.source.XYZ({
           url: 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
         })
-      })
+      }),
+      /*new ol.layer.Tile({
+        source: new ol.source.XYZ({
+          //url: 'http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
+          url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          //url: 'http://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png',
+          attributions: [new ol.Attribution({ html: ['&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'] })]
+        })
+      })*/
     ],
     target: 'map',
     view: new ol.View({
@@ -241,7 +249,9 @@ MapController.prototype.setupMap = function() {
   this.WFSTLayers.distributionLayer = new WFSTLayer({
     url: "http://localhost:8080/geoserver/wema/wfs",
     featureNS: "wema",
-    featureType: "distribution"
+    featureType: "distribution",
+    geometryType: "Polygon",
+    geometryName: "geometry"
   });
   this.layers.distributionLayer = this.WFSTLayers.distributionLayer.getLayer();
   this.map.addLayer(this.layers.distributionLayer);
