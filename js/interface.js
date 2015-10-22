@@ -69,6 +69,7 @@ InterfaceManager.prototype.setup = function(mode) {
 		//console.log(timeline);
 		that.modelManager.saveState(species,timeline);
 		mc.setVisTimeline(timeline);
+		that.timeline.expandGraph(true);
 	});
 
 };
@@ -143,6 +144,9 @@ ToolbarManager.prototype.setup = function () {
 	$('#saveState').click(function saveButtonClick() {
 		//run model
 		that._event("save",null);
+
+		//animate icon
+		//$('#saveState i').addClass('fa-spin');
 	})
 
 };

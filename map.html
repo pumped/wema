@@ -25,6 +25,8 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/timeline.css">
 
+	<link rel="stylesheet" type="text/css" href="packages/font-awesome-4.4.0/css/font-awesome.css">
+
 	<script type="text/javascript" src="packages/timelineVis/timeline.js"></script>
 	<script type="text/javascript" src="packages/timelineVis/highcharts.js"></script>
 	<link rel="stylesheet" type="text/css" href="packages/timelineVis/css/timeline.css"/>
@@ -81,7 +83,7 @@
       <div id="editTools">
         <div id="mapControls"></div>
         <ul class="vertButtons">
-          <li id="saveState" title="Run Model"><span class="glyphicon glyphicon-refresh"></span>Run</li>
+          <li id="saveState" title="Run Model"><i class="fa fa-refresh"></i>Run</li>
           <li id="pointTool" title="Point"><span class="glyphicon glyphicon-pencil"></span>Point</li>
 					<li id="polygonTool" title="Polygon"><span class="glyphicon glyphicon-pencil"></span>Polygon</li>
           <li id="drawTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
@@ -97,6 +99,9 @@
         <ul class="vertButtons">
           <li id="editTool" title="Edit"><span class="glyphicon glyphicon-move"></span>Edit</li>
           <li id="removeTool" title="Delete"><span class="glyphicon glyphicon-remove"></span>Delete</li>
+        </ul>
+				<ul class="vertButtons">
+          <li id="layerSwitcher" title="Layers"><span class="glyphicon glyphicon-move"></span>Layers</li>
         </ul>
       </div>
     </div>

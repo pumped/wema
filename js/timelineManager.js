@@ -23,6 +23,14 @@ TimelineManager.prototype.setMapController = function(mapController) {
 	//this.modelManager.setMapController(mapController);
 };
 
+TimelineManager.prototype.expandGraph = function(expand) {
+	if (expand) {
+		this.playGraph.expandGraph();
+	} else {
+		this.playGraph.shrinkGraph();
+	}
+}
+
 
 TimelineManager.prototype.setup = function() {
 	this.setupPlaybackBar();
@@ -63,10 +71,10 @@ TimelineManager.prototype.setup = function() {
 			}]
 		}];
 
-	playGraph = new GraphTimeline("playbackGraph");
-	playGraph.setData(tldata);
-	playGraph.setBaseID("0");
-	playGraph.setID("1");
+	this.playGraph = new GraphTimeline("playbackGraph");
+	this.playGraph.setData(tldata);
+	this.playGraph.setBaseID("0");
+	this.playGraph.setID("1");
 
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
 	var $message = $('#message');
@@ -76,7 +84,9 @@ TimelineManager.prototype.setup = function() {
 	ws.onmessage = function(ev){
 		var data = JSON.parse(ev.data);
 		console.log(data);
-		playGraph.setTimelineData("1",data.data.state);
+		if (data.event == "timeline_state") {
+			that.playGraph.setTimelineData("1",data.data.state);
+		}
 	};
 	ws.onclose = function(ev){
 		console.log("socket closed");
