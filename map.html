@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="js/MapController.js"></script>
   <script type="text/javascript" src="js/modelManager.js"></script>
   <script type="text/javascript" src="js/timelineManager.js"></script>
+	<script type="text/javascript" src="js/layerSwitcher.js"></script>
 	<script type="text/javascript" src="js/interface.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/bootstrap-slider.js"></script>
@@ -45,7 +46,7 @@
           <a class="navbar-brand" href="index.html">Weed Manager</a>
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
+          <ul id="modeSwitcher" class="nav navbar-nav">
             <li class="active"><a id="overview" href="#overview">Overview</a></li>
             <li><a id="edit" href="#edit">Current Distribution</a></li>
             <li><a id="zone" href="#zone">Manage</a></li>
@@ -59,18 +60,33 @@
           </form>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-stats"></span> <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><div class="console"></div></li>
-                <li><div class="nodeStats">
-                	<ul class="info">
-                		<li>1 <span class="subText">Active Nodes</span>
-                		</li><li>0 <span class="subText">Jobs</span>
-                		</li><li>0 <span class="subText">Models Running</span>
-                		</li><li>2 <span class="subText">Projects</span></li>
-                		<li class="clr"></li>
-                	</ul>
-                </div></li>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Layers <b class="caret"></b></a>
+              <ul class="dropdown-menu" id="layerSwitcher">
+                <li class="layers">
+									<h4>Base Layers</h4>
+									<ul>
+										<li id="lBaseSatelite"><img class="active" src="img/thumbs/sat.png"/><span class="title">Satelite</span></li>
+										<li id="lBasePlain"><img src="img/thumbs/plain.png"/><span class="title">Clean</span></li>
+										<li id="lBaseRoad"><img src="img/thumbs/map.png"/><span class="title">Map</span></li>
+									</ul>
+								</li>
+								<li class="layerTransparency">
+									<h4>Overlays</h4>
+									<ul>
+										<li>
+											<span class="title">Habitat Suitability</span>
+											<label for="slideHSOpacity">opacity</label>
+											<input id="slideHSOpacity" class="opacity" type="range" min="0" max="1" step="0.01"/>
+										</li>
+										<li>
+											<span class="title">Simulation</span>
+											<label for="slideSimOpacity">opacity</label>
+											<input id="slideSimOpacity" class="opacity" type="range" value="1" min="0" max="1" step="0.01"/>
+											<!--<label for="slidePlaybackSpeed">playback speed</label>
+											<input id="slidePlaybackSpeed" class="opacity" type="range" min="300" max="2000" step="100"/>-->
+										</li>
+									</ul>
+								</li>
               </ul>
             </li>
             <li><a id="showTimelines" data-toggle="collapse" data-target=".timelineContainer"><span class="glyphicon glyphicon-random"></span> Timelines</a></li>
@@ -83,7 +99,8 @@
       <div id="editTools">
         <div id="mapControls"></div>
         <ul class="vertButtons">
-          <li id="saveState" title="Run Model"><i class="fa fa-refresh"></i>Run</li>
+          <li id="runModel" title="Run Model"><i class="fa fa-refresh"></i>Run</li>
+					<li id="saveState" title="Save"><i class="glyphicon glyphicon-star-empty"></i>Save</li>
           <li id="pointTool" title="Point"><span class="glyphicon glyphicon-pencil"></span>Point</li>
 					<li id="polygonTool" title="Polygon"><span class="glyphicon glyphicon-pencil"></span>Polygon</li>
           <li id="drawTool" title="Draw"><span class="glyphicon glyphicon-pencil"></span>Draw</li>
@@ -99,9 +116,6 @@
         <ul class="vertButtons">
           <li id="editTool" title="Edit"><span class="glyphicon glyphicon-move"></span>Edit</li>
           <li id="removeTool" title="Delete"><span class="glyphicon glyphicon-remove"></span>Delete</li>
-        </ul>
-				<ul class="vertButtons">
-          <li id="layerSwitcher" title="Layers"><span class="glyphicon glyphicon-move"></span>Layers</li>
         </ul>
       </div>
     </div>

@@ -3,8 +3,7 @@ var iface = new InterfaceManager();
 
 $('document').ready(function(){
 	iface.setup();
-
-    iface.console.write('Map Initialised');
+  iface.console.write('Map Initialised');
 
 	//set current mode
 	if ( window.location.hash ) {
@@ -49,7 +48,7 @@ InterfaceManager.prototype.setup = function(mode) {
 	this.timeline.setup();
 
 	//setup mode buttons
-	$('.navbar-nav a').click(function(){
+	$('#modeSwitcher a').click(function(){
 		button = this.href.split('#')[1];
 		iface.setMode(button);
 	});
@@ -71,6 +70,21 @@ InterfaceManager.prototype.setup = function(mode) {
 		mc.setVisTimeline(timeline);
 		that.timeline.expandGraph(true);
 	});
+
+
+	//setup layer switcher
+	this.layerSwitcher = new LayerSwitcher();
+	this.layerSwitcher.onLayerToggle(function layerToggled(params){
+		if (params.hasOwnProperty("id")) {
+			mc.setBaseLayer(params.id);
+		}
+	});
+	this.layerSwitcher.onTransperancyChange(function transparencyChanged(params){
+		if (params.hasOwnProperty("id")) {
+			mc.setLayerTransparency(params.id,params.value);
+		}
+	});
+	//this.layerSwitcher.setup();
 
 };
 
@@ -109,13 +123,17 @@ function ToolbarManager(mc) {
 	this.controls = {}; // {ID:button}
 	this.mode = {
 		'edit':{
+			'saveState':0,
+			'runModel':0,
 			'drawTool': 0,
 			'polygonTool':1,
-			'pointTool': 1,
+			'pointTool': 0,
 			'editTool': 1,
 			'removeTool': 1
 		},
 		'zone':{
+			'saveState':1,
+			'runModel':1,
 			'drawTool': 1,
 			'polygonTool':0,
 			'pointTool':0,
@@ -141,7 +159,7 @@ ToolbarManager.prototype.setup = function () {
 		that._draw("zone");
 	});
 
-	$('#saveState').click(function saveButtonClick() {
+	$('#runModel').click(function saveButtonClick() {
 		//run model
 		that._event("save",null);
 
