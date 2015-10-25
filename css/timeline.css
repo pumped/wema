@@ -1,3 +1,32 @@
+#timelineExpander {
+	height:0;
+}
+
+#timelineExpander .expHandle {
+	margin: auto !important;
+	text-align: center;
+	width: 50px;
+	position: relative;
+	top: -25px;
+	background-color: #fff;
+	/* height: 50px; */
+	border-radius: 25px 25px 0 0;
+	height: 25px;
+	font-size: 1.5em;
+}
+
+#timelineExpander .glyphicon {
+
+	margin: auto;
+}
+
+#timelineExpander .glyphicon-chevron-up {
+	padding-left:1px;
+}
+
+#timelineExpander .glyphicon-chevron-down {
+	margin-right: 1px;
+}
 
 
 .minorPoint, .majorPoint {
@@ -8,7 +37,7 @@
 
 .minorPoint:hover, .clickTarget:hover .minorPoint, .clickTarget:hover .majorPoint {
 	fill:#80A1E4;
-}	
+}
 
 .majorPoint {
 }

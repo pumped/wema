@@ -37,24 +37,9 @@ TimelineManager.prototype.setup = function() {
 
 	//setup timelines
 	var that = this;
-	$.getJSON(this.url+'?r=getTimeline&species='+this.speciesID+'&timeline='+this.id, function(data){
-		/*that.timeline = new Timeline(data);
-		that.timeline.drawTimeline('timelines');*/
-		that.data = data;
-		//playGraph.setData(data);
-	//	playGraph.setTimelineData("1",data);
-	/*	that.setID(data[0].ID);
-		that.timeline.drawTimeline('timelines');
-		that.timeline.clickBind(function(id, year){
-			that.setID(id);
-			data = that.getData(id);
-			year = year - data.startTime;
-			that.setYear(year);
-		});*/
 
-	});
 
-	tldata = [{
+/*	tldata = [{
 			startTime:'0',
 			endTime:'30',
 			ID:'0',
@@ -69,12 +54,21 @@ TimelineManager.prototype.setup = function() {
 				cost: 200000,
 				children:[]
 			}]
-		}];
+		}];*/
 
 	this.playGraph = new GraphTimeline("playbackGraph");
-	this.playGraph.setData(tldata);
-	this.playGraph.setBaseID("0");
+	this.playGraph._setupExpander("#timelineExpander .expHandle");
+	//this.playGraph.setData([]);
+	//this.playGraph.setBaseID("0");
 	this.playGraph.setID("1");
+
+	//get default data
+	$.getJSON(this.url+'?r=getTimeline&species='+this.speciesID+'&timeline='+this.id, function(data){
+		that.data = data;
+		that.playGraph.setData([that.data]);
+		that.playGraph.setBaseID("0");
+		that.playGraph.setID("1");
+	});
 
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
 	var $message = $('#message');
@@ -96,6 +90,8 @@ TimelineManager.prototype.setup = function() {
 	};
 
 };
+
+
 
 //fire callbacks
 TimelineManager.prototype._event = function(type,data) {
