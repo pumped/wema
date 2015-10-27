@@ -48,10 +48,19 @@ AnimatedRaster.prototype.changeParam = function(paramater, value) {
 }
 
 AnimatedRaster.prototype.drawImage = function(time) {
+	if (!this.canvasSize) {
+		return;
+	}
+
 	this.time = time;
+	var extent = this.extent.join(",");
 
 	var img = new Image();
-	img.src = this.url+time+'.png?'+this.cacheBreaker;
+	img.src = this.url+"&time="+time+
+	"&BBOX="+extent+
+	"&WIDTH="+this.canvasSize[0]+
+	"&HEIGHT="+this.canvasSize[1]+
+	'&'+this.cacheBreaker;
 
 	var that = this;
 	img.onload = function() {
@@ -87,6 +96,10 @@ AnimatedRaster.prototype.getCanvas = function(extent, resolution, pixelRatio, si
 };
 
 AnimatedRaster.prototype.calculateProjection = function(extent, resolution, pixelRatio, size, projection) {
+	this.extent = extent;
+	this.canvasSize = size;
+	console.log(size);
+
 	this.canvas.setAttribute('width', size[0]);
 	this.canvas.setAttribute('height', size[1]);
 

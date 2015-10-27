@@ -37,11 +37,11 @@ MapController.prototype.getID = function () {
 
 MapController.prototype._getVisURL = function() {
   console.log(this.speciesID + " - " + this.visID);
-  var url = "map/imgs";
+  var url = "http://localhost:8082/wms";
   if (this.speciesID && this.visID) {
-    url += "/" + this.speciesID + "-" + this.visID;
+    url += "?species=" + this.speciesID + "&timeline=" + this.visID;
   }
-  url += "/agg";
+  //url += "";
 
   return url;
 }
