@@ -88,7 +88,7 @@ WFSTLayer.prototype._setupWFS = function () {
   //management zone styles
   var managementActionStyles = (function() {
     return function(feature, resolution) {
-      if (feature.get('controlMechanism')) {
+      if (typeof feature.get('controlMechanism') !== 'undefined' && feature.get('controlMechanism') !== null) {
         var defaultStyle = [new ol.style.Style({
           fill: new ol.style.Fill({color: zoneLookup[feature.get('controlMechanism')].fillColor}),
           stroke: new ol.style.Stroke({color: zoneLookup[feature.get('controlMechanism')].strokeColor, width: 4})
@@ -289,7 +289,7 @@ WFSTLayer.prototype._setupDrawing = function () {
     //fix geometry name
     if (that.params.geometryName != "geometry") {
       e.feature.set(that.params.geometryName,e.feature.getGeometry());
-      e.feature.setGeometryName(that.params.geometryName);  
+      e.feature.setGeometryName(that.params.geometryName);
     }
 
     that._saveChanges([e.feature],null,null, function success(data,features){
@@ -310,7 +310,7 @@ WFSTLayer.prototype.getDrawInteraction = function () {
 };
 
 WFSTLayer.prototype.setVisibility = function (state) {
-  console.log(this.layer);
+  //console.log(this.layer);
   if (state) {
     this.layer.setVisible(true);
   } else {

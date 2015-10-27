@@ -1,4 +1,5 @@
 function AnimatedRaster (params) {
+	this.cacheBreaker = 0;
 
 	if (params.hasOwnProperty("extent")) {
 		this.extent = params.extent;
@@ -29,6 +30,7 @@ AnimatedRaster.prototype.setup = function() {
 
 AnimatedRaster.prototype.setTime = function(time) {
 	//todo animate to that time
+	console.log("Time set to: " + time);
 	this.time = time;
 	this.drawImage(time);
 }
@@ -36,9 +38,10 @@ AnimatedRaster.prototype.setTime = function(time) {
 AnimatedRaster.prototype.changeParam = function(paramater, value) {
 	if (paramater == "url") {
 		this.url = value;
+		this.cacheBreaker++;
 	}
 
-	console.log("Paramater " + paramater + " changed to " + value);
+	console.debug("Paramater " + paramater + " changed to " + value);
 
 	//refresh view
 	this.drawImage(this.time);
@@ -48,7 +51,7 @@ AnimatedRaster.prototype.drawImage = function(time) {
 	this.time = time;
 
 	var img = new Image();
-	img.src = this.url+time+'.png';
+	img.src = this.url+time+'.png?'+this.cacheBreaker;
 
 	var that = this;
 	img.onload = function() {
@@ -165,10 +168,13 @@ Animater.prototype.stop = function() {
 }
 
 Animater.prototype.animateTo = function(value) {
+	console.debug("Animate To: " + value)
+
 	this.targetFrame = value;
 	this.frameStep = this._calculateStepSize(this.currentFrame, value);
 
 	if (!this.animating) {
+		console.debug("animation starting");
 		this.start();
 	}
 }

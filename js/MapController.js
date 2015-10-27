@@ -26,8 +26,8 @@ function MapController() {
   this.id;
   this.visID;
   this.speciesID;
-  this.zone;
-  this.time;
+  this.zone = 0;
+  this.time = 0;
 }
 
 MapController.prototype.getID = function () {
@@ -56,7 +56,7 @@ MapController.prototype._setupVisLayer = function() {
   this.animatedRaster = new AnimatedRaster({
     url: url,
     startTime: "0",
-    extent: [16078473, -2203421, 16365455, -1723647]
+    extent: [16229014.299223267, -2036989.4760287334, 16274226.801453948, -2006452.8832288054]
   });
   this.animater = new Animater(this.animatedRaster);
 
@@ -172,7 +172,6 @@ MapController.prototype.getMetadata = function() {
                     timeline:this.id,
                     species:this.speciesID
                   };
-
   return metadata;
 };
 
@@ -191,7 +190,7 @@ MapController.prototype.addHSLayer =  function() {
         MAP: 'hs.map'
       }
     }),
-    opacity:0.5
+    opacity:0
   })
 
   this.map.addLayer(this.layers.HSLayer);

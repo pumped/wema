@@ -64,10 +64,10 @@ TimelineManager.prototype.setup = function() {
 
 	//get default data
 	$.getJSON(this.url+'?r=getTimeline&species='+this.speciesID+'&timeline='+this.id, function(data){
-		that.data = data;
-		that.playGraph.setData([that.data]);
+		that.data = [data];
+		that.playGraph.setData(that.data);
 		that.playGraph.setBaseID("0");
-		that.playGraph.setID("1");
+		that.setID("1");
 	});
 
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
@@ -145,6 +145,9 @@ TimelineManager.prototype.getID = function(id) {
 
 TimelineManager.prototype.setID = function(id) {
 	this.id = id;
+	if (this.playGraph) {
+		this.playGraph.setID(id);
+	}
 	//this.modelManager.setID(id);
 	//data = this.getData(this.id);
 
@@ -164,19 +167,24 @@ TimelineManager.prototype.setYear = function(year) {
 		this.mapController.setVisTime(year-this.startYear);
 
 		//adjust stats
-		//this.updateStats();
+		this.updateStats();
 	}
 };
 
 TimelineManager.prototype.updateStats = function() {
 	var data = this.getData(this.id);
 	if (data) {
-		var idx = this.currentYear - (this.startYear); // + parseInt(data.startTime));
+		var idx = this.currentYear; // + parseInt(data.startTime));
 
 		if (idx >= 0) {
-			var invArea = data.invStats[idx];
+			var invArea = data.occupied[idx];
+			var cost = 0;
 
-			$('#costDisplay .value').html("0");
+			if (data.hasOwnProperty("costs")) {
+				cost = data.costs[idx];
+			}
+
+			$('#costDisplay .value').html(String(cost));
 			$('#yearDisplay .value').html(this.currentYear);
 			$('#invAreaDisplay .value').html(invArea);
 			//$('#restCostDisplay .value').html("$"+(invArea*600));
@@ -199,7 +207,6 @@ TimelineManager.prototype.getData = function(id) {
 		}
 	}
 
-	console.log(this.data);
 	if (this.data != null) {
 		this.currentData = this.dataSearch(this.data[0], id);
 		return this.currentData;
@@ -210,6 +217,10 @@ TimelineManager.prototype.getData = function(id) {
 };
 
 TimelineManager.prototype.dataSearch = function(data,id) {
+	if (!data || !data.hasOwnProperty("ID")) {
+		return 0;
+	}
+
 	if (data.ID == id) {
 		return data;
 	}
