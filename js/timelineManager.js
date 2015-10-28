@@ -3,7 +3,7 @@ function TimelineManager(url) {
 	this.startYear = 0;
 	this.currentYear = this.startYear;
 	this.endYear = 29;
-	this.playbackSpeed = 200;
+	this.playbackSpeed = 300;
 	this.loop = false;
 	this.data = null;
 	this.url = url;
@@ -80,6 +80,9 @@ TimelineManager.prototype.setup = function() {
 		console.log(data);
 		if (data.event == "timeline_state") {
 			that.playGraph.setTimelineData("1",data.data.state);
+		}
+		if (data.event == "time_rendered") {
+			that.setYear(data.data.time);
 		}
 	};
 	ws.onclose = function(ev){

@@ -12,6 +12,8 @@ function AnimatedRaster (params) {
 	if (params.hasOwnProperty("startTime")) {
 		this.time = params.startTime;
 	}
+	this.currentVisibleFrame = 0;
+	this.backwards = false;
 
 	this.setup();
 
@@ -45,7 +47,7 @@ AnimatedRaster.prototype.changeParam = function(paramater, value) {
 
 	//refresh view
 	this.drawImage(this.time);
-}
+};
 
 AnimatedRaster.prototype.drawImage = function(time) {
 	if (!this.canvasSize) {
@@ -63,14 +65,34 @@ AnimatedRaster.prototype.drawImage = function(time) {
 	'&'+this.cacheBreaker;
 
 	var that = this;
+	var thisTime = parseInt(time);
+
 	img.onload = function() {
-		that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height);
-		that.ctx.drawImage(img, that.imgPosition.x, that.imgPosition.y, that.imgSize.x, that.imgSize.y);
-		//500 * img.height / img.width
-		//floodLayer.changed();
-		//console.log('drawing: '+iCount)
-		that.fireFrameCallback();
+		var draw = false;
+
+		//only show images in the correct direction of travel
+		if (that.backwards) {
+			if (that.currentVisibleFrame >= thisTime) {
+				draw = true;
+			}
+		} else {
+			if (that.currentVisibleFrame <= thisTime) {
+				draw = true;
+			}
+		}
+
+		//if not loaded out of order, draw it
+		if (draw) {
+			that.currentVisibleFrame = thisTime;
+			that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height);
+			that.ctx.drawImage(img, that.imgPosition.x, that.imgPosition.y, that.imgSize.x, that.imgSize.y);
+			that.fireFrameCallback();
+		}
 	};
+};
+
+AnimatedRaster.prototype.setDirection = function (backwards) {
+	this.backwards = backwards;
 };
 
 AnimatedRaster.prototype.onframe = function(callback) {
@@ -98,7 +120,6 @@ AnimatedRaster.prototype.getCanvas = function(extent, resolution, pixelRatio, si
 AnimatedRaster.prototype.calculateProjection = function(extent, resolution, pixelRatio, size, projection) {
 	this.extent = extent;
 	this.canvasSize = size;
-	console.log(size);
 
 	this.canvas.setAttribute('width', size[0]);
 	this.canvas.setAttribute('height', size[1]);
@@ -160,7 +181,7 @@ function Animater(layer) {
 
 	this.currentFrame = 0;
 
-	this.frameSteps = 0.1;
+	this.frameSteps = 1;
 }
 
 Animater.prototype.start = function() {
@@ -168,7 +189,6 @@ Animater.prototype.start = function() {
 		return;
 	}
 	this.animating = true;
-	//console.log("animation started");
 
 	//play animation
 	var that = this;
@@ -176,18 +196,14 @@ Animater.prototype.start = function() {
 }
 
 Animater.prototype.stop = function() {
-	//console.log("animation stoped");
 	this.animating = false;
 }
 
 Animater.prototype.animateTo = function(value) {
-	console.debug("Animate To: " + value)
-
 	this.targetFrame = value;
 	this.frameStep = this._calculateStepSize(this.currentFrame, value);
 
 	if (!this.animating) {
-		console.debug("animation starting");
 		this.start();
 	}
 }
@@ -199,39 +215,38 @@ Animater.prototype._calculateStepSize = function(currentSize, targetSize) {
 
 	if (currentSize > targetSize) {
 		backwards = true;
-		//stepSize = -stepSize;
-		//console.log("backwards");
+		if (stepSize > -1 ) {
+			stepSize == -1;
+		}
 	} else {
-		//stepSize = stepSize;
 		backwards = false;
-		//console.log("forwards");
 	}
-
-	/*console.log(backwards);
-	console.log(currentSize);
-	console.log(targetSize);*/
 
 	return {"stepSize":stepSize,"backwards":backwards};
 }
 
 Animater.prototype._calculateNewFrame = function() {
 	//calculate new value
-	var newFrame = this.currentFrame + this.frameStep.stepSize;
+	var newFrame;
 
-	if (this.frameStep.backwards) {
-		if (newFrame < this.targetFrame) {
-			newFrame = this.targetFrame;
-			this.stop();
+	if (this.frameStep.stepSize > 0 || this.frameStep.stepSize < 0) { //frame step size is valid
+		newFrame = this.currentFrame + this.frameStep.stepSize;
+
+		if (this.frameStep.backwards) {
+			if (newFrame < this.targetFrame) {
+				newFrame = this.targetFrame;
+				this.stop();
+			}
+		} else {
+			if (newFrame > this.targetFrame) {
+				newFrame = this.targetFrame;
+				this.stop();
+			}
 		}
-	} else {
-		if (newFrame > this.targetFrame) {
-			newFrame = this.targetFrame;
-			this.stop();
-		}
+	} else { //frame step size is invalid
+		newFrame = this.targetFrame;
+		this.stop();
 	}
-
-	/*console.log("Target: " + this.targetFrame);
-	console.log("Current: " + newFrame);*/
 
 	return newFrame;
 }
@@ -239,29 +254,14 @@ Animater.prototype._calculateNewFrame = function() {
 Animater.prototype._animate = function() {
 
 	if (!this.animating) {
-		console.log("animating finished");
 		return;
 	}
 
 	this.currentFrame = this._calculateNewFrame();
 
-
 	//draw frame
+	this.layer.setDirection(this.frameStep.backwards);
 	this.layer.drawImage(this.currentFrame.toFixed(0));
-
-
-	//TODO - real logic
-	/*if (this.backwards==0) {
-		this.count+=0.1;
-	} else {
-		this.count-=0.1;
-	}
-
-	if (this.count >= 23.5) {
-		this.backwards = 1;
-	} else if (this.count <= 0) {
-		this.backwards = 0;
-	}*/
 
 	if (this.animating) {
 		var that = this;
