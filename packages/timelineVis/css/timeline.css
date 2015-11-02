@@ -1,0 +1,18 @@
+body {
+  background-color:#eee;
+}
+
+.chartContainer {
+  height:100%;
+  width:100%;
+}
+
+#playbackGraph {
+  height:50px;
+  overflow:visible;
+  margin:5px 20px 0 2px;
+}
+
+.highcharts-container, .highcharts-container svg {
+  overflow:visible !important;
+}

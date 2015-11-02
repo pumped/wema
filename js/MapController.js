@@ -78,9 +78,13 @@ MapController.prototype._setupVisLayer = function() {
   this.map.addLayer(this.layers.dispersal)
 }
 
-MapController.prototype.setVisTime = function(val) {
+MapController.prototype.setVisTime = function(val,quick) {
   this.time = val;
-  this.animater.animateTo(val);
+  if (typeof quick === "undefined" || quick == false){
+    this.animater.animateTo(val);
+  } else {
+    this.animater.jumpTo(val);
+  }
 }
 
 MapController.prototype.getMode = function (mode) {
@@ -151,6 +155,7 @@ MapController.prototype.setVectorTimeline = function(id) {
   this.id = id;
 
   //show/hide as necessary
+  this.WFSTLayers.distributionLayer.vectorSource.changed();
 };
 
 MapController.prototype.setSpecies = function (species) {

@@ -79,10 +79,10 @@ TimelineManager.prototype.setup = function() {
 		var data = JSON.parse(ev.data);
 		console.log(data);
 		if (data.event == "timeline_state") {
-			that.playGraph.setTimelineData("1",data.data.state);
+			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
 		}
 		if (data.event == "time_rendered") {
-			that.setYear(data.data.time);
+			that.setYear(data.data.time,true);
 		}
 	};
 	ws.onclose = function(ev){
@@ -161,13 +161,13 @@ TimelineManager.prototype.setID = function(id) {
 	this._event("timelineChange",{"id":id});
 };
 
-TimelineManager.prototype.setYear = function(year) {
+TimelineManager.prototype.setYear = function(year,quick) {
 	if (this.currentYear != year) {
 		this.currentYear = year;
 		this.slider.slider('setValue',year);
 
 		//adjust layers
-		this.mapController.setVisTime(year-this.startYear);
+		this.mapController.setVisTime(year-this.startYear,quick);
 
 		//adjust stats
 		this.updateStats();
@@ -219,6 +219,27 @@ TimelineManager.prototype.getData = function(id) {
 	return null;
 };
 
+TimelineManager.prototype.nextID = function() {
+	//search data
+	var newID = this.highestID(this.data[0]);
+	return newID+1;
+};
+
+TimelineManager.prototype.highestID = function(data) {
+	if (data.hasOwnProperty("ID")) {
+		var highest = parseInt(data.ID);
+		//search children
+		for (var i=0;i<data['children'].length;i++) {
+			var child = this.highestID(data['children'][i]);
+			if (child > highest) {
+				highest = child;
+			}
+		}
+		return highest;
+	}
+	return 0;
+};
+
 TimelineManager.prototype.dataSearch = function(data,id) {
 	if (!data || !data.hasOwnProperty("ID")) {
 		return 0;
@@ -227,11 +248,12 @@ TimelineManager.prototype.dataSearch = function(data,id) {
 	if (data.ID == id) {
 		return data;
 	}
-
-	for (var i=0;i<data['children'].length;i++) {
-		child = this.dataSearch(data['children'][i], id);
-		if (child != 0) {
-			return child;
+	if (data.hasOwnProperty('children'))	{
+		for (var i=0;i<data['children'].length;i++) {
+			child = this.dataSearch(data['children'][i], id);
+			if (child != 0) {
+				return child;
+			}
 		}
 	}
 	return 0;

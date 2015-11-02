@@ -159,6 +159,11 @@ ToolbarManager.prototype.setup = function () {
 		that._draw("zone");
 	});
 
+	$('#saveState').click(function saveStateClick() {
+		var id = iface.timeline.nextID();
+		iface.timeline.setID(id);
+	});
+
 	$('#runModel').click(function saveButtonClick() {
 		//run model
 		that._event("save",null);

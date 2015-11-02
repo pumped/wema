@@ -199,6 +199,15 @@ Animater.prototype.stop = function() {
 	this.animating = false;
 }
 
+Animater.prototype.jumpTo = function(value) {
+	this.stop();
+	this.frameStep = this._calculateStepSize(this.currentFrame, value);
+	this.targetFrame = value;
+
+	//draw frame
+	this._setFrame(this.targetFrame.toFixed(0));
+}
+
 Animater.prototype.animateTo = function(value) {
 	this.targetFrame = value;
 	this.frameStep = this._calculateStepSize(this.currentFrame, value);
@@ -259,12 +268,16 @@ Animater.prototype._animate = function() {
 
 	this.currentFrame = this._calculateNewFrame();
 
-	//draw frame
-	this.layer.setDirection(this.frameStep.backwards);
-	this.layer.drawImage(this.currentFrame.toFixed(0));
+	this._setFrame(this.currentFrame.toFixed(0));
 
 	if (this.animating) {
 		var that = this;
 		setTimeout(function(){that._animate()},this.frameTime);
 	}
 };
+
+Animater.prototype._setFrame = function(frame) {
+	//draw frame
+	this.layer.setDirection(this.frameStep.backwards);
+	this.layer.drawImage(frame);
+}

@@ -89,10 +89,14 @@ WFSTLayer.prototype._setupWFS = function () {
   var managementActionStyles = (function() {
     return function(feature, resolution) {
       if (typeof feature.get('controlMechanism') !== 'undefined' && feature.get('controlMechanism') !== null) {
-        var defaultStyle = [new ol.style.Style({
-          fill: new ol.style.Fill({color: zoneLookup[feature.get('controlMechanism')].fillColor}),
-          stroke: new ol.style.Stroke({color: zoneLookup[feature.get('controlMechanism')].strokeColor, width: 4})
-        })];
+        if (feature.get('timeline') == that.getDrawProperties().timeline) {
+          var defaultStyle = [new ol.style.Style({
+            fill: new ol.style.Fill({color: zoneLookup[feature.get('controlMechanism')].fillColor}),
+            stroke: new ol.style.Stroke({color: zoneLookup[feature.get('controlMechanism')].strokeColor, width: 4})
+          })];
+        } else {
+          return null;
+        }
       } else {
         var defaultStyle = [new ol.style.Style({
           fill: new ol.style.Fill({color: "rgba(53, 180, 251, 0.2)"}),
