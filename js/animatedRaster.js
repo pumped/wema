@@ -18,6 +18,8 @@ function AnimatedRaster (params) {
 	this.setup();
 
 	this.frameCallbacks = [];
+
+	this.waitingFrames = [];
 }
 
 AnimatedRaster.prototype.setup = function() {
@@ -62,27 +64,18 @@ AnimatedRaster.prototype.drawImage = function(time) {
 	"&BBOX="+extent+
 	"&WIDTH="+this.canvasSize[0]+
 	"&HEIGHT="+this.canvasSize[1]+
-	'&'+this.cacheBreaker;
+	'&CB='+this.cacheBreaker;
 
 	var that = this;
 	var thisTime = parseInt(time);
+	this.waitingFrames.push(img);
 
 	img.onload = function() {
 		var draw = false;
-
-		//only show images in the correct direction of travel
-		if (that.backwards) {
-			if (that.currentVisibleFrame >= thisTime) {
-				draw = true;
-			}
-		} else {
-			if (that.currentVisibleFrame <= thisTime) {
-				draw = true;
-			}
-		}
-
+		var frame = that.waitingFrames.indexOf(img);
+		that.waitingFrames.splice(0,frame+1);
 		//if not loaded out of order, draw it
-		if (draw) {
+		if (frame >= 0) {
 			that.currentVisibleFrame = thisTime;
 			that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height);
 			that.ctx.drawImage(img, that.imgPosition.x, that.imgPosition.y, that.imgSize.x, that.imgSize.y);
@@ -266,9 +259,12 @@ Animater.prototype._animate = function() {
 		return;
 	}
 
-	this.currentFrame = this._calculateNewFrame();
+	var newFrame = this._calculateNewFrame();
 
-	this._setFrame(this.currentFrame.toFixed(0));
+	if (this.currentFrame != newFrame) {
+		this.currentFrame = newFrame;
+		this._setFrame(this.currentFrame.toFixed(0));
+	}
 
 	if (this.animating) {
 		var that = this;

@@ -86,6 +86,7 @@ InterfaceManager.prototype.setup = function(mode) {
 	});
 	//this.layerSwitcher.setup();
 
+
 };
 
 InterfaceManager.prototype.setMode = function(mode) {
@@ -129,7 +130,8 @@ function ToolbarManager(mc) {
 			'polygonTool':1,
 			'pointTool': 0,
 			'editTool': 1,
-			'removeTool': 1
+			'removeTool': 1,
+			'saveDistribution':1
 		},
 		'zone':{
 			'saveState':1,
@@ -138,7 +140,8 @@ function ToolbarManager(mc) {
 			'polygonTool':0,
 			'pointTool':0,
 			'editTool': 1,
-			'removeTool': 1
+			'removeTool': 1,
+			'saveDistribution':0
 		}
 	};
 
@@ -164,12 +167,16 @@ ToolbarManager.prototype.setup = function () {
 		iface.timeline.setID(id);
 	});
 
+	$('#saveDistribution').click(function saveDistributionButton(){
+		var species = iface.speciesID;
+		var timeline = "0";
+		iface.modelManager.saveState(species,timeline);
+		$("#zone").click();
+	});
+
 	$('#runModel').click(function saveButtonClick() {
 		//run model
 		that._event("save",null);
-
-		//animate icon
-		//$('#saveState i').addClass('fa-spin');
 	})
 
 };

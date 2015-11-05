@@ -77,19 +77,22 @@ TimelineManager.prototype.setup = function() {
 	};
 	ws.onmessage = function(ev){
 		var data = JSON.parse(ev.data);
-		console.log(data);
+		//console.log(data);
 		if (data.event == "timeline_state") {
 			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
 		}
 		if (data.event == "time_rendered") {
 			that.setYear(data.data.time,true);
 		}
+		if (data.event == "model_complete") {
+			$('#runModel i').removeClass('fa-pulse');
+		}
 	};
 	ws.onclose = function(ev){
 		console.log("socket closed");
 	};
 	ws.onerror = function(ev){
-		console.log("socket error");
+		//console.log("socket error");
 	};
 
 };
@@ -229,10 +232,12 @@ TimelineManager.prototype.highestID = function(data) {
 	if (data.hasOwnProperty("ID")) {
 		var highest = parseInt(data.ID);
 		//search children
-		for (var i=0;i<data['children'].length;i++) {
-			var child = this.highestID(data['children'][i]);
-			if (child > highest) {
-				highest = child;
+		if (data.hasOwnProperty("children")){
+			for (var i=0;i<data['children'].length;i++) {
+				var child = this.highestID(data['children'][i]);
+				if (child > highest) {
+					highest = child;
+				}
 			}
 		}
 		return highest;

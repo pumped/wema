@@ -19,6 +19,7 @@ ModelManager.prototype.getStatus = function() {
 ModelManager.prototype.saveState = function(species, timeline) {
 /*	var species = "a";
 	var timeline = "b";*/
+	$('#runModel i').addClass('fa-pulse');
 
 	$.getJSON(this.url + '?r=runModel&species='+species+"&timeline="+timeline, function(data) {
 		console.log(data);

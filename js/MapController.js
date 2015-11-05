@@ -68,7 +68,7 @@ MapController.prototype._setupVisLayer = function() {
   	  ratio: 1.5,
   	  projection: 'EPSG:3857'
     }),
-    opacity:1
+    opacity:0.5
   })
 
   this.animatedRaster.onframe(function updateOverlay(){
@@ -267,6 +267,9 @@ MapController.prototype.setupMap = function() {
   });
   this.layers.distributionLayer = this.WFSTLayers.distributionLayer.getLayer();
   this.map.addLayer(this.layers.distributionLayer);
+  this.WFSTLayers.distributionLayer.drawPropertiesFunction(function getDrawMetadata(){
+    return {species:that.speciesID};
+  });
 
   //add interaction handlers
   this.map.addInteraction(this.WFSTLayers.managementActions.getDrawInteraction());
