@@ -184,11 +184,9 @@ TimelineManager.prototype.updateStats = function() {
 
 		if (idx >= 0) {
 			var invArea = data.occupied[idx];
-			var cost = 0;
 
-			if (data.hasOwnProperty("costs")) {
-				cost = data.costs[idx];
-			}
+
+			var cost = this._calculateCosts(data,idx);
 
 			$('#costDisplay .value').html(String(cost));
 			$('#yearDisplay .value').html(this.currentYear);
@@ -199,6 +197,22 @@ TimelineManager.prototype.updateStats = function() {
 		console.warn("Timeline Manager - (updateStats): no data found");
 	}
 };
+
+TimelineManager.prototype._calculateCosts = function(data,idx) {
+
+	var indexes = ["ap_range","c_range"];
+	var costs = [500,100];
+	var cost = 0;
+
+	indexes.forEach(function(element,i) {
+		if (data.hasOwnProperty(element)) {
+			cost += data[element][idx] * costs[i];
+		}
+	});
+
+
+	return cost;
+}
 
 function smoothVal(selector, val) {
 	oldVal = parseInt($(selector).html());
