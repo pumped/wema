@@ -99,8 +99,8 @@ WFSTLayer.prototype._setupWFS = function () {
         }
       } else {
         var defaultStyle = [new ol.style.Style({
-          fill: new ol.style.Fill({color: "rgba(53, 180, 251, 0.2)"}),
-          stroke: new ol.style.Stroke({color: "rgba(53, 180, 251, 0.7)", width: 4})
+          fill: new ol.style.Fill({color: "rgba(255, 255, 255, 0.2)"}),
+          stroke: new ol.style.Stroke({color: "rgba(255, 255, 255, 0.9)", width: 4})
         })];
       }
       return defaultStyle;
