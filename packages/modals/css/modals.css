@@ -1,0 +1,136 @@
+.modelStatus {
+    font-size:0.9em;
+    text-align:right;
+    padding-right:5px;
+}
+
+.modal .progress {
+    margin-bottom:5px;
+    height:30px;
+}
+
+.modal .progress-bar {
+   padding-top:5px;
+   text-align:left;
+   padding-left:10px;
+}
+
+.modal .modal-header {
+    border:0;
+    padding-bottom: 0px;
+}
+
+.modal-content {
+  border:0;
+  box-shadow:0;
+}
+
+.modal .newTimelineButtons i {
+  font-size:10em;
+  text-align:center;
+  color:#aaa;
+}
+
+.modal .newTimelineButtons {
+  text-align:center;
+  border-radius:10px;
+  padding:20px 5px;
+  white-space:inherit;
+  /* width: 100px; */
+  border: 1px solid #888;
+  /* background-color: #eee; */
+}
+
+.modal .newTimelineButtons .title {
+  display:block;
+  font-size: 1.5em;
+}
+
+
+.modal .close {
+  color:#333;
+  opacity:0.8;
+}
+
+
+
+
+/* User Selector */
+#userSelectModal .userSelector > * {
+vertical-align: middle;
+}
+
+#userSelectModal .userSelector .userIcon {
+  width: 20px;
+  height: 20px;
+  border-radius:50px;
+  display: inline-block;
+  margin-right: 9px;
+}
+
+#userSelectModal .userSelector .userName {
+ font-size:2em;
+ color:#777;
+ display: inline-block;
+ padding-top: 2px;
+ /* vertical-align: middle; */
+}
+
+#userSelectModal .otherUsers .userSelector {
+  margin: 2px;
+  border: 1px solid #C7C7C7;
+  /* border-bottom:0; */
+  /* border-bottom: 0; */
+  padding:15px;
+  background-color:#eee;
+  width: 49%;
+  display: block;
+  float: left;
+}
+
+#userSelectModal .otherUsers .userSelector:nth-child(odd) {
+  /* border-right-width:0; */
+}
+
+#userSelectModal .otherUsers .userSelector:last-child {
+  border-right-width:1;
+}
+
+#userSelectModal .otherUsers .userSelector .userName {
+  font-size: 1.5em;
+}
+
+#userSelectModal .otherUsers {
+  margin: 20px;
+}
+
+#userSelectModal .otherUsers .userSelector i {
+  font-size: 20px;
+  color:#bbb;
+}
+
+#userSelectModal .otherUsers .active {
+  background-color: #FFFFFF;
+}
+
+.newUserContainer {
+  /* margin-bottom:20px; */
+}
+
+#userSelectModal .userSelectors {
+    /* border-bottom: 1px solid #ccc; */
+    padding: 0;
+    /* background-color: #eee; */
+}
+
+#userSelectModal .newUserContainer {
+  padding:0;
+}
+
+#userSelectModal .newUserContainer input {
+  width:200px;
+}
+
+#userSelectModal .newUserContainer {
+  padding-top:30px;
+}

@@ -24,6 +24,7 @@ function InterfaceManager() {
 
 InterfaceManager.prototype.setup = function(mode) {
 	var that = this;
+	this.modals = new Modals();
 
 	//set default species and ID
 	this.speciesID = "siam";
@@ -66,6 +67,7 @@ InterfaceManager.prototype.setup = function(mode) {
 		var timeline = that.timeline.getID();
 		var species = that.speciesID;
 		//console.log(timeline);
+		that.modals.runModal.show();
 		that.modelManager.saveState(species,timeline);
 		mc.setVisTimeline(timeline);
 		that.timeline.expandGraph(true);
@@ -163,6 +165,10 @@ ToolbarManager.prototype.setup = function () {
 	});
 
 	$('#saveState').click(function saveStateClick() {
+		iface.modals.newTimelineModal.show();
+	});
+
+	iface.modals.on("newTimeline",function(options){
 		var id = iface.timeline.nextID();
 		iface.timeline.setID(id);
 	});
@@ -287,6 +293,10 @@ ToolbarManager.prototype.activate = function(ID) {
 
 	if (ID == 'drawTool') {
 		$('.zoneBtns').slideDown();
+	}
+
+	if (ID == 'polygonTool') {
+		iface.modals.userModal.show();
 	}
 };
 
