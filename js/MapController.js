@@ -98,7 +98,7 @@ MapController.prototype.setMode = function (mode) {
     this.WFSTLayers.managementActions.setVisibility(false);
     this.WFSTLayers.distributionLayer.setVisibility(true);
   } else if (mode == "zone") {
-    this.WFSTLayers.distributionLayer.setVisibility(false);
+    this.WFSTLayers.distributionLayer.setVisibility(true);
     this.WFSTLayers.managementActions.setVisibility(true);
   }
 };
@@ -118,6 +118,7 @@ MapController.prototype.setInteractionMode = function(mode) {
   //if just turning off return
   if (mode == false) {
     this.WFSTLayers.managementActions.setMode(false);
+    this.WFSTLayers.distributionLayer.setMode(false);
     return;
   }
 
@@ -231,7 +232,9 @@ MapController.prototype.setupMap = function() {
   }
 
   this.map = new ol.Map({
-    interactions: ol.interaction.defaults().extend([
+    interactions: ol.interaction.defaults({
+      doubleClickZoom :false
+    }).extend([
       new ol.interaction.DragRotateAndZoom()
     ]),
     layers: [this.baseLayers.satelite],

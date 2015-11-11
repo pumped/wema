@@ -228,8 +228,8 @@ ul.vertButtons {
 
 .statsOverlay {
     position:absolute;
-    right:80;
-    top:80;
+    right:80px;
+    top:40px;
     font-size:32px;
     line-height:1em;
     font-weight:bold;
@@ -252,7 +252,6 @@ ul.vertButtons {
 
 
 #timeline {
-    margin-right: 50px;
     position:fixed;
     bottom:0;
     z-index: 10;
@@ -261,6 +260,7 @@ ul.vertButtons {
     left:0;
     right:0;
 		padding-bottom: 60px;
+		padding-right: 50px;
 }
 
 #timeline .slider {

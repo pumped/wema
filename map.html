@@ -50,7 +50,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul id="modeSwitcher" class="nav navbar-nav">
-            <li class="active"><a id="overview" href="#overview">Overview</a></li>
+            <!--<li class="active"><a id="overview" href="#overview">Overview</a></li>-->
             <li><a id="edit" href="#edit">Report</a></li>
             <li><a id="zone" href="#zone">Plan</a></li>
             <li><a id="plan" href="#plan">Review</a></li>
@@ -62,6 +62,9 @@
             </select>
           </form>-->
           <ul class="nav navbar-nav navbar-right">
+						<li class="zoomButtons">
+							
+						</li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Layers <b class="caret"></b></a>
               <ul class="dropdown-menu" id="layerSwitcher">
@@ -79,12 +82,12 @@
 										<li>
 											<span class="title">Habitat Suitability</span>
 											<label for="slideHSOpacity">opacity</label>
-											<input id="slideHSOpacity" class="opacity" type="range" min="0" max="1" step="0.01"/>
+											<input id="slideHSOpacity" class="opacity" type="range" min="0" max="1" value="0" step="0.01"/>
 										</li>
 										<li>
 											<span class="title">Simulation</span>
 											<label for="slideSimOpacity">opacity</label>
-											<input id="slideSimOpacity" class="opacity" type="range" value="1" min="0" max="1" step="0.01"/>
+											<input id="slideSimOpacity" class="opacity" type="range" value="0.5" min="0" max="1" step="0.01"/>
 											<!--<label for="slidePlaybackSpeed">playback speed</label>
 											<input id="slidePlaybackSpeed" class="opacity" type="range" min="300" max="2000" step="100"/>-->
 										</li>
@@ -123,6 +126,7 @@
         </ul>
       </div>
     </div>
+
 
     <div class="timelineContainer">
       <div id="timelines"></div>

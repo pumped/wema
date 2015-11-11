@@ -67,10 +67,14 @@ InterfaceManager.prototype.setup = function(mode) {
 		var timeline = that.timeline.getID();
 		var species = that.speciesID;
 		//console.log(timeline);
-		that.modals.runModal.show();
 		that.modelManager.saveState(species,timeline);
+		that.modals.runModal.show();
 		mc.setVisTimeline(timeline);
 		that.timeline.expandGraph(true);
+	});
+
+	this.timeline.on("graphData",function(data){
+		that.modals.runModal.hide();
 	});
 
 
@@ -131,7 +135,7 @@ function ToolbarManager(mc) {
 			'drawTool': 0,
 			'polygonTool':1,
 			'pointTool': 0,
-			'editTool': 1,
+			'editTool': 0,
 			'removeTool': 1,
 			'saveDistribution':1
 		},
@@ -141,7 +145,7 @@ function ToolbarManager(mc) {
 			'drawTool': 1,
 			'polygonTool':0,
 			'pointTool':0,
-			'editTool': 1,
+			'editTool': 0,
 			'removeTool': 1,
 			'saveDistribution':0
 		}
@@ -166,11 +170,13 @@ ToolbarManager.prototype.setup = function () {
 
 	$('#saveState').click(function saveStateClick() {
 		iface.modals.newTimelineModal.show();
+		that.deactivateAll();
 	});
 
 	iface.modals.on("newTimeline",function(options){
 		var id = iface.timeline.nextID();
 		iface.timeline.setID(id);
+		that.deactivateAll();
 	});
 
 	$('#saveDistribution').click(function saveDistributionButton(){
@@ -178,11 +184,13 @@ ToolbarManager.prototype.setup = function () {
 		var timeline = "0";
 		iface.modelManager.saveState(species,timeline);
 		$("#zone").click();
+		that.deactivateAll();
 	});
 
 	$('#runModel').click(function saveButtonClick() {
 		//run model
 		that._event("save",null);
+		that.deactivateAll();
 	})
 
 };
@@ -205,6 +213,8 @@ ToolbarManager.prototype.on = function(type,callback) {
 }
 
 ToolbarManager.prototype.setMode = function(mode) {
+	this.deactivateAll();
+	
 	//edit toolbar
 	if (mode == 'zone' || mode == 'edit') {
 		$('#editTools').slideDown();
@@ -268,11 +278,7 @@ ToolbarManager.prototype.toggle = function(ID) {
 		active = true;
 	}
 
-	//deactivate all tools
-	this.mc.setInteractionMode(false);
-	for (id in this.controls) {
-		this.deactivate(id);
-	}
+	this.deactivateAll();
 
 	//turn on/off required tool
 	callback = this.controls[ID];
@@ -282,6 +288,14 @@ ToolbarManager.prototype.toggle = function(ID) {
   		this.activate(ID);
   	}
 };
+
+ToolbarManager.prototype.deactivateAll = function() {
+		//deactivate all
+		this.mc.setInteractionMode(false);
+		for (id in this.controls) {
+			this.deactivate(id);
+		}
+}
 
 ToolbarManager.prototype.activate = function(ID) {
 	//set map controller mode

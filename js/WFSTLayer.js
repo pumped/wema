@@ -22,6 +22,8 @@ function WFSTLayer(params) {
 
   this.modificationTable = {};
 
+  this.modifyCollection = new ol.Collection();
+
   this._setupWFS();
   this._setupDrawing();
   this._setupModify();
@@ -49,9 +51,16 @@ WFSTLayer.prototype.setMode = function(mode) {
     this.modify.setActive(true);
   } else {
     //off
-    //console.log(mode);
     this.draw.setActive(false);
+  }
 
+  this.modifyCollection.clear();
+  var features = this.vectorSource.getFeatures();
+  var drawProperties = this.getDrawProperties();
+  for (i in features) {
+    if (features[i].getProperties().timeline == drawProperties.timeline) {
+      this.modifyCollection.push(features[i]);
+    }
   }
 }
 
@@ -132,7 +141,22 @@ WFSTLayer.prototype.getDrawProperties = function() {
 WFSTLayer.prototype._setupModify = function () {
   //console.log(this.vectorSource);
   //console.log(this.vectorSource.getFeatures());
+  var that = this;
+
   this.select = new ol.interaction.Select({
+    layers: [this.layer],
+    filter: function(feature,layer){
+      var props = feature.getProperties();
+      var drawProps = that.getDrawProperties();
+      if (props.hasOwnProperty("timeline") && drawProps.hasOwnProperty("timeline")) {
+        if (props.timeline == drawProps.timeline) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+      return false;
+    },
     wrapX: false
   });
   var that = this;
@@ -264,20 +288,26 @@ WFSTLayer.prototype._saveChanges = function(add, modify, del, successFunction, e
   });
 };
 
+WFSTLayer.prototype.isFreeHand = function(e) {
+  return false;
+}
+
 // setup drawing interaction handler
 WFSTLayer.prototype._setupDrawing = function () {
+  var that = this;
+
   this.draw = new ol.interaction.Draw({
     source:this.vectorSource,
-    type:this.params.geometryType
+    type:this.params.geometryType,
+    condition: ol.events.condition.pointerMove,
+    freehandCondition: function(){return true /*that.isFreeHand()*/;}
   });
 
   this.draw.setActive(false);
 
   this.snap = new ol.interaction.Snap({
-    source: this.vectorSource
+    features: this.modifyCollection
   });
-
-  var that = this;
 
   this.drawFinishListener = this.draw.on("drawend", function(e){
 

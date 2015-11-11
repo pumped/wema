@@ -80,6 +80,7 @@ TimelineManager.prototype.setup = function() {
 		//console.log(data);
 		if (data.event == "timeline_state") {
 			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
+			that._event("graphData",this.data);
 		}
 		if (data.event == "time_rendered") {
 			that.setYear(data.data.time,true);
