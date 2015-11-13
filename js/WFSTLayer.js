@@ -299,7 +299,7 @@ WFSTLayer.prototype._setupDrawing = function () {
   this.draw = new ol.interaction.Draw({
     source:this.vectorSource,
     type:this.params.geometryType,
-    condition: ol.events.condition.pointerMove,
+    //condition: ol.events.condition.pointerMove,
     freehandCondition: function(){return true /*that.isFreeHand()*/;}
   });
 

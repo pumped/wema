@@ -214,7 +214,7 @@ ToolbarManager.prototype.on = function(type,callback) {
 
 ToolbarManager.prototype.setMode = function(mode) {
 	this.deactivateAll();
-	
+
 	//edit toolbar
 	if (mode == 'zone' || mode == 'edit') {
 		$('#editTools').slideDown();
@@ -223,10 +223,18 @@ ToolbarManager.prototype.setMode = function(mode) {
 	}
 
 	//timeline
-	if (mode == 'plan' || mode == 'zone') {
+	if (mode == 'zone') {
 		$('#timeline').slideDown();
 	} else {
 		$('#timeline').slideUp();
+	}
+
+	//report
+	console.log(mode);
+	if (mode == 'plan') {
+		$('.reviewContainer').slideDown();
+	} else {
+		$('.reviewContainer').slideUp();
 	}
 
 	//return if no more settings
@@ -372,3 +380,11 @@ ZoneManager.prototype.setup = function() {
 ZoneManager.prototype.setZone = function() {
 
 };
+
+
+function numberWithCommas(x) {
+	if (x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+    return 0;
+}

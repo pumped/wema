@@ -62,12 +62,17 @@ TimelineManager.prototype.setup = function() {
 	//this.playGraph.setBaseID("0");
 	this.playGraph.setID("1");
 
+	this.review = new Review();
+
 	//get default data
 	$.getJSON(this.url+'?r=getTimeline&species='+this.speciesID+'&timeline='+this.id, function(data){
 		that.data = [data];
 		that.playGraph.setData(that.data);
 		that.playGraph.setBaseID("0");
 		that.setID("1");
+
+		that.review.setData(data);
+		that.review.setID("1");
 	});
 
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
@@ -80,6 +85,7 @@ TimelineManager.prototype.setup = function() {
 		//console.log(data);
 		if (data.event == "timeline_state") {
 			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
+			that.review.update();
 			that._event("graphData",this.data);
 		}
 		if (data.event == "time_rendered") {
@@ -186,10 +192,12 @@ TimelineManager.prototype.updateStats = function() {
 		if (idx >= 0) {
 			var invArea = data.occupied[idx];
 
+			//var cost = this._calculateCosts(data,idx);
+			var cost = this.review.getCostsAt(idx,false);
+			var costSummary = this.review.getCostsAt(idx,true);
 
-			var cost = this._calculateCosts(data,idx);
-
-			$('#costDisplay .value').html(String(cost));
+			$('#costDisplay .value').html(String(numberWithCommas(cost)));
+			$('#cumulativeCostDisplay .value').html(String(numberWithCommas(costSummary)));
 			$('#yearDisplay .value').html(this.currentYear);
 			$('#invAreaDisplay .value').html(invArea);
 			//$('#restCostDisplay .value').html("$"+(invArea*600));
@@ -199,7 +207,7 @@ TimelineManager.prototype.updateStats = function() {
 	}
 };
 
-TimelineManager.prototype._calculateCosts = function(data,idx) {
+/*TimelineManager.prototype._calculateCosts = function(data,idx) {
 
 	var indexes = ["ap_range","c_range"];
 	var costs = [500,100];
@@ -213,7 +221,7 @@ TimelineManager.prototype._calculateCosts = function(data,idx) {
 
 
 	return cost;
-}
+}*/
 
 function smoothVal(selector, val) {
 	oldVal = parseInt($(selector).html());

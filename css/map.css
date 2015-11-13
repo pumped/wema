@@ -95,7 +95,7 @@ html {
 	margin-top:2px;
 }
 
-.timelineContainer {
+.timelineContainer, .reviewContainer {
     background-color:#fff;
     width:100%;
     margin-bottom:51px;
@@ -107,6 +107,10 @@ html {
     z-index: 15;
     text-align: center;
     overflow:auto;
+}
+
+.reviewContainer {
+	height:auto;
 }
 
 ul.vertButtons {

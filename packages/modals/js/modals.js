@@ -319,10 +319,10 @@ RunModal.prototype.progressBarUpdate = function(percentage) {
   }
 
   var that = this;
-  percentage += 2;
+  percentage += 1;
   setTimeout(function() {
     that.progressBarUpdate(percentage);
-  },300);
+  },200);
 };
 
 RunModal.prototype.hide = function() {

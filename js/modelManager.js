@@ -1,5 +1,5 @@
 function ModelManager() {
-	this.url = 'http://localhost:8082/api';
+	this.url = 'http://'+document.location.hostname+':8082/api';
 	this.id = -1;
 	this.updateRate = 5000;
 	this.consID = -1;

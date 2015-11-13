@@ -13,6 +13,9 @@
 	<script type="text/javascript" src="packages/modals/js/modals.js"></script>
 	<link rel="stylesheet" type="text/css" href="packages/modals/css/modals.css">
 
+	<script type="text/javascript" src="packages/review/js/reviews.js"></script>
+	<link rel="stylesheet" type="text/css" href="packages/review/css/review.css"/>
+
   <script type="text/javascript" src="js/console.js"></script>
 	<script type="text/javascript" src="js/MapController.js"></script>
   <script type="text/javascript" src="js/modelManager.js"></script>
@@ -51,9 +54,9 @@
         <div class="navbar-collapse collapse">
           <ul id="modeSwitcher" class="nav navbar-nav">
             <!--<li class="active"><a id="overview" href="#overview">Overview</a></li>-->
-            <li><a id="edit" href="#edit">Report</a></li>
-            <li><a id="zone" href="#zone">Plan</a></li>
-            <li><a id="plan" href="#plan">Review</a></li>
+            <li><a id="edit" href="#edit"><span class="glyphicon glyphicon-th"></span> Data</a></li>
+            <li><a id="zone" href="#zone"><span class="glyphicon glyphicon-edit"></span> Plan</a></li>
+            <li><a id="plan" href="#plan"><span class="glyphicon glyphicon-stats"></span> Report</a></li>
           </ul>
           <!--<form class="navbar-form navbar-right">
             <label for="weedSpecies">Species</label>
@@ -63,7 +66,7 @@
           </form>-->
           <ul class="nav navbar-nav navbar-right">
 						<li class="zoomButtons">
-							
+
 						</li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Layers <b class="caret"></b></a>
@@ -114,10 +117,10 @@
         </ul>
         <ul class="vertButtons zoneBtns">
             <li id="Dzone" class="zoneBtn"><span>D</span>Delimitation</li>
-            <li id="Pzone" class="zoneBtn"><span>P</span>Prevention</li>
-            <li id="Rzone" class="zoneBtn"><span>R</span>Removal</li>
+            <!--<li id="Pzone" class="zoneBtn"><span>P</span>Prevention</li>-->
+            <li id="Rzone" class="zoneBtn"><span>E</span>Eradication</li>
             <li id="Czone" class="zoneBtn"><span>C</span>Containment</li>
-            <li id="ICzone" class="zoneBtn"><span>IC</span>Impact Control</li>
+            <li id="ICzone" class="zoneBtn"><span>IC</span>Intensive Control</li>
             <li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>
         </ul>
         <ul class="vertButtons">
@@ -130,6 +133,40 @@
 
     <div class="timelineContainer">
       <div id="timelines"></div>
+    </div>
+
+		<div class="reviewContainer">
+			<h3>Total Area Covered</h3>
+			<div class="container">
+				<div class="row managedAreas">
+					<div class="col-xs-6 col-sm-2 areaStat zoneD">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Delimitation</span>
+					</div>
+					<div class="col-xs-6 col-sm-2 areaStat zoneP">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Prevention</span>
+					</div>
+					<div class="col-xs-6 col-sm-2 areaStat zoneR">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Eradication</span>
+					</div>
+					<div class="col-xs-6 col-sm-2 areaStat zoneC">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Containment</span>
+					</div>
+					<div class="col-xs-6 col-sm-2 areaStat zoneIC">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Intensive Control</span>
+					</div>
+					<div class="col-xs-6 col-sm-2 areaStat zoneAP">
+						<div class="range blk-inline"><span class="value">20,005</span><span class="units">Ha</span></div>
+						<span class="title">Asset Protection</span>
+					</div>
+				</div>
+			</div>
+			<div id="reviewManagementGraph"></div>
+			<div id="reviewCostGraph"></div>
     </div>
 
     <div class="mapContainer">
@@ -145,7 +182,11 @@
       </div>
       <div id="costDisplay">
         $<span class="value">0</span>
-        <div class="descriptor">Management Cost</div>
+        <div class="descriptor">Years Management Cost</div>
+      </div>
+			<div id="cumulativeCostDisplay">
+        $<span class="value">0</span>
+        <div class="descriptor">Total Costs</div>
       </div>
       <div id="invAreaDisplay">
         <span class="value">

@@ -37,7 +37,7 @@ MapController.prototype.getID = function () {
 
 MapController.prototype._getVisURL = function() {
   console.log(this.speciesID + " - " + this.visID);
-  var url = "http://localhost:8082/wms";
+  var url = "http://"+document.location.hostname+":8082/wms";
   if (this.speciesID && this.visID) {
     url += "?species=" + this.speciesID + "&timeline=" + this.visID;
   }
@@ -250,7 +250,7 @@ MapController.prototype.setupMap = function() {
 
   //setup management actions wfs
   this.WFSTLayers.managementActions = new WFSTLayer({
-    url: "http://localhost:8080/geoserver/wema/wfs",
+    url: "http://"+document.location.hostname+":8080/geoserver/wema/wfs",
     featureNS: "wema",
     featureType: "management_strategies"
   });
@@ -262,7 +262,7 @@ MapController.prototype.setupMap = function() {
 
   //setup distribution layer
   this.WFSTLayers.distributionLayer = new WFSTLayer({
-    url: "http://localhost:8080/geoserver/wema/wfs",
+    url: "http://"+document.location.hostname+":8080/geoserver/wema/wfs",
     featureNS: "wema",
     featureType: "distribution",
     geometryType: "Polygon",
