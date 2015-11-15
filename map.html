@@ -20,6 +20,7 @@
 	<script type="text/javascript" src="js/MapController.js"></script>
   <script type="text/javascript" src="js/modelManager.js"></script>
   <script type="text/javascript" src="js/timelineManager.js"></script>
+	<script type="text/javascript" src="js/strategies.js"></script>
 	<script type="text/javascript" src="js/layerSwitcher.js"></script>
 	<script type="text/javascript" src="js/interface.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
@@ -68,6 +69,31 @@
 						<li class="zoomButtons">
 
 						</li>
+						<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-screenshot"></span> Strategies <b class="caret"></b></a>
+              <ul class="dropdown-menu" id="managementStrategiesPanel">
+                <li>
+									<h4>Management Strategies</h4>
+								</li>
+								<li>
+									<label for="preventionCampaignButtons">Prevention Campaign</label>
+									<div id="preventionCampaignButtons" class="btn-group" role="group" aria-label="">
+										<button type="button" data-action="0" class="btn btn-default">0%</button>
+									  <button type="button" data-action="10" class="btn btn-default">10%</button>
+									  <button type="button" data-action="20" class="btn btn-default active">20%</button>
+									</div>
+									<span class="subtitle">% of total expenditure</span>
+								</li>
+								<li>
+									<label for="assetProtectionButtons">Asset Protection</label>
+									<div id="assetProtectionButtons" class="btn-group" role="group" aria-label="">
+										<button type="button" data-action="0" class="btn btn-default">Off</button>
+									  <button type="button" data-action="1" class="btn btn-default active">On</button>
+									</div>
+									<span class="subtitle">protect assets at all costs</span>
+								</li>
+              </ul>
+            </li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Layers <b class="caret"></b></a>
               <ul class="dropdown-menu" id="layerSwitcher">
@@ -121,7 +147,7 @@
             <li id="Rzone" class="zoneBtn"><span>E</span>Eradication</li>
             <li id="Czone" class="zoneBtn"><span>C</span>Containment</li>
             <li id="ICzone" class="zoneBtn"><span>IC</span>Intensive Control</li>
-            <li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>
+            <!--<li id="APzone" class="zoneBtn"><span>AP</span>Asset Protection</li>-->
         </ul>
         <ul class="vertButtons">
           <li id="editTool" title="Edit"><span class="glyphicon glyphicon-move"></span>Edit</li>

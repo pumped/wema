@@ -63,6 +63,10 @@ InterfaceManager.prototype.setup = function(mode) {
 		mc.setZone(zoneID);
 	});
 
+	this.modals.on("drawActionsSet",function(zone) {
+		mc.setZone(zone);
+	});
+
 	this.tools.on("save",function saveState(e) {
 		var timeline = that.timeline.getID();
 		var species = that.speciesID;
@@ -92,6 +96,10 @@ InterfaceManager.prototype.setup = function(mode) {
 	});
 	//this.layerSwitcher.setup();
 
+	this.strategyManager = new Strategies(this.modelManager.url);
+	this.strategyManager.on("stateChanged",function stateChanged(state) {
+		that.modelManager.setParamaters(state);
+	});
 
 };
 
@@ -165,7 +173,8 @@ ToolbarManager.prototype.setup = function () {
 
 
 	$('#drawTool').click(function() {
-		that._draw("zone");
+		//that._draw("zone");
+
 	});
 
 	$('#saveState').click(function saveStateClick() {
@@ -230,7 +239,6 @@ ToolbarManager.prototype.setMode = function(mode) {
 	}
 
 	//report
-	console.log(mode);
 	if (mode == 'plan') {
 		$('.reviewContainer').slideDown();
 	} else {
@@ -314,7 +322,8 @@ ToolbarManager.prototype.activate = function(ID) {
 	$('#'+ID).addClass('active');
 
 	if (ID == 'drawTool') {
-		$('.zoneBtns').slideDown();
+		//$('.zoneBtns').slideDown();
+		iface.modals.actionModal.show();
 	}
 
 	if (ID == 'polygonTool') {
@@ -324,13 +333,12 @@ ToolbarManager.prototype.activate = function(ID) {
 
 ToolbarManager.prototype.deactivate = function(ID) {
 	var mode = this.controls[ID];
-	//this.mc.setInteractionMode(false);
 
 	//change button state
 	$('#'+ID).removeClass('active');
 
 	if (ID == 'drawTool') {
-		$('.zoneBtns').slideUp();
+		//$('.zoneBtns').slideUp();
 	}
 };
 

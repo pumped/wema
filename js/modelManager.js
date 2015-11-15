@@ -3,6 +3,7 @@ function ModelManager() {
 	this.id = -1;
 	this.updateRate = 5000;
 	this.consID = -1;
+	this.params = {};
 
 	//console.trace();
 }
@@ -15,15 +16,30 @@ ModelManager.prototype.getStatus = function() {
 
 }
 
+ModelManager.prototype.setParamaters = function(param) {
+	this.params = param;
+}
+
 //save the state and run a model
 ModelManager.prototype.saveState = function(species, timeline) {
 /*	var species = "a";
 	var timeline = "b";*/
 	$('#runModel i').addClass('fa-pulse');
 
-	$.getJSON(this.url + '?r=runModel&species='+species+"&timeline="+timeline, function(data) {
+	var reqString = this.reqString();
+
+	$.getJSON(this.url + '?r=runModel&species='+species+"&timeline="+timeline+reqString, function(data) {
 		console.log(data);
 	});
+}
+
+ModelManager.prototype.reqString = function() {
+	var str = "";
+	for (i in this.params) {
+		str+= "&" + i + "=" + this.params[i];
+	}
+
+	return str;
 }
 
 ModelManager.prototype.setID = function(id) {

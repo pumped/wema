@@ -40,7 +40,7 @@ html {
 }
 
 #layerSwitcher .layers {
-  width: 295px;
+  /*width: 295px;*/
 	padding:15px;
 }
 
@@ -300,8 +300,20 @@ a#playback {
 
 
 
+/*  Management Strategies  */
+#managementStrategiesPanel {
+	width:300px;
+	padding:15px;
+}
 
+#managementStrategiesPanel li label {
+	display:block;
+	margin-top: 20px;
+}
 
+#managementStrategiesPanel .subtitle {
+	display:block;
+}
 
 
 /* Ajax Loading Indicator

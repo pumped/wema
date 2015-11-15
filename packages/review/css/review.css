@@ -1,0 +1,56 @@
+#reviewManagementGraph, #reviewCostGraph {
+  height:280px;
+}
+
+
+.managedAreas {
+  padding-bottom:20px;
+}
+
+.areaStat {
+  border-bottom:5px solid red;
+  text-align:center;
+}
+
+.areaStat .colorBlock {
+  width:50px;
+  height:50px;
+  background-color:#ccc;
+}
+
+.areaStat .blk-inline {
+  display: block;
+  text-align: center;
+}
+
+.areaStat .range {
+    font-size: 2em;
+}
+
+.areaStat .units {
+    font-size: 0.5em;
+}
+
+.areaStat.zoneIC {
+	border-color:#3877D8;
+}
+
+.areaStat.zoneP {
+	border-color:#F9A404;
+}
+
+.areaStat.zoneAP {
+	border-color:#ff2800;
+}
+
+.areaStat.zoneD {
+	border-color:#ffe573;
+}
+
+.areaStat.zoneR {
+	border-color:#00BB3F;
+}
+
+.areaStat.zoneC {
+	border-color:#FF8973;
+}

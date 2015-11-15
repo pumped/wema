@@ -99,9 +99,13 @@ WFSTLayer.prototype._setupWFS = function () {
     return function(feature, resolution) {
       if (typeof feature.get('controlMechanism') !== 'undefined' && feature.get('controlMechanism') !== null) {
         if (feature.get('timeline') == that.getDrawProperties().timeline) {
+          var cm = feature.get('controlMechanism');
+          var cm1 = parseInt(cm / 1000);
+          var cm2 = cm % 10;
+
           var defaultStyle = [new ol.style.Style({
-            fill: new ol.style.Fill({color: zoneLookup[feature.get('controlMechanism')].fillColor}),
-            stroke: new ol.style.Stroke({color: zoneLookup[feature.get('controlMechanism')].strokeColor, width: 4})
+            fill: new ol.style.Fill({color: zoneLookup[cm1].fillColor}),
+            stroke: new ol.style.Stroke({color: zoneLookup[cm1].strokeColor, width: 6})
           })];
         } else {
           return null;

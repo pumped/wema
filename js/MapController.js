@@ -4,7 +4,7 @@ var tiled;
 /*geographic = new OpenLayers.Projection("EPSG:4326");
 mercator = new OpenLayers.Projection("EPSG:3857");*/
 
-var zoneIDLookup = ["D","P","R","C","IC","AP"];
+var zoneIDLookup = ["D","P","R","C","IC","AP","N"];
 
 var zoneLookup = {
   "4" : {fillColor: "rgba(31, 96, 233, 0.2)", strokeColor: "rgba(31, 96, 233, 0.8)"},
@@ -13,6 +13,7 @@ var zoneLookup = {
   "0" : {fillColor: "rgba(238, 200, 0, 0.2)", strokeColor: "rgba(238, 200, 0, 0.8)"},
   "2" : {fillColor: "rgba(12, 182, 85, 0.2)", strokeColor: "rgba(12, 182, 85, 0.8)"},
   "3" : {fillColor: "rgba(255, 106, 142, 0.2)", strokeColor: "rgba(255, 106, 142, 0.8)"},
+  "6" : {fillColor: "rgba(152, 152, 152, 0.2)", strokeColor: "rgba(152, 152, 152, 0.8)"}
 };
 
 

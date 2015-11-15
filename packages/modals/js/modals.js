@@ -19,6 +19,9 @@ Modals.prototype.setup = function() {
 
   this.newTimelineModal = new NewTimelineModal();
   this.newTimelineModal.callbacks = this.callbacks;
+
+  this.actionModal = new ActionModal();
+  this.actionModal.callbacks = this.callbacks;
 };
 
 //fire callbacks
@@ -328,3 +331,224 @@ RunModal.prototype.progressBarUpdate = function(percentage) {
 RunModal.prototype.hide = function() {
   $("#runModelModal").modal("hide");
 }
+
+
+
+
+
+function ActionModal() {
+  //append it to html
+  this.callbacks = {};
+  this.id = "#prescribedActionModal";
+  this.setup();
+  this.actions = ["n","n"];
+  this.timeBetween = 10;
+  this.zoneIDLookup = ["D","P","E","C","IC","AP","N"];
+}
+
+ActionModal.prototype.show = function(initial,second) {
+  $(this.id).modal("show");
+};
+
+ActionModal.prototype.setupHTML = function () {
+  var html = '<div class="modal fade" id="prescribedActionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+  <div class="modal-dialog" role="document">\
+    <div class="modal-content">\
+      <div class="modal-header">\
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+        <h4 class="modal-title" id="myModalLabel"></h4>\
+      </div>\
+      <div class="modal-body">\
+        <div class="row">\
+          <div class="col-xs-4">\
+            <h3>Action</h3>\
+            <div id="primaryActionDropdown" class="dropdown actionDropdown" data-action="n">\
+              <button class="actionSelectorBtn btn btn-default dropdown-toggle" type="button" id="primaryActionDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">\
+                <div class="actionContainer erZone">\
+                  <div class="symbol">E</div>\
+                  <div class="title">Eradication</div>\
+                </div>\
+                <span class="caret"></span>\
+              </button>\
+              <ul class="dropdown-menu" aria-labelledby="primaryActionDropdownMenu">\
+                <li>\
+                  <div class="actionContainer erZone" data-action="e">\
+                    <div class="symbol">E</div>\
+                    <div class="title">Eradication</div>\
+                  </div>\
+                </li>\
+                <li>\
+                  <div class="actionContainer coZone" data-action="c">\
+                    <div class="symbol">C</div>\
+                    <div class="title">Containment</div>\
+                  </div>\
+                </li>\
+                <li>\
+                  <div class="actionContainer icoZone" data-action="ic">\
+                    <div class="symbol">IC</div>\
+                    <div class="title">Intensive Control</div>\
+                  </div>\
+                </li>\
+              </ul>\
+            </div>\
+          </div>\
+          <div class="col-xs-4">\
+            <h3>For</h3>\
+            <div class="transitionContainer">\
+              <span class="glyphicon glyphicon-arrow-right actionSelectArrow" aria-hidden="true"></span>\
+              <select class="yearSelector form-control">\
+                <option value="5">5 years</option>\
+                <option value="10">10 years</option>\
+                <option value="15">15 years</option>\
+                <option value="20">20 years</option>\
+                <option value="25">25 years</option>\
+              </select>\
+            </div>\
+          </div>\
+          <div class="col-xs-4">\
+            <h3>Followed by</h3>\
+            <div class="dropdown actionDropdown" id="secondaryActionDropdown" data-action="n">\
+              <button class="actionSelectorBtn btn btn-default dropdown-toggle" type="button" id="secondaryActionDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">\
+                <div class="actionContainer naZone">\
+                  <div class="symbol">None</div>\
+                  <div class="title">No Action</div>\
+                </div>\
+                <span class="caret"></span>\
+              </button>\
+              <ul class="dropdown-menu" aria-labelledby="secondaryActionDropdownMenu">\
+                <li>\
+                  <div class="actionContainer naZone" data-action="n">\
+                    <div class="symbol">None</div>\
+                    <div class="title">No Action</div>\
+                  </div>\
+                </li>\
+                <li>\
+                  <div class="actionContainer erZone" data-action="e">\
+                    <div class="symbol">E</div>\
+                    <div class="title">Eradication</div>\
+                  </div>\
+                </li>\
+                <li>\
+                  <div class="actionContainer coZone" data-action="c">\
+                    <div class="symbol">C</div>\
+                    <div class="title">Containment</div>\
+                  </div>\
+                </li>\
+                <li>\
+                  <div class="actionContainer icoZone" data-action="ic">\
+                    <div class="symbol">IC</div>\
+                    <div class="title">Intensive Control</div>\
+                  </div>\
+                </li>\
+              </ul>\
+            </div>\
+        </div>\
+      </div>\
+    </div>\
+    <div class="modal-footer">\
+      <button type="button" class="btn btn-default actionBtnClose" data-dismiss="modal">Close</button>\
+      <button type="button" class="btn btn-primary actionBtnSave">Draw</button>\
+    </div>\
+  </div>\
+</div>\
+</div>';
+  $('body').append(html);
+};
+
+ActionModal.prototype.setup = function() {
+  var that = this;
+  this.setupHTML();
+
+  //dropdown item click
+  $(".actionDropdown .actionContainer").click(function() {
+    var action = $(this).data("action");
+    if (action) {
+      var parent = $(this).parents(".actionDropdown");
+      var btn = $(parent).find(".btn .actionContainer");
+      $(btn).replaceWith($(this).parent().html());
+
+      //set action for button
+      parent.data("action",action);
+
+      //update actions
+      that.getActions();
+    }
+  });
+
+  //save button click
+  $(".actionBtnSave").click(function() {
+    //update action
+    that.timeBetween = parseInt($("#prescribedActionModal .yearSelector").val());
+
+    that.hide();
+
+    //fire event
+    that._event("drawActionsSet",that.getActionCode());
+  });
+};
+
+ActionModal.prototype._getActionIDs = function() {
+  //determine action ids
+  var actionIds = [6,6];
+
+  actionIds[0] = this.zoneIDLookup.indexOf(this.actions[0].toUpperCase());
+  actionIds[1] = this.zoneIDLookup.indexOf(this.actions[1].toUpperCase());
+
+  if (actionIds[0] == -1) {
+    actionIds[0] = 6;
+  }
+
+  if (actionIds[1] == -1) {
+    actionIds[1] = 6;
+  }
+
+  return actionIds;
+}
+
+ActionModal.prototype.getActionCode = function() {
+
+  //add leading 0 to time between
+  var timeBetween = this.timeBetween;
+  if(this.timeBetween < 10) {
+    var timeBetween = "0" + this.timeBetween;
+  }
+
+  var actionIds = this._getActionIDs();
+
+  var actionCode = "" + actionIds[0] + timeBetween + actionIds[1];
+  console.log(actionCode);
+
+  return actionCode;
+};
+
+ActionModal.prototype.getActions = function() {
+  this.actions[0] = $("#primaryActionDropdown").data("action");
+  this.actions[1] = $("#secondaryActionDropdown").data("action");
+};
+
+ActionModal.prototype.actionSelect = function() {
+
+};
+
+ActionModal.prototype.hide = function() {
+  $(this.id).modal("hide");
+};
+
+//fire callbacks
+ActionModal.prototype._event = function(type,data) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](data);
+			}
+		}
+	}
+};
+
+//set callback
+ActionModal.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
+};

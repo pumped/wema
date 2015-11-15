@@ -134,3 +134,113 @@ vertical-align: middle;
 #userSelectModal .newUserContainer {
   padding-top:30px;
 }
+
+
+
+
+/*  Prescribed Modal */
+#prescribedActionModal .currentAction {
+  text-align: center;
+  /* margin-top: 130px; */
+}
+
+#prescribedActionModal .transitionOptions {
+  list-style:none;
+  padding:0;
+  margin:0;
+  text-align: center;
+}
+
+#prescribedActionModal .transitionOptions li {
+  width: 150px;
+  /* margin: auto; */
+  display: inline-block;
+}
+
+#prescribedActionModal .actionContainer {
+  /* border:1px solid black; */
+  width: 150px;
+  padding: 20px;
+  margin: 0 auto 4px auto;
+}
+
+#prescribedActionModal .actionContainer .symbol {
+  text-align: center;
+  font-size: 3em;
+  font-weight: normal;
+}
+
+#prescribedActionModal .actionContainer .title {
+  text-align: center;
+}
+
+#prescribedActionModal .erZone {
+  background-color: #00BB3F;
+  color: #fff;
+}
+
+#prescribedActionModal .icoZone {
+  background-color: #3877D8;
+  color: #fff;
+}
+
+#prescribedActionModal .coZone {
+  background-color: #FF8973;
+  color: #fff;
+}
+
+#prescribedActionModal .naZone {
+  background-color: #B5B5B5;
+  color: #fff;
+}
+
+
+
+
+
+#prescribedActionModal select.yearSelector {
+  font-size:2em;
+  height: auto;
+}
+
+.actionSelector {
+  font-size:1.3em;
+  height: 130px;
+  background-color: #333;
+  color: #fff;
+}
+
+.actionSelector:hover {
+
+}
+
+.actionSelector option {
+ height:130px;
+}
+
+.actionSelectorBtn {
+  /* height: 120px; */
+  /* width: auto; */
+  font-size: 1em;
+  /*border: 0;*/
+  background: 0;
+}
+
+.actionContainer:hover {
+  opacity:0.8;
+}
+
+#prescribedActionModal .actionSelectArrow {
+  font-size:3em;
+  margin-bottom: 25px;
+  margin-top: 16px;
+}
+
+#prescribedActionModal .transitionContainer {
+  text-align:center;
+}
+
+#prescribedActionModal h3 {
+  text-align:center;
+  margin-top:0;
+}
