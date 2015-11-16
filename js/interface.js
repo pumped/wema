@@ -10,6 +10,19 @@ $('document').ready(function(){
     	$(window.location.hash).click();
 	}
 
+	$("#clickCover").hide();
+	$("#clickCover").click(function(e){e.stopPropagation();});
+	var timeout = 0;
+	$(document).click(function(e){
+		console.log(e);
+		e.stopPropagation();
+		$("#clickCover").show();
+		clearTimeout(timeout);
+		timeout = setTimeout(function(){
+			$("#clickCover").hide();
+		},200);
+	});
+
 });
 
 function InterfaceManager() {
@@ -99,6 +112,20 @@ InterfaceManager.prototype.setup = function(mode) {
 	this.strategyManager = new Strategies(this.modelManager.url);
 	this.strategyManager.on("stateChanged",function stateChanged(state) {
 		that.modelManager.setParamaters(state);
+	});
+
+
+	//zoom buttons
+	$('.zoomIn').click(function() {
+		var view = mc.map.getView();
+		var zoom = view.getZoom();
+		view.setZoom(zoom+1)
+	});
+
+	$('.zoomOut').click(function() {
+		var view = mc.map.getView();
+		var zoom = view.getZoom();
+		view.setZoom(zoom-1)
 	});
 
 };

@@ -150,6 +150,25 @@ AnimatedRaster.prototype.calculateProjection = function(extent, resolution, pixe
 	//console.log("imgX:" + imgPosition.x + ", imgY:" +imgPosition.y);
 };
 
+//fire callbacks
+AnimatedRaster.prototype._event = function(type,data) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](data);
+			}
+		}
+	}
+};
+
+//set callback
+AnimatedRaster.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
+};
+
 
 
 function Animater(layer) {

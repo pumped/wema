@@ -81,6 +81,7 @@ MapController.prototype._setupVisLayer = function() {
 
 MapController.prototype.setVisTime = function(val,quick) {
   this.time = val;
+  this.layers.managementActions.changed();
   if (typeof quick === "undefined" || quick == false){
     this.animater.animateTo(val);
   } else {
@@ -285,7 +286,7 @@ MapController.prototype.setupMap = function() {
   this.map.addInteraction(this.WFSTLayers.distributionLayer.snap);
   this.map.addInteraction(this.WFSTLayers.distributionLayer.select);
   this.map.addInteraction(this.WFSTLayers.distributionLayer.modify);
-
+  
 }
 
 MapController.prototype.setBaseLayer = function(id) {

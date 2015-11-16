@@ -309,7 +309,7 @@ RunModal.prototype.progressBarUpdate = function(percentage) {
   $("#runModelModal .progress-bar").css("width",percentage+"%");
   $("#runModelModal .progress-bar").html(percentage+"%");
 
-  if (percentage >= 70) {
+  if (percentage >= 90) {
     return;
   }
 
@@ -402,6 +402,7 @@ ActionModal.prototype.setupHTML = function () {
                 <option value="15">15 years</option>\
                 <option value="20">20 years</option>\
                 <option value="25">25 years</option>\
+                <option value="30">30 years</option>\
               </select>\
             </div>\
           </div>\

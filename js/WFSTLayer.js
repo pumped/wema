@@ -99,13 +99,33 @@ WFSTLayer.prototype._setupWFS = function () {
     return function(feature, resolution) {
       if (typeof feature.get('controlMechanism') !== 'undefined' && feature.get('controlMechanism') !== null) {
         if (feature.get('timeline') == that.getDrawProperties().timeline) {
+          var zoneIDLookup = ["D","P","E","C","IC","AP","N"];
+          var drawProperties = that.getDrawProperties();
+
           var cm = feature.get('controlMechanism');
           var cm1 = parseInt(cm / 1000);
           var cm2 = cm % 10;
+          var year = parseInt((cm % 1000) / 10);
+
+          var cmc = cm1;
+          if (year <= drawProperties.time) {
+              cmc = cm2;
+          }
+
+          var text = zoneIDLookup[cm1] + "(" + year + "yr) -> " + zoneIDLookup[cm2];
+          if (resolution > 70) {
+            text = '';
+          }
 
           var defaultStyle = [new ol.style.Style({
-            fill: new ol.style.Fill({color: zoneLookup[cm1].fillColor}),
-            stroke: new ol.style.Stroke({color: zoneLookup[cm1].strokeColor, width: 6})
+            fill: new ol.style.Fill({color: zoneLookup[cmc].fillColor}),
+            stroke: new ol.style.Stroke({color: zoneLookup[cmc].strokeColor, width: 6}),
+            text: new ol.style.Text({
+              text:text,
+              fill: new ol.style.Fill({color: "#fff"}),
+              stroke: new ol.style.Stroke({color: zoneLookup[cmc].strokeColor, width: 4}),
+              font:"normal 16px Verdana"
+            })
           })];
         } else {
           return null;

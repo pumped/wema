@@ -56,36 +56,38 @@ MAP
             EXPRESSION ([pixel] >= 10 AND [pixel] < 30)
             STYLE
               OPACITY 30
-              COLORRANGE 43 131 186 171 221 164
+              COLORRANGE 3 22 39 8 47 83
               DATARANGE 1 60
             END
           END
           CLASS
             EXPRESSION ([pixel] >= 30 AND [pixel] < 60)
             STYLE
-              OPACITY 100
-              COLORRANGE 43 131 186 171 221 164
+              OPACITY 60
+              COLORRANGE 8 47 83 26 79 130
               DATARANGE 1 60
             END
           END
           CLASS
             EXPRESSION ([pixel] >= 60 AND [pixel] < 122)
             STYLE
-              COLORRANGE 171 221 164 203 192 38
+              OPACITY 60
+              COLORRANGE 26 79 130 49 114 176
               DATARANGE 60 122
             END
           END
           CLASS
             EXPRESSION ([pixel] >= 122 AND [pixel] < 184)
             STYLE
-              COLORRANGE 203 192 38 253 174 97
+              OPACITY 80
+              COLORRANGE 49 114 176 81 147 209
               DATARANGE 122 184
             END
           END
           CLASS
             EXPRESSION ([pixel] >= 184 AND [pixel] < 9999)
             STYLE
-              COLORRANGE 253 174 97 215 25 28
+              COLORRANGE 81 147 209 240 248 255
               DATARANGE 184 400
             END
           END

@@ -262,6 +262,7 @@ Review.prototype._updateData = function() {
     this.costGraph.series[3].setData(costs.containment,false);
     this.costGraph.series[4].setData(costs.intensiveControl,false);
     this.costGraph.series[5].setData(costs.assetProtection);
+    this.updateAreaSummary();
   }
 }
 
@@ -288,11 +289,22 @@ Review.prototype.getCostsAt = function(year,summarised) {
   return 0;
 }
 
+Review.prototype.updateAreaSummary = function() {
+  var len = this.haSummaries["removal"].length-1;
+  $(".zoneD .value").html(this.haSummaries["delimitation"][len]);
+  $(".zoneP .value").html("N/A");
+  $(".zoneR .value").html(this.haSummaries["removal"][len]);
+  $(".zoneC .value").html(this.haSummaries["containment"][len]);
+  $(".zoneIC .value").html(this.haSummaries["intensiveControl"][len]);
+  $(".zoneAP .value").html(this.haSummaries["assetProtection"][len]);
+}
+
 Review.prototype.calculateCosts = function(data) {
 
   //calculate based on range of active management
   var costs = {};
   var costSummaries = {};
+  var haSummaries = {};
   for (var i in this.costLookup) { //for each type
     var type = this.costLookup[i].id;
     var costPerHa = this.costLookup[i].cost
@@ -300,25 +312,23 @@ Review.prototype.calculateCosts = function(data) {
     if (data.hasOwnProperty(type)) { //if the data has that id e.g d_range
       var activeManagementAreas = data[this.costLookup[i].id];
       var sum = 0;
+      var haSum = 0;
 
       for (var j in activeManagementAreas) { //for each year in that id d_range[0,1,2...]
-        if (!costs.hasOwnProperty(i)) {costs[i]=[]; costSummaries[i]=[];} //setup costs array if it doesn't exist
+        if (!costs.hasOwnProperty(i)) {costs[i]=[]; costSummaries[i]=[]; haSummaries[i]=[];} //setup costs array if it doesn't exist
         var cost = activeManagementAreas[j] * costPerHa; //cost = management area * fee
-        if (i == "removal" && j>0 && j<10) {
-          cost += costs[i][0];
-        }
         costs[i].push(cost)
         sum += cost;
+        haSum += activeManagementAreas[j];
         costSummaries[i].push(sum);
+        haSummaries[i].push(haSum);
       }
-
-
-
     }
   }
 
   this.costs = costs;
   this.costSummaries = costSummaries;
+  this.haSummaries = haSummaries;
   return costs;
 }
 

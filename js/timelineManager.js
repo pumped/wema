@@ -82,7 +82,7 @@ TimelineManager.prototype.setup = function() {
 	};
 	ws.onmessage = function(ev){
 		var data = JSON.parse(ev.data);
-		//console.log(data);
+		console.log(data);
 		if (data.event == "timeline_state") {
 			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
 			that.review.update();
