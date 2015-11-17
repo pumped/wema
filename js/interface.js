@@ -14,13 +14,12 @@ $('document').ready(function(){
 	$("#clickCover").click(function(e){e.stopPropagation();});
 	var timeout = 0;
 	$(document).click(function(e){
-		console.log(e);
 		e.stopPropagation();
 		$("#clickCover").show();
 		clearTimeout(timeout);
 		timeout = setTimeout(function(){
 			$("#clickCover").hide();
-		},200);
+		},100);
 	});
 
 });
@@ -218,7 +217,7 @@ ToolbarManager.prototype.setup = function () {
 	$('#saveDistribution').click(function saveDistributionButton(){
 		var species = iface.speciesID;
 		var timeline = "0";
-		iface.modelManager.saveState(species,timeline);
+		iface.modelManager.saveState(species,timeline,false);
 		$("#zone").click();
 		that.deactivateAll();
 	});

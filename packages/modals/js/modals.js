@@ -362,7 +362,7 @@ ActionModal.prototype.setupHTML = function () {
         <div class="row">\
           <div class="col-xs-4">\
             <h3>Action</h3>\
-            <div id="primaryActionDropdown" class="dropdown actionDropdown" data-action="n">\
+            <div id="primaryActionDropdown" class="dropdown actionDropdown" data-action="e">\
               <button class="actionSelectorBtn btn btn-default dropdown-toggle" type="button" id="primaryActionDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">\
                 <div class="actionContainer erZone">\
                   <div class="symbol">E</div>\
@@ -458,6 +458,7 @@ ActionModal.prototype.setupHTML = function () {
 
 ActionModal.prototype.setup = function() {
   var that = this;
+  this.actions = ["n","n"];
   this.setupHTML();
 
   //dropdown item click
@@ -486,6 +487,8 @@ ActionModal.prototype.setup = function() {
     //fire event
     that._event("drawActionsSet",that.getActionCode());
   });
+
+  this.getActions();
 };
 
 ActionModal.prototype._getActionIDs = function() {

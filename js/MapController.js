@@ -286,7 +286,6 @@ MapController.prototype.setupMap = function() {
   this.map.addInteraction(this.WFSTLayers.distributionLayer.snap);
   this.map.addInteraction(this.WFSTLayers.distributionLayer.select);
   this.map.addInteraction(this.WFSTLayers.distributionLayer.modify);
-  
 }
 
 MapController.prototype.setBaseLayer = function(id) {

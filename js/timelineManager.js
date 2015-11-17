@@ -75,6 +75,14 @@ TimelineManager.prototype.setup = function() {
 		that.review.setID("1");
 	});
 
+	var updateStats = throttle(function(){
+		console.log("throttle");
+		var data = that.data;
+		that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
+		that.review.update();
+		that._event("graphData",that.data);
+	},800,that);
+
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
 	var $message = $('#message');
 	ws.onopen = function(){
@@ -84,9 +92,8 @@ TimelineManager.prototype.setup = function() {
 		var data = JSON.parse(ev.data);
 		console.log(data);
 		if (data.event == "timeline_state") {
-			that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
-			that.review.update();
-			that._event("graphData",this.data);
+			that.data = data;
+			updateStats();
 		}
 		if (data.event == "time_rendered") {
 			that.setYear(data.data.time,true);
@@ -341,3 +348,26 @@ TimelineManager.prototype.stop = function() {
 	$('#playback .glyphicon').removeClass('glyphicon-pause');
 	$('#playback .glyphicon').addClass('glyphicon-play');
 };
+
+function throttle(fn, threshhold, scope) {
+  threshhold || (threshhold = 250);
+  var last,
+      deferTimer;
+  return function () {
+    var context = scope || this;
+
+    var now = +new Date,
+        args = arguments;
+    if (last && now < last + threshhold) {
+      // hold on to it
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(function () {
+        last = now;
+        fn.apply(context, args);
+      }, threshhold);
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+}
