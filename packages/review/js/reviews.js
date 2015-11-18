@@ -45,6 +45,8 @@ Review.prototype.setID = function(id) {
 Review.prototype.setData = function(data) {
   this.data = data;
   if (this.id != -1) {
+    this.setupManagementGraph();
+    this.setupCostGraph();
     this._updateData();
   }
 };
@@ -80,7 +82,7 @@ Review.prototype.setupManagementGraph = function() {
   if (this.managementGraph) {
     return;
   }
-
+  console.log("setup graph");
   this.managementGraph = new Highcharts.Chart({
         chart: {
             type: 'column',
@@ -255,6 +257,11 @@ Review.prototype.setupCostGraph = function() {
 Review.prototype._updateData = function() {
   var data = this.fetchTimeline(this.id);
 
+  console.trace();
+  console.log(this.id);
+  console.log(this.managementGraph);
+  console.log(this.data);
+
   if (this.id != -1 && this.managementGraph && this.data) {
     this.managementGraph.series[0].setData(data.d_range,false);
     this.managementGraph.series[1].setData(data.p_range,false);
@@ -279,7 +286,7 @@ Review.prototype.getCostsAt = function(year,summarised) {
   //console.log(this.costs);
   //check objects exist
   var data = this.fetchTimeline(this.id);
-  if (this.data) {
+  if (data) {
     //if summarised pull from summaries
     var costs;
 
@@ -293,7 +300,7 @@ Review.prototype.getCostsAt = function(year,summarised) {
       }
 
       //add up costs
-      summed += parseInt(this.data[sumID][year]);
+      summed += parseInt(data[sumID][year]);
     }
 
     return summed;
@@ -378,7 +385,7 @@ Review.prototype.fetchTimeline = function(id) {
 }
 
 Review.prototype._recursiveSearchData = function(id, elem) {
-	if (elem.ID == id) {
+  if (elem.ID == id) {
 		return elem;
 	}
 

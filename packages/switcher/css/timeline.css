@@ -1,0 +1,82 @@
+body {
+  background-color:#fff;
+}
+
+.chartContainer {
+  height:100%;
+  width:100%;
+}
+
+.timelineChart {
+  height:150px;
+  overflow:visible;
+}
+
+.highcharts-container, .highcharts-container svg {
+  overflow:visible !important;
+}
+
+#timelines .tlButtonContainer {
+  border:1px solid #eee;
+  border-radius:20px;
+  padding:15px;
+}
+
+#timelines h2 {
+  font-size:1.5em;
+  text-align:center
+}
+
+.tlButtonContainer .tlStats {
+  text-align: center;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+.tlButtonContainer .tlStats .title {
+  font-size:0.9em;
+  padding-top:10px;
+}
+
+.tlButtonContainer .tlStats .value {
+  font-size: 1.2em;
+  line-height: .9em;
+  /* margin-bottom: 20px; */
+}
+
+.tlButtonContainer .tlDistStats .tlDistHa {
+  width: 32%;
+  display:inline-block;
+  text-align:center;
+  border-bottom-width:2px;
+  border-bottom-style: solid;
+  margin-bottom: 8px;
+}
+
+.tlButtonContainer .tlDistStats .title {
+  font-size:0.7em;
+
+}
+
+.tlDZone {
+  border-color:#ffe573;
+}
+.tlPZone {
+  border-color:#F9A404;
+}
+.tlRZone {
+  border-color:#00BB3F;
+}
+.tlCZone {
+  border-color:#FF8973;
+}
+.tlICZone {
+  border-color:#3877D8;
+}
+.tlAPZone {
+  border-color:#ff2800;
+}
+
+.tlButtonContainer {
+  /*margin-bottom: 35px;*/
+}

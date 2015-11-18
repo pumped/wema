@@ -112,7 +112,7 @@ html {
     top:0;
     bottom:0;
     left:0;
-    height:0;
+    height:auto;
     position:absolute;
     z-index: 15;
     text-align: center;

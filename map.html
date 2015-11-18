@@ -1,8 +1,8 @@
 <html>
 <head>
 	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-  <script type="text/javascript" src="js/svg.min.js"></script>
-  <script type="text/javascript" src="js/timeline.js"></script>
+  <!--<script type="text/javascript" src="js/svg.min.js"></script>-->
+  <!--<script type="text/javascript" src="js/timeline.js"></script>-->
 	<script type="text/javascript" src="packages/reconnecting-websocket/reconnecting-websocket.min.js"></script>
 
 	<script type="text/javascript" src="js/ol.js"></script>
@@ -10,11 +10,17 @@
 	<script type="text/javascript" src="js/WFSTLayer.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/ol.css">
 
+	<!-- Modals -->
 	<script type="text/javascript" src="packages/modals/js/modals.js"></script>
 	<link rel="stylesheet" type="text/css" href="packages/modals/css/modals.css">
 
+	<!-- Review Tab -->
 	<script type="text/javascript" src="packages/review/js/reviews.js"></script>
 	<link rel="stylesheet" type="text/css" href="packages/review/css/review.css"/>
+
+	<!-- Timeline Tab -->
+	<script type="text/javascript" src="packages/switcher/js/timeline.js"></script>
+	<link rel="stylesheet" type="text/css" href="packages/switcher/css/timeline.css"/>
 
   <script type="text/javascript" src="js/console.js"></script>
 	<script type="text/javascript" src="js/MapController.js"></script>
@@ -59,6 +65,7 @@
             <li><a id="edit" href="#edit"><span class="glyphicon glyphicon-th"></span> Data</a></li>
             <li><a id="zone" href="#zone"><span class="glyphicon glyphicon-edit"></span> Plan</a></li>
             <li><a id="plan" href="#plan"><span class="glyphicon glyphicon-stats"></span> Report</a></li>
+						<li><a id="time" href="#time"><span class="glyphicon glyphicon-random"></span> Compare</a></li>
           </ul>
           <!--<form class="navbar-form navbar-right">
             <label for="weedSpecies">Species</label>
@@ -125,7 +132,7 @@
 								</li>
               </ul>
             </li>
-            <li><a id="showTimelines" data-toggle="collapse" data-target=".timelineContainer"><span class="glyphicon glyphicon-random"></span> Timelines</a></li>
+            <!--<li><a id="showTimelines" data-toggle="collapse" data-target=".timelineContainer"><span class="glyphicon glyphicon-random"></span> Timelines</a></li>-->
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -159,7 +166,9 @@
 
 
     <div class="timelineContainer">
-      <div id="timelines"></div>
+			<div class="container">
+	      <div id="timelines"></div>
+			</div>
     </div>
 
 		<div class="reviewContainer">

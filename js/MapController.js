@@ -114,7 +114,7 @@ MapController.prototype.getInteractionMode = function() {
 }
 
 MapController.prototype.setInteractionMode = function(mode) {
-  console.log("Set Interaction Mode: " + mode)
+  //console.log("Set Interaction Mode: " + mode)
   //remove current listener
   this.interaction = mode;
 
@@ -258,7 +258,7 @@ MapController.prototype.setupMap = function() {
     featureType: "management_strategies"
   });
   this.layers.managementActions = this.WFSTLayers.managementActions.getLayer();
-  this.map.addLayer(this.layers.managementActions);
+
   this.WFSTLayers.managementActions.drawPropertiesFunction(function getDrawMetadata() {
     return that.getMetadata();
   });
@@ -281,6 +281,9 @@ MapController.prototype.setupMap = function() {
   this.WFSTLayers.distributionLayer.drawPropertiesFunction(function getDrawMetadata(){
     return {species:that.speciesID};
   });
+
+  //add management actions last so it's on top
+  this.map.addLayer(this.layers.managementActions);
 
   //add interaction handlers
   this.map.addInteraction(this.WFSTLayers.managementActions.getDrawInteraction());

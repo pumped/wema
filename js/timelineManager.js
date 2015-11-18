@@ -15,12 +15,10 @@ function TimelineManager(url) {
 
 TimelineManager.prototype.setConsole = function(cons) {
 	this.console = cons;
-	//this.modelManager.setConsole(cons);
 };
 
 TimelineManager.prototype.setMapController = function(mapController) {
 	this.mapController = mapController;
-	//this.modelManager.setMapController(mapController);
 };
 
 TimelineManager.prototype.expandGraph = function(expand) {
@@ -38,23 +36,12 @@ TimelineManager.prototype.setup = function() {
 	//setup timelines
 	var that = this;
 
+	this.timelineSwitcher = new TimelineOverview("timelines");
+	this.timelineSwitcher.setBaseID("0");
 
-/*	tldata = [{
-			startTime:'0',
-			endTime:'30',
-			ID:'0',
-			occupied: [886, 1276, 1544, 1737, 1887, 2307, 3038, 3836, 4622, 5356, 6120, 6967, 7909, 8954, 10133, 11334, 12625, 13982, 15347, 16907, 18509, 20180, 21916, 23738, 25644, 27648, 29728, 31932, 34124, 36413],
-			cost: 500000,
-			divisions: [2000,1000,3000,6000,0,1000],
-			children:[{
-				startTime:'0',
-				endTime:'30',
-				ID:'1',
-				occupied: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-				cost: 200000,
-				children:[]
-			}]
-		}];*/
+	this.timelineSwitcher.on("timelineChanged",function(id){
+		that.setID(id);
+	})
 
 	this.playGraph = new GraphTimeline("playbackGraph");
 	this.playGraph._setupExpander("#timelineExpander .expHandle");
@@ -71,6 +58,8 @@ TimelineManager.prototype.setup = function() {
 		that.playGraph.setBaseID("0");
 		that.setID("1");
 
+		that.timelineSwitcher.setData(that.data);
+
 		that.review.setData(data);
 		that.review.setID("1");
 	});
@@ -79,6 +68,7 @@ TimelineManager.prototype.setup = function() {
 		console.log("throttle");
 		var data = that.evtData;
 		that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
+		that.timelineSwitcher.setData(that.data);
 		that.review.update();
 		that._event("graphData",that.data);
 	},800,that);
@@ -168,6 +158,14 @@ TimelineManager.prototype.setID = function(id) {
 	if (this.playGraph) {
 		this.playGraph.setID(id);
 	}
+	if (this.review) {
+		this.review.setID(id);
+	}
+
+	if (this.timelineSwitcher) {
+		this.timelineSwitcher.setID(id);
+	}
+
 	//this.modelManager.setID(id);
 	//data = this.getData(this.id);
 

@@ -277,6 +277,12 @@ ToolbarManager.prototype.setMode = function(mode) {
 		$('.reviewContainer').slideUp();
 	}
 
+	if (mode == 'time') {
+		$('.timelineContainer').slideDown();
+	} else {
+		$('.timelineContainer').slideUp();
+	}
+
 	//return if no more settings
 	if (!this.mode[mode]) {
 		return;
@@ -294,7 +300,7 @@ ToolbarManager.prototype.setMode = function(mode) {
 
 ToolbarManager.prototype._draw = function(mode) {
 	if (mode == "draw") {
-		console.log("draw");
+
 	}
 }
 /*
@@ -319,7 +325,7 @@ ToolbarManager.prototype.bindOnMode = function(ID,button,zone) {
 };
 
 ToolbarManager.prototype.toggle = function(ID) {
-	console.log(ID);
+	/*console.log(ID);*/
 	//get currently Active tool
 	var active = false;
 	if ($('#'+ID).hasClass('active')) {
