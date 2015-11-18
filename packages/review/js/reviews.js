@@ -82,7 +82,7 @@ Review.prototype.setupManagementGraph = function() {
   if (this.managementGraph) {
     return;
   }
-  console.log("setup graph");
+
   this.managementGraph = new Highcharts.Chart({
         chart: {
             type: 'column',
@@ -257,27 +257,27 @@ Review.prototype.setupCostGraph = function() {
 Review.prototype._updateData = function() {
   var data = this.fetchTimeline(this.id);
 
-  console.trace();
+  console.log("update report");
   console.log(this.id);
   console.log(this.managementGraph);
-  console.log(this.data);
+  console.log(data);
 
-  if (this.id != -1 && this.managementGraph && this.data) {
-    this.managementGraph.series[0].setData(data.d_range,false);
-    this.managementGraph.series[1].setData(data.p_range,false);
-    this.managementGraph.series[2].setData(data.r_range,false);
-    this.managementGraph.series[3].setData(data.c_range,false);
-    this.managementGraph.series[4].setData(data.ic_range,false);
-    this.managementGraph.series[5].setData(data.ap_range);
+  if (this.id != -1 && this.managementGraph && data) {
+    this.managementGraph.series[0].setData(data.d_range.slice(0),false);
+    this.managementGraph.series[1].setData(data.p_range.slice(0),false);
+    this.managementGraph.series[2].setData(data.r_range.slice(0),false);
+    this.managementGraph.series[3].setData(data.c_range.slice(0),false);
+    this.managementGraph.series[4].setData(data.ic_range.slice(0),false);
+    this.managementGraph.series[5].setData(data.ap_range.slice(0));
   }
 
-  if (this.id != -1 && this.managementGraph && this.data) {
-    this.costGraph.series[0].setData(data.d_cost,false);
-    this.costGraph.series[1].setData(data.p_cost,false);
-    this.costGraph.series[2].setData(data.r_cost,false);
-    this.costGraph.series[3].setData(data.c_cost,false);
-    this.costGraph.series[4].setData(data.ic_cost,false);
-    this.costGraph.series[5].setData(data.ap_cost);
+  if (this.id != -1 && this.managementGraph && data) {
+    this.costGraph.series[0].setData(data.d_cost.slice(0),false);
+    this.costGraph.series[1].setData(data.p_cost.slice(0),false);
+    this.costGraph.series[2].setData(data.r_cost.slice(0),false);
+    this.costGraph.series[3].setData(data.c_cost.slice(0),false);
+    this.costGraph.series[4].setData(data.ic_cost.slice(0),false);
+    this.costGraph.series[5].setData(data.ap_cost.slice(0));
     this.updateAreaSummary();
   }
 }

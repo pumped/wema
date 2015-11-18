@@ -52,6 +52,7 @@ InterfaceManager.prototype.setup = function(mode) {
 	this.timeline.on("timelineChange",function updateMapTimeline(data){
 		if (data.hasOwnProperty("id")) {
 			mc.setVectorTimeline(data.id);
+			mc.setVisTimeline(data.id);
 		} else {
 			console.warn("Timeline Change event doesn't have an ID");
 		}

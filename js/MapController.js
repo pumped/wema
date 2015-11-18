@@ -153,6 +153,8 @@ MapController.prototype.setVisTimeline = function(id) {
 
   //update animated raster url
   this.animatedRaster.changeParam("url",this._getVisURL());
+
+  this.layers.dispersal.changed();
 };
 
 MapController.prototype.setVectorTimeline = function(id) {
@@ -160,6 +162,8 @@ MapController.prototype.setVectorTimeline = function(id) {
 
   //show/hide as necessary
   this.WFSTLayers.distributionLayer.vectorSource.changed();
+  //change
+  this.WFSTLayers.managementActions.changed();
 };
 
 MapController.prototype.setSpecies = function (species) {

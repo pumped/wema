@@ -91,7 +91,7 @@ TimelineOverview.prototype.updateChart = function(data,id) {
   $("#timeline"+id+" .distibution .value").html(occupied + "ha");
 
   $("#timeline"+id+" .tlDZone .value").html(dha + "ha");
-  $("#timeline"+id+" .tlPZone .value").html(pha + "ha");
+  $("#timeline"+id+" .tlPZone .value").html(pha + "%");
   $("#timeline"+id+" .tlRZone .value").html(rha + "ha");
   $("#timeline"+id+" .tlCZone .value").html(cha + "ha");
   $("#timeline"+id+" .tlICZone .value").html(icha + "ha");
@@ -235,9 +235,9 @@ TimelineOverview.prototype._recursiveCreateChart = function(elem) {
       this.updateChart(elem,elem.ID);
 
       if (this.baseData && elem.ID != this.baseID) {
-        chart.series[0].setData(this.baseData.occupied);
+        chart.series[0].setData(this.baseData.occupied.slice(0));
       }
-      chart.series[1].setData(elem.occupied);
+      chart.series[1].setData(elem.occupied.slice(0));
 
       this.chartN++;
     }
@@ -256,13 +256,6 @@ TimelineOverview.prototype.setBaseID = function(id) {
 
 TimelineOverview.prototype.setID = function(id) {
   this.ID = id;
-}
-
-TimelineOverview.prototype.setDataArray = function(id,data) {
-  var timeline = this.fetchTimeline(id);
-  timeline.occupied = data;
-
-  this._partialUpdate(id);
 }
 
 TimelineOverview.prototype.setTimelineData = function(id,data) {

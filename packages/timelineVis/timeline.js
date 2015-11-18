@@ -162,7 +162,6 @@ GraphTimeline.prototype.shrinkGraph = function() {
 
 
 GraphTimeline.prototype.setData = function(data) {
-  console.log(data);
   this.data = data;
   if (this.ID && this.baseID) {
     this._updateData("base");
@@ -181,7 +180,7 @@ GraphTimeline.prototype.setID = function(id) {
 
 GraphTimeline.prototype.setDataArray = function(id,data) {
   var timeline = this.fetchTimeline(id);
-  timeline.occupied = data;
+  //timeline.occupied = data;
 
   this._partialUpdate(id);
 }
@@ -245,10 +244,14 @@ GraphTimeline.prototype._partialUpdate = function (id) {
 GraphTimeline.prototype._updateData = function(type) {
   if (type == "base") {
     var data = this.fetchTimeline(this.baseID);
-    this.chart.series[0].setData(data.occupied);
+    if (data) {
+      this.chart.series[0].setData(data.occupied.slice(0));
+    }
   } else if (type == "selected") {
     var data = this.fetchTimeline(this.ID);
-    this.chart.series[1].setData(data.occupied);
+    if (data) {
+      this.chart.series[1].setData(data.occupied.slice(0));
+    }
   }
 }
 

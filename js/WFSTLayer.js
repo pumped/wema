@@ -383,6 +383,10 @@ WFSTLayer.prototype.getDrawInteraction = function () {
     return this.draw;
 };
 
+WFSTLayer.prototype.changed = function () {
+    this.layer.changed();
+};
+
 WFSTLayer.prototype.setVisibility = function (state) {
   //console.log(this.layer);
   if (state) {
