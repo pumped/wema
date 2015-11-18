@@ -75,8 +75,14 @@ InterfaceManager.prototype.setup = function(mode) {
 		mc.setZone(zoneID);
 	});
 
+	//setup modals draw action save
 	this.modals.on("drawActionsSet",function(zone) {
 		mc.setZone(zone);
+	});
+	//connect edit tool to drawAction
+	mc.on("editFeature",function(feature) {
+		//open modal in edit state
+		//this.modals.actionModal.editMode(feature,function() editFinished);
 	});
 
 	this.tools.on("save",function saveState(e) {

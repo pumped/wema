@@ -216,13 +216,13 @@ function NewTimelineModal() {
                     <span class="subtitle">Create a new scenario with no management actions.</span>\
                   </div>\
                 </div>\
-                <div class="col-xs-6">\
+                <!--<div class="col-xs-6">\
                   <div id="duplicateModelButton" class="newTimelineButtons btn btn-default">\
                     <i class="fa fa-files-o"></i>\
                     <span class="title">Duplicate Current</span>\
                     <span class="subtitle">Create a new scenario with the current management actions.</span>\
                   </div>\
-                </div>\
+                </div>-->\
               </div>\
             </div>\
           </div>\
@@ -340,8 +340,8 @@ function ActionModal() {
   //append it to html
   this.callbacks = {};
   this.id = "#prescribedActionModal";
-  this.setup();
   this.actions = ["n","n"];
+  this.setup();
   this.timeBetween = 10;
   this.zoneIDLookup = ["D","P","E","C","IC","AP","N"];
 }
@@ -458,7 +458,6 @@ ActionModal.prototype.setupHTML = function () {
 
 ActionModal.prototype.setup = function() {
   var that = this;
-  this.actions = ["n","n"];
   this.setupHTML();
 
   //dropdown item click

@@ -19,6 +19,7 @@ var zoneLookup = {
 
 
 function MapController() {
+  this.callbacks = {};
   this.layers = {};
   this.WFSTLayers = {};
   this.map;
@@ -262,6 +263,11 @@ MapController.prototype.setupMap = function() {
     return that.getMetadata();
   });
 
+  this.WFSTLayers.managementActions.on("editFeature", function(e){
+    console.log("edit Feature")
+    that._event("editFeature",e);
+  });
+
   //setup distribution layer
   this.WFSTLayers.distributionLayer = new WFSTLayer({
     url: "http://"+document.location.hostname+":8080/geoserver/wema/wfs",
@@ -308,4 +314,23 @@ MapController.prototype.setLayerTransparency = function(id,trans) {
   } else if (id == "slideSimOpacity") {
     this.layers.dispersal.set("opacity",trans);
   }
+};
+
+//fire callbacks
+MapController.prototype._event = function(type,data) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](data);
+			}
+		}
+	}
+};
+
+//set callback
+MapController.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
 };

@@ -2,7 +2,7 @@
 function TimelineManager(url) {
 	this.startYear = 0;
 	this.currentYear = this.startYear;
-	this.endYear = 29;
+	this.endYear = 30;
 	this.playbackSpeed = 300;
 	this.loop = false;
 	this.data = null;
@@ -77,7 +77,7 @@ TimelineManager.prototype.setup = function() {
 
 	var updateStats = throttle(function(){
 		console.log("throttle");
-		var data = that.data;
+		var data = that.evtData;
 		that.playGraph.setTimelineData(data.data.timelineID,data.data.state);
 		that.review.update();
 		that._event("graphData",that.data);
@@ -92,7 +92,7 @@ TimelineManager.prototype.setup = function() {
 		var data = JSON.parse(ev.data);
 		console.log(data);
 		if (data.event == "timeline_state") {
-			that.data = data;
+			that.evtData = data;
 			updateStats();
 		}
 		if (data.event == "time_rendered") {

@@ -15,7 +15,7 @@ function WFSTLayer(params) {
   var defaults = {geometryType:"MultiPolygon", geometryName: "the_geom"}
 
   this.params = $.extend({},defaults,params);
-
+  this.callbacks = {};
   this.drawProperties = {
     controlMechanism: 2
   };
@@ -31,6 +31,7 @@ function WFSTLayer(params) {
 
 //sets the interaction mode with the layer
 WFSTLayer.prototype.setMode = function(mode) {
+  this.interactMode = mode;
 
   this.draw.setActive(false);
   this.select.setActive(false);
@@ -48,12 +49,16 @@ WFSTLayer.prototype.setMode = function(mode) {
     this.select.setActive(true);
   } else if (mode == "edit") {
     this.select.setActive(true);
-    this.modify.setActive(true);
+    /*this.modify.setActive(true);*/
   } else {
     //off
     this.draw.setActive(false);
   }
 
+  //update edit collection
+  this.select.getFeatures().clear();
+
+  // update collection for snapping
   this.modifyCollection.clear();
   var features = this.vectorSource.getFeatures();
   var drawProperties = this.getDrawProperties();
@@ -113,7 +118,7 @@ WFSTLayer.prototype._setupWFS = function () {
           }
 
           var text = zoneIDLookup[cm1] + "(" + year + "yr) -> " + zoneIDLookup[cm2];
-          if (resolution > 70) {
+          if (resolution > 153) {
             text = '';
           }
 
@@ -186,6 +191,7 @@ WFSTLayer.prototype._setupModify = function () {
   var that = this;
   //deletes
   this.select.on("select", function(e){
+    console.log(e);
     //if deleting
     if (that.delete) {
       var features = e.target.getFeatures().getArray();
@@ -204,6 +210,14 @@ WFSTLayer.prototype._setupModify = function () {
         });
       }
     }
+
+    if (that.interactMode == "edit") {
+      var features = e.target.getFeatures().getArray();
+      if (features.length > 0) {
+        var feature = features[0];
+        that._event("editFeature", feature);
+      }
+    }
   });
 
   //when feature is selected store revision for modification detection
@@ -219,7 +233,9 @@ WFSTLayer.prototype._setupModify = function () {
     if (that.modificationTable.hasOwnProperty(id))
     if (that.modificationTable[id] != feature.getRevision()) {
       console.debug("Feature changed, saving");
-      that._saveChanges(null,[feature],null);
+      that._saveChanges(null,null,[feature]);
+      feature.setId("");
+      that._saveChanges([feature],null,null);
     }
   });
 
@@ -295,8 +311,8 @@ WFSTLayer.prototype._saveChanges = function(add, modify, del, successFunction, e
       if (typeof successFunction == "function") {
         successFunction(data, add);
       } else {
-        console.debug("Transaction Succeded");
-        console.debug(data);
+        // console.debug("Transaction Succeded");
+        // console.debug(data);
       }
     },
     error: function(e) {
@@ -374,4 +390,23 @@ WFSTLayer.prototype.setVisibility = function (state) {
   } else {
     this.layer.setVisible(false);
   }
+};
+
+//fire callbacks
+WFSTLayer.prototype._event = function(type,data) {
+	if (this.callbacks.hasOwnProperty(type)) {
+		for (var i in this.callbacks[type]) {
+			if (typeof this.callbacks[type][i] == "function") {
+				this.callbacks[type][i](data);
+			}
+		}
+	}
+};
+
+//set callback
+WFSTLayer.prototype.on = function(type,callback) {
+	if (!this.callbacks.hasOwnProperty(type)) {
+		this.callbacks[type] = [];
+	}
+	this.callbacks[type].push(callback);
 };

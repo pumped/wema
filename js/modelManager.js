@@ -21,19 +21,20 @@ ModelManager.prototype.setParamaters = function(param) {
 }
 
 //save the state and run a model
-ModelManager.prototype.saveState = function(species, timeline, full) {
+ModelManager.prototype.saveState = function(species, timeline, noAction) {
 /*	var species = "a";
 	var timeline = "b";*/
 	var fullStr;
-	if (full == false) {
+	var reqString;
+	if (noAction == false) {
 		fullStr = "&full=0";
+		reqString = "&prevention=0&protection=0";
 	} else {
 		fullStr = "&full=1";
+		reqString = this.reqString();
 	}
 
 	$('#runModel i').addClass('fa-pulse');
-
-	var reqString = this.reqString();
 
 	$.getJSON(this.url + '?r=runModel&species='+species+"&timeline="+timeline+reqString+fullStr, function(data) {
 		console.log(data);

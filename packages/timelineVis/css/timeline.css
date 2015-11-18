@@ -8,7 +8,7 @@ body {
 }
 
 #playbackGraph {
-  height:50px;
+  height:75px;
   overflow:visible;
   margin:5px 20px 0 2px;
 }

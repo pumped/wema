@@ -4,34 +4,15 @@ function GraphTimeline(container) {
   this.container = container;
 
   this.options = {
-    heights: [50,300]
+    heights: [75,300]
   }
 
-  this.setupGraph(this.container);
-
-  this.tlExpanded = false;
-  this.tlExpandHandle = false;
-}
-
-GraphTimeline.prototype._setupExpander = function(id) {
-	var that = this;
-  this.tlExpandHandle = id;
-	$(id).on("click",function expanderClicked(){
-		if (that.tlExpanded == false) {
-      that.expandGraph();
-    } else {
-      that.shrinkGraph();
-    }
-	});
-}
-
-GraphTimeline.prototype.setupGraph = function(div) {
   Highcharts.setOptions({
     colors: ['#cccccc', '#529BF1', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
              '#FF9655', '#FFF263', '#6AF9C4'],
   });
 
-  this.chart = new Highcharts.Chart({
+  this.chartOptions = {
     chart: {
       renderTo:this.container,
       type: 'area',
@@ -49,7 +30,7 @@ GraphTimeline.prototype.setupGraph = function(div) {
     xAxis: {
       minTickInterval: 1,
       labels:{
-        enabled:false
+        enabled:true
       }
     },
     yAxis: {
@@ -83,20 +64,79 @@ GraphTimeline.prototype.setupGraph = function(div) {
       enabled: false
     },
     series: [{
-        name: 'Original',
+        name: 'No Action',
         color: "#cccccc",
         data: [null]
       }, {
-        name: 'New',
+        name: 'Current Plan',
         color: '#24CBE5',
         data: [null]
     }]
-  });
+  };
+
+  this.largeChartOptions = {
+    legend: {
+      enabled:true
+    },
+    title: {
+      text: 'Area Invaded vs Time'
+    },
+    yAxis: {
+      title: {
+        text: 'Area (ha)'
+      },
+    }
+  };
+
+  this.smallChartOptions = {
+    legend: {
+      enabled:false
+    },
+    title: {
+      text: ''
+    },
+    yAxis: {
+      title: {
+        text: ''
+      },
+    }
+  };
+
+  this.setupGraph(this.container);
+
+  this.tlExpanded = false;
+  this.tlExpandHandle = false;
+}
+
+GraphTimeline.prototype._setupExpander = function(id) {
+	var that = this;
+  this.tlExpandHandle = id;
+	$(id).on("click",function expanderClicked(){
+		if (that.tlExpanded == false) {
+      that.expandGraph();
+    } else {
+      that.shrinkGraph();
+    }
+	});
+}
+
+GraphTimeline.prototype.setupGraph = function(div) {
+  //destroy old chart if we're reloading options
+  if (this.chart) {
+    this.chart.destroy();
+  }
+  this.chart = new Highcharts.Chart(this.chartOptions);
 };
 
 GraphTimeline.prototype.expandGraph = function() {
   $('#'+this.container).height(this.options.heights[1]);
-  this.chart.reflow();
+
+  $.extend(true,this.chartOptions,this.largeChartOptions);
+  this.setupGraph();
+  this._updateData("base");
+  this._updateData("selected");
+
+  //this.chart.reflow();
   this.tlExpanded = true;
   if (this.tlExpandHandle) {
     $(this.tlExpandHandle + " .glyphicon").removeClass("glyphicon-chevron-up");
@@ -106,7 +146,12 @@ GraphTimeline.prototype.expandGraph = function() {
 
 GraphTimeline.prototype.shrinkGraph = function() {
   $('#'+this.container).height(this.options.heights[0]);
-  this.chart.reflow();
+
+  $.extend(true,this.chartOptions,this.smallChartOptions);
+  this.setupGraph();
+  this._updateData("base");
+  this._updateData("selected");
+
   this.tlExpanded = false;
   if (this.tlExpandHandle) {
     $(this.tlExpandHandle + " .glyphicon").removeClass("glyphicon-chevron-down");

@@ -16,12 +16,12 @@ function Review() {
   this.costSummaries;
 
   this.costLookup = {
-    "delimitation":{"id":"d_range","cost":300},
-    "prevention":{"id":"p_range","cost":0},
-    "removal":{"id":"r_range","cost":1800},
-    "containment":{"id":"c_range","cost":1200},
-    "intensiveControl":{"id":"ic_range","cost":1200},
-    "assetProtection":{"id":"ap_range","cost":600}
+    "delimitation":{"id":"d_range","cost":300,"costID":"d_cost","costSumID":"d_costSum","haSum":"d_haSum"},
+    "prevention":{"id":"p_range","cost":0,"costID":"p_cost","costSumID":"p_costSum","haSum":"p_haSum"},
+    "removal":{"id":"r_range","cost":1800,"costID":"r_cost","costSumID":"r_costSum","haSum":"r_haSum"},
+    "containment":{"id":"c_range","cost":1200,"costID":"c_cost","costSumID":"c_costSum","haSum":"c_haSum"},
+    "intensiveControl":{"id":"ic_range","cost":1200,"costID":"ic_cost","costSumID":"ic_costSum","haSum":"ic_haSum"},
+    "assetProtection":{"id":"ap_range","cost":600,"costID":"ap_cost","costSumID":"ap_costSum","haSum":"ap_haSum"}
   };
 };
 
@@ -110,7 +110,11 @@ Review.prototype.setupManagementGraph = function() {
         yAxis: {
             min: 0,
             title: {
-                text: 'Area (Ha)'
+                text: 'Managed Area (Ha)',
+                style: {
+                  "font-size": "20px",
+                  "color":"#333"
+                }
             }
         },
         tooltip: {
@@ -193,7 +197,11 @@ Review.prototype.setupCostGraph = function() {
         yAxis: {
             min: 0,
             title: {
-                text: 'Cost ($)'
+                text: 'Cost ($)',
+                style: {
+                  "font-size": "20px",
+                  "color":"#333"
+                }
             },
             reversed: true
         },
@@ -215,8 +223,10 @@ Review.prototype.setupCostGraph = function() {
                         textShadow: '0 0 3px black'
                     },
                     formatter: function(){
-                      if (this.y > 1000) {
-                        return "$" + (this.y/1000) + "k";
+                      if (this.y > 1000 && this.y <100000) {
+                        return "$" + parseInt(this.y/100)/10 + "k";
+                      } if (this.y > 100000) {
+                        return  "$" + parseInt(this.y/1000) + "k";
                       }
                       return "";
                     }
@@ -255,13 +265,12 @@ Review.prototype._updateData = function() {
   }
 
   if (this.id != -1 && this.managementGraph && this.data) {
-    var costs = this.calculateCosts(data);
-    this.costGraph.series[0].setData(costs.delimitation,false);
-    this.costGraph.series[1].setData(costs.prevention,false);
-    this.costGraph.series[2].setData(costs.removal,false);
-    this.costGraph.series[3].setData(costs.containment,false);
-    this.costGraph.series[4].setData(costs.intensiveControl,false);
-    this.costGraph.series[5].setData(costs.assetProtection);
+    this.costGraph.series[0].setData(data.d_cost,false);
+    this.costGraph.series[1].setData(data.p_cost,false);
+    this.costGraph.series[2].setData(data.r_cost,false);
+    this.costGraph.series[3].setData(data.c_cost,false);
+    this.costGraph.series[4].setData(data.ic_cost,false);
+    this.costGraph.series[5].setData(data.ap_cost);
     this.updateAreaSummary();
   }
 }
@@ -269,19 +278,22 @@ Review.prototype._updateData = function() {
 Review.prototype.getCostsAt = function(year,summarised) {
   //console.log(this.costs);
   //check objects exist
-  if (this.costs && this.costSummaries) {
+  var data = this.fetchTimeline(this.id);
+  if (this.data) {
     //if summarised pull from summaries
     var costs;
-    if (summarised){
-      costs = this.costSummaries
-    } else {
-      costs = this.costs;
-    }
 
     //summarise
     var summed = 0;
-    for (var type in costs) {
-      summed += costs[type][year];
+    for (id in this.costLookup) {
+      //set the array ID depending on if it's total cost or not
+      var sumID = this.costLookup[id].costID;
+      if (summarised) {
+        sumID = this.costLookup[id].costSumID;
+      }
+
+      //add up costs
+      summed += parseInt(this.data[sumID][year]);
     }
 
     return summed;
@@ -290,47 +302,69 @@ Review.prototype.getCostsAt = function(year,summarised) {
 }
 
 Review.prototype.updateAreaSummary = function() {
-  var len = this.haSummaries["removal"].length-1;
-  $(".zoneD .value").html(this.haSummaries["delimitation"][len]);
-  $(".zoneP .value").html("N/A");
-  $(".zoneR .value").html(this.haSummaries["removal"][len]);
-  $(".zoneC .value").html(this.haSummaries["containment"][len]);
-  $(".zoneIC .value").html(this.haSummaries["intensiveControl"][len]);
-  $(".zoneAP .value").html(this.haSummaries["assetProtection"][len]);
-}
-
-Review.prototype.calculateCosts = function(data) {
-
-  //calculate based on range of active management
-  var costs = {};
-  var costSummaries = {};
-  var haSummaries = {};
-  for (var i in this.costLookup) { //for each type
-    var type = this.costLookup[i].id;
-    var costPerHa = this.costLookup[i].cost
-
-    if (data.hasOwnProperty(type)) { //if the data has that id e.g d_range
-      var activeManagementAreas = data[this.costLookup[i].id];
-      var sum = 0;
-      var haSum = 0;
-
-      for (var j in activeManagementAreas) { //for each year in that id d_range[0,1,2...]
-        if (!costs.hasOwnProperty(i)) {costs[i]=[]; costSummaries[i]=[]; haSummaries[i]=[];} //setup costs array if it doesn't exist
-        var cost = activeManagementAreas[j] * costPerHa; //cost = management area * fee
-        costs[i].push(cost)
-        sum += cost;
-        haSum += activeManagementAreas[j];
-        costSummaries[i].push(sum);
-        haSummaries[i].push(haSum);
-      }
-    }
+  var data = this.fetchTimeline(this.id);
+  if (data) {
+    var len = data["r_haSum"].length-1;
+    $(".zoneD .value").html(data["d_haSum"][len]);
+    $(".zoneP .value").html("N/A");
+    $(".zoneR .value").html(data["r_haSum"][len]);
+    $(".zoneC .value").html(data["c_haSum"][len]);
+    $(".zoneIC .value").html(data["ic_haSum"][len]);
+    $(".zoneAP .value").html(data["ap_haSum"][len]);
   }
-
-  this.costs = costs;
-  this.costSummaries = costSummaries;
-  this.haSummaries = haSummaries;
-  return costs;
 }
+
+// Review.prototype.calculateCosts = function(data) {
+//
+//   //calculate based on range of active management
+//   var costs = {};
+//   var totalCost = 0;
+//   var costSummaries = {};
+//   var haSummaries = {};
+//   for (var i in this.costLookup) { //for each type
+//     var type = this.costLookup[i].id;
+//     var costPerHa = this.costLookup[i].cost
+//
+//     if (data.hasOwnProperty(type)) { //if the data has that id e.g d_range
+//       var activeManagementAreas = data[this.costLookup[i].id];
+//       var sum = 0;
+//       var haSum = 0;
+//
+//       for (var j in activeManagementAreas) { //for each year in that id d_range[0,1,2...]
+//         if (!costs.hasOwnProperty(i)) {costs[i]=[]; costSummaries[i]=[]; haSummaries[i]=[];} //setup costs array if it doesn't exist
+//         var cost = activeManagementAreas[j] * costPerHa; //cost = management area * fee
+//         costs[i].push(cost)
+//         sum += cost;
+//         haSum += activeManagementAreas[j];
+//         costSummaries[i].push(sum);
+//         haSummaries[i].push(haSum);
+//         totalCost += cost;
+//       }
+//     }
+//   }
+//
+//   //calculate prevention
+//   if (data.hasOwnProperty("prevention")) {
+//     var amt = parseInt(data["prevention"][0]);
+//     if (costs.hasOwnProperty("prevention")) {
+//       var prevention = costs["prevention"];
+//       var preventionSummary = costSummaries["prevention"];
+//       var cost = ((totalCost / 100) * amt) / prevention.length;
+//       var sum = 0;
+//       console.log("totalCost: " + totalCost);
+//       for (var i in prevention) {
+//         prevention[i] = cost;
+//         sum += cost;
+//         preventionSummary[i] = sum;
+//       }
+//     }
+//   }
+//
+//   this.costs = costs;
+//   this.costSummaries = costSummaries;
+//   this.haSummaries = haSummaries;
+//   return costs;
+// }
 
 Review.prototype.update = function() {
   this._updateData();
