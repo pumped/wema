@@ -48,7 +48,7 @@ Modals.prototype.on = function(type,callback) {
 // Get user modal
 function UserModal() {
   this.callbacks = {};
-  this.users = {1:{"name":"Jeremy"},2:{"name":"Trina"},3:{"name":"Ian"},4:{"name":"Dylan"}};
+  this.users = {1:{"name":"Claire"},2:{"name":"Kylie"},3:{"name":"Damon"},4:{"name":"Cathy"},5:{"name":"Bart"}};
   this.colors = ["#FF0D9A","#82E281","#FFB11C","#658BE4","#ff5c5c","#5cf0ff","#ffa55c"];
   this.activeUser = 0;
 

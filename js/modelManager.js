@@ -27,7 +27,7 @@ ModelManager.prototype.saveState = function(species, timeline, noAction) {
 	var fullStr;
 	var reqString;
 	if (noAction == false) {
-		fullStr = "&full=0";
+		fullStr = "&full=1";
 		reqString = "&prevention=0&protection=0";
 	} else {
 		fullStr = "&full=1";

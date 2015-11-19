@@ -86,7 +86,9 @@ TimelineManager.prototype.setup = function() {
 			updateStats();
 		}
 		if (data.event == "time_rendered") {
-			that.setYear(data.data.time,true);
+			if (data.data.timelineID != "0") {
+				that.setYear(data.data.time,true);
+			}
 		}
 		if (data.event == "model_complete") {
 			$('#runModel i').removeClass('fa-pulse');
@@ -200,7 +202,9 @@ TimelineManager.prototype.updateStats = function() {
 			//var cost = this._calculateCosts(data,idx);
 			var cost = this.review.getCostsAt(idx,false);
 			var costSummary = this.review.getCostsAt(idx,true);
+			var mgmtPlan = this.id;
 
+			$("#managementPlanDisplay .value").html(String(mgmtPlan))
 			$('#costDisplay .value').html(String(numberWithCommas(cost)));
 			$('#cumulativeCostDisplay .value').html(String(numberWithCommas(costSummary)));
 			$('#yearDisplay .value').html(this.currentYear);

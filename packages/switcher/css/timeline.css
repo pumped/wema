@@ -20,6 +20,7 @@ body {
   border:1px solid #eee;
   border-radius:20px;
   padding:15px;
+  margin-bottom: 25px;
 }
 
 #timelines h2 {
@@ -56,6 +57,10 @@ body {
 .tlButtonContainer .tlDistStats .title {
   font-size:0.7em;
 
+}
+
+.tlCard.active .tlButtonContainer {
+  background-color: #D5E5FF;
 }
 
 .tlDZone {

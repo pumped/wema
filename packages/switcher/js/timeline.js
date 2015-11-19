@@ -7,11 +7,22 @@ function TimelineOverview(container) {
 
   this.baseID;
   this.baseData;
+  this.lastTimeline = "1";
 
   var that = this;
   $("#timelines").on("click",".viewTlButton",function(e){
     var id = $(this).data("id");
-    that._event("timelineChanged",id);
+    that._idChange(id);
+  });
+
+  $("#switchTimeline").on("click",function(e){
+    console.log(that.baseID);
+    if (that.ID != that.baseID) {
+      that.lastTimeline = that.ID;
+      that._idChange(that.baseID);
+    } else {
+      that._idChange(that.lastTimeline);
+    }
   });
 
   this.costLookup = {
@@ -25,9 +36,13 @@ function TimelineOverview(container) {
   //this.chart = this.newGraph({chart: {renderTo: "timeline0-chart"}});
 }
 
+TimelineOverview.prototype._idChange = function(id) {
+  this._event("timelineChanged",id);
+};
+
 TimelineOverview.prototype.setupChart = function(container,chartID,id) {
   //setup dom
-  var html = '<div id="timeline'+id+'" class="col-md-4">\
+  var html = '<div id="timeline'+id+'" class="col-md-4 tlCard">\
     <div class="tlButtonContainer">\
       <div class="row">\
         <div class="col-md-12"><h2>Timeline '+id+'</h2></div>\
@@ -141,7 +156,8 @@ TimelineOverview.prototype.newGraph = function(options) {
       spacingBottom: 5,
       spacingTop: 5,
       spacingLeft: 0,
-      spacingRight: 0
+      spacingRight: 0,
+      backgroundColor: 'rgba(0,0,0,0)'
     },
     title: {
       text: ''
@@ -255,7 +271,10 @@ TimelineOverview.prototype.setBaseID = function(id) {
 }
 
 TimelineOverview.prototype.setID = function(id) {
+  this.lastTimeline = this.ID;
   this.ID = id;
+  $('.tlCard').removeClass("active");
+  $("#timeline"+id).addClass("active");
 }
 
 TimelineOverview.prototype.setTimelineData = function(id,data) {

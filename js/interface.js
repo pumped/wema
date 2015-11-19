@@ -53,8 +53,15 @@ InterfaceManager.prototype.setup = function(mode) {
 		if (data.hasOwnProperty("id")) {
 			mc.setVectorTimeline(data.id);
 			mc.setVisTimeline(data.id);
+			$('#zone').click();
 		} else {
 			console.warn("Timeline Change event doesn't have an ID");
+		}
+
+		if (data.id == "0") {
+			$("#drawTool").hide();
+			$("#runModel").hide();
+			$("#removeTool").hide();
 		}
 	});
 

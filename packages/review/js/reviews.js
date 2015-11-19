@@ -256,11 +256,11 @@ Review.prototype.setupCostGraph = function() {
 
 Review.prototype._updateData = function() {
   var data = this.fetchTimeline(this.id);
-
+/*
   console.log("update report");
   console.log(this.id);
   console.log(this.managementGraph);
-  console.log(data);
+  console.log(data);*/
 
   if (this.id != -1 && this.managementGraph && data) {
     this.managementGraph.series[0].setData(data.d_range.slice(0),false);
