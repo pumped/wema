@@ -113,10 +113,11 @@ WFSTLayer.prototype._setupWFS = function () {
           var year = parseInt((cm % 1000) / 10);
 
           var cmc = cm1;
-          if (year <= drawProperties.time) {
+          if (year < drawProperties.time) {
               cmc = cm2;
           }
 
+          //text
           var text = zoneIDLookup[cm1] + "(" + year + "yr) -> " + zoneIDLookup[cm2];
           if (resolution > 153) {
             text = '';

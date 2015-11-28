@@ -71,7 +71,7 @@ TimelineManager.prototype.setup = function() {
 		that.timelineSwitcher.setData(that.data);
 		that.review.update();
 		that._event("graphData",that.data);
-	},800,that);
+	},1200,that);
 
 	var ws = new ReconnectingWebSocket('ws://localhost:8082/ws');
 	var $message = $('#message');

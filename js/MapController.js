@@ -67,7 +67,7 @@ MapController.prototype._setupVisLayer = function() {
   this.layers.dispersal = new ol.layer.Image({
     source: new ol.source.ImageCanvas({
       canvasFunction: function canvasEscape(extent, resolution, pixelRatio, size, projection){return that.animatedRaster.getCanvas(extent, resolution, pixelRatio, size, projection);},
-  	  ratio: 1.5,
+  	  ratio: 1,
   	  projection: 'EPSG:3857'
     }),
     opacity:0.5
